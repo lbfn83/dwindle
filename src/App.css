@@ -1,30 +1,47 @@
-@font-face {
-  font-family: Roboto;
-  src: url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-}
-
 img{
   max-width: 100%;
   max-height: 100%;
+}
+
+button{
+  font-family: 'Poppins', sans-serif;
+  background-color: #96DFE3;
+  font-weight: 700;
+  font-size: larger;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 5px 16px 0px #0B325E;
+}
+
+button:hover{
+  background-color: #6dd9df;
+  cursor: pointer;
+}
+
+button:active{
+  background-color: #519da1;
 }
 
 .site-container{
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: Roboto;
+  font-family: 'Poppins', sans-serif;
 }
 
 .page-container{
   display: flex;
   justify-content: center;
-  width: 85.375em
+  width: 1025px;
+  display: flex;
+  flex-direction: column;
 }
 
 
 /* title bar styling begins */
 .title-bar{
   width: 95%;
+  max-width: 1642.98px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -39,17 +56,6 @@ img{
   width: 158px;
   height: 44px;
   margin: 2.5rem;
-  background-color: #96DFE3;
-  font-weight: 700;
-  font-size: larger;
-  border-radius: 10px;
-  border: none;
-  box-shadow: 2px 5px 16px 0px #0B325E;
-}
-
-.title-bar button:hover{
-  background-color: #6dd9df;
-  cursor: pointer;
 }
 
 /* title bar styling ends */
@@ -74,3 +80,31 @@ img{
 }
 
 /* nav styling ends */
+
+/* jobpage styling*/
+.job-page-body{
+  text-align: center;
+}
+
+.job-page-body h1{
+  font-weight: bolder;
+  margin-top: 126px;
+  padding: 0 120px;
+}
+
+/* job page forms components*/
+.form-component{
+  margin-top: 50px;
+}
+.form-component input{
+  width: 379px;
+  height: 48px;
+  border-radius: 10px;
+}
+
+.form-component button{
+  width: 158px;
+  height: 48px;
+  margin: 0;
+  font-size: medium;
+}

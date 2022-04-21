@@ -10,7 +10,7 @@ function App() {
   return (
     <div className='site-container'>
       <div className='title-bar'>
-        <div className='logo-image-container'><img src={logo} /></div> 
+        <div className='logo-image-container'><img src={logo} alt="dwindle logo" /></div> 
         <button>Post a Job</button>
       </div>
 
