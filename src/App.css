@@ -82,10 +82,29 @@ button:active{
 /* nav styling ends */
 
 /* jobpage styling*/
-
-.center{
+.job-page-body{
   text-align: center;
+}
+
+.job-page-body h1{
   font-weight: bolder;
   margin-top: 126px;
   padding: 0 120px;
+}
+
+/* job page forms components*/
+.form-component{
+  margin-top: 50px;
+}
+.form-component input{
+  width: 379px;
+  height: 48px;
+  border-radius: 10px;
+}
+
+.form-component button{
+  width: 158px;
+  height: 48px;
+  margin: 0;
+  font-size: medium;
 }
