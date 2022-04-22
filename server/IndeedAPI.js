@@ -1,7 +1,13 @@
-import axios from 'axios'
-import fs from 'fs'
-// const axios = require('axios')
-// export default
+// import axios from 'axios'
+// import fs from 'fs'
+// import { RAPID_API_KEY } from './util/constants'
+
+
+
+const axios = require('axios')
+const fs = require('fs')
+const staticVariables = require('./util/constants')
+
 
 // Get to the end of page function
 //should I make this as generator funcitron?
@@ -26,7 +32,7 @@ function fetchJobPosting(options)
   console.log('fileDB? : ',fileDB)
   
   // https://nodejs.dev/learn/writing-files-with-nodejs
-  var fileDB = fs.createWriteStream('./QueryResult/CheckEndofPages3.txt', {
+  var fileDB = fs.createWriteStream('./QueryResult/CheckEndofPages4.txt', {
     flags: 'a' // 'a' means appending (old data will be preserved)
   })
 
@@ -72,12 +78,12 @@ function fetchJobPosting(options)
     
     fileDB.write("****Size of Arrays: " + res.data.length + "\n")
     
-    if( res.data.length > 0 )
+    let nextQueryOption = JSON.parse(res.config.data)      
+    if( res.data.length > 0 || (nextQueryOption.page < 5))
     {
       fileDB.write(JSON.stringify(res.data))
       fileDB.write(delimiter)
       
-      let nextQueryOption = JSON.parse(res.config.data)      
       nextQueryOption.page = (parseInt(nextQueryOption.page)+1).toString()
       
 
@@ -117,9 +123,9 @@ var options = {
     // 4,000 request / month Hard Limit is 30 dollars per month
     // 25 / month 
     // currently this key is tied to my kamatra83@gmail.com
-    'X-RapidAPI-Key': ''
+    'X-RapidAPI-Key': `${staticVariables.RAPID_API_KEY}`
   },  
-  data: '{"search_terms":"target","location":"","page":"1","fetch_full_text":"yes"}'
+  data: '{"search_terms":"amazon","location":"","page":"1","fetch_full_text":"yes"}'
 };  
 
 // TODO: should define trigger here that every 10 a.m (?) execute this script
