@@ -48,17 +48,14 @@ app.get('/jobs', async (req, res) => {
         headers: {
           'content-type': 'application/json',
           'X-RapidAPI-Host': 'linkedin-jobs-search.p.rapidapi.com',
-          // This key should be replaced with User before production. 
-          // 4,000 request / month Hard Limit is 30 dollars per month
-          // 25 / month 
-          // currently this key is tied to my kamatra83@gmail.com
           'X-RapidAPI-Key': `${staticVariables.RAPID_API_KEY}`
         },  
         data: `{"search_terms":"${search_terms}","location":"${location}","page":"${page}","fetch_full_text": "${fetch_full_text}"}`
       };  
-      
+
     const result = await axios.request(query)
-    console.log(result.data.length)
+    // From Linked in to our backend server, we got object as a response, not string
+    console.log(typeof result.data)
     res.send(result.data);
 
   } catch (error) {
