@@ -2,7 +2,7 @@
   "name": "v39-geckos-team-05",
   "version": "0.1.0",
   "private": true,
-  "type" : "module", 
+  "type": "module",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.4",

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-// import JobPostings from "./JobPostings.js";
+import JobPostings from "./JobPostings.js";
 import axios from 'axios'
 import { BACKEND_SVR_URL } from "../util/constants.js";
 
@@ -46,8 +46,8 @@ function Search()
     return (
         <>
          <button onClick={toggleReq}> "send request" </button> ,
-         <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div>
-         {/* <JobPostings jobList={arryJobPosting}/>  */}
+         {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
+         <JobPostings jobList={arryJobPosting}/> 
         </>
       );
 }
