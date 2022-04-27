@@ -84,12 +84,21 @@ button:active{
 /* jobpage styling*/
 .job-page-body{
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content:  center;
+  align-items:  center;
 }
 
 .job-page-body h1{
   font-weight: bolder;
   margin-top: 126px;
   padding: 0 120px;
+}
+
+.job-page-body p {
+  font-size: 20px;
+  margin: 0 250px;
 }
 
 /* job page forms components*/
@@ -100,6 +109,7 @@ button:active{
   width: 379px;
   height: 48px;
   border-radius: 10px;
+  padding: 0 15px;
 }
 
 .form-component button{
