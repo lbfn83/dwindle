@@ -12,7 +12,7 @@ export const EmailSignUp = () => {
 
         <form className='form-component'>
 
-            <input type="email" placeholder='type your email' />
+            <input type="email" placeholder='Type Your Email' />
             <button>Sign up for Free</button>
 
         </form>

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
-import JobPostings from "./JobPostings.js";
+import JobPostings from "./JobPostings";
 import axios from 'axios'
-import { BACKEND_SVR_URL } from "../util/constants.js";
+import { BACKEND_SVR_URL } from "../util/constants";
 
 function Search()
 {
