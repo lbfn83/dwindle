@@ -11,13 +11,16 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const buildPath = path.join(__dirname, '..', 'build');
 
+require('dotenv').config()
+// console.log(process.env)
+
 app.use(express.static(buildPath));
 app.use(cors());
 
 
 // '{"search_terms":"target","location":"","page":"1","fetch_full_text":"yes"}'
 app.get('/jobs', async (req, res) => {
-    console.log(req)
+    // console.log(req)
   try {
       let { search_terms = '',location = '', page = '1',fetch_full_text = 'yes' } = req.query;
    
@@ -48,14 +51,14 @@ app.get('/jobs', async (req, res) => {
         headers: {
           'content-type': 'application/json',
           'X-RapidAPI-Host': 'linkedin-jobs-search.p.rapidapi.com',
-          'X-RapidAPI-Key': `${staticVariables.RAPID_API_KEY}`
+          'X-RapidAPI-Key': `${process.env.API_KEY}`
         },  
         data: `{"search_terms":"${search_terms}","location":"${location}","page":"${page}","fetch_full_text": "${fetch_full_text}"}`
       };  
 
     const result = await axios.request(query)
     // From Linked in to our backend server, we got object as a response, not string
-    console.log(typeof result.data)
+    // console.log(typeof result.data)
     res.send(result.data);
 
   } catch (error) {
