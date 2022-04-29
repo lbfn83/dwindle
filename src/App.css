@@ -118,3 +118,41 @@ button:active{
   margin: 0;
   font-size: medium;
 }
+
+/*job page form component ends*/
+
+/*Job posting styling begins*/
+
+.job-posting{
+  font-weight: bolder;
+  padding: 20px 20px;
+  text-align: left;
+  border: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.job-posting h1, h2{
+  margin: 0;
+  padding: 0;
+}
+
+.job-posting button{
+  height: 60px;
+  width: 150px;
+}
+
+.posting-text-container{
+  width: 80%;
+}
+
+.posting-text-container h2{
+  font-weight: 300;
+  font-size: 17px;
+}
+
+.posting-text-container h1{
+  font-size: 26px;
+  font-weight: 700;
+}

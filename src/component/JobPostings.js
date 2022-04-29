@@ -15,8 +15,16 @@ export default function JobPostings({jobList}) {
             <div>
               { jobList.map( (p,index) =>(
                  
-                      [<div key = {2*index-1}>{index} | {p.job_title} | {p.company_name} </div>, 
-                      <div key = {2*index}>{index} | {p.job_location} | {p.posted_date} </div>]
+                      [
+                        <div key = {2*index-1} className="job-posting">
+                          <div className='posting-text-container'>
+                            <h2>{p.company_name}</h2>
+                            <h1> {p.job_title} </h1> 
+                            <div >{p.job_location} | {p.posted_date} </div>
+                          </div>
+                          <button>Apply</button>
+                        </div>
+                        ]
               ))
               }
             </div>
