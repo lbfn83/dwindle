@@ -1,7 +1,6 @@
 // This is not for express server
 // import { RAPID_API_KEY } from './util/constants';
 
-const staticVariables = require('./util/constants')
 
 const path = require('path');
 const axios = require('axios');
