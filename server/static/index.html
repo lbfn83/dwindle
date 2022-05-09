@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Subscriber List</h1>
+    <ol id = 'subscriberList'>
+
+    </ol>
+    <button id = 'btnAdd'>Add Subscriber</button>
+    <script>
+
+    const btnCreate = document.getElementById("btnAdd")
+    btnCreate.addEventListener("click", async e => {
+                    const jsonRequest = {}
+                    
+                    
+                    jsonRequest.email = prompt("Enter new subscriber's email address!")
+
+
+                    let result = await fetch("http://localhost:5000/eamil/subscribe", {method: "POST", 
+                    headers: {"content-type": "application/json"}, body: jsonRequest })
+                    
+                    // result = await result.json();
+                    
+                    readTodos()
+                    
+                    if (!result.success)  alert("FAILED! ", result)
+
+     })
+
+    // Showing current list of subscribers 
+    readTodos();
+
+    async function readTodos() {
+
+        try{
+            const subscriberList = document.getElementById("subscriberList")
+            while(subscriberList.firstChild) subscriberList.removeChild(subscriberList.firstChild)
+
+            const result = await fetch("http://localhost:5000/email/subscribe", {method:"GET"})
+            const userEmails = await result.json();
+            console.log("userEmails ", userEmails)
+            userEmails.forEach(item =>{
+
+                const li = document.createElement("li")
+                li.textContent = item.email;
+                li.id = item.id;
+                
+                li.addEventListener("click", async (e) => {
+                    try{
+                        const jsonRequest = {}
+                        jsonRequest.id = e.target.id;
+                        let result = await fetch("http://localhost:5000/email/subscribe", {method: "DELETE", 
+                        headers: {"content-type": "application/json"}, body: JSON.stringify(jsonRequest) })
+                            
+                        result  = await result.json();
+                        readTodos();
+                        if (!result.success)  alert("FAILED! ")
+                    }catch(error)
+                    {
+                        console.log("html deletion error" , error)
+                    }
+                    
+    
+                })
+                subscriberList.appendChild(li)
+            })
+        }
+        catch (e) {
+      
+            console.log("Error reading the subscriber list.", e)
+        }
+
+    }
+    </script>
+</body>
+</html>

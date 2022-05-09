@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../db.js');
+const pool = require('../db');
 
 //  Insert DB module to populate data in an empty DB 
 //  I also can use Sequelize libarary ORM tool!
@@ -29,6 +29,22 @@ router.post('/subscribe', async (req, res) => {
         }
         
     }
-})
+});
 
+router.get('/subscribe', async (req, res) => {
+    const result = await pool.query("Select * from subscriber;");
+    const rows = result.rows;
+    res.setHeader("content-type", "application/json");
+    res.send(JSON.stringify(rows));
+});
+
+router.delete('/subscribe', async(req, res) => {
+    try{
+        await pool.query("delete from subscriber where id = $1", [req.body.id]);
+        res.status(200).send("Subscriber Deletion Success");
+    }catch(error)
+    {
+        res.status(400).send(`Subscriber Deletion failed : ${error}`);
+    }
+})
 module.exports = router
