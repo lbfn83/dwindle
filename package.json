@@ -11,6 +11,8 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.27.2",
     "concurrently": "^7.1.0",
+    "dotenv": "^16.0.0",
+    "polyfill": "^0.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-scripts": "^5.0.1",
@@ -20,6 +22,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test2": "concurrently --kill-others \"npm run start --workspace=server\"  \"npm run test\" ",
+    "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache --watchAll=false",
     "eject": "react-scripts eject",
     "dev": "concurrently --kill-others \"npm run start --workspace=server\"  \"npm run start\" "
   },

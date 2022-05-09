@@ -24,7 +24,7 @@ export default function JobPostings({jobList}) {
                           </div>
                           <button>Apply</button>
                         </div>
-                        ]
+                      ]
               ))
               }
             </div>
