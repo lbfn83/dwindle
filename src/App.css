@@ -1,38 +1,158 @@
-.App {
-  text-align: center;
+img{
+  max-width: 100%;
+  max-height: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+button{
+  font-family: 'Poppins', sans-serif;
+  background-color: #96DFE3;
+  font-weight: 700;
+  font-size: larger;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 5px 16px 0px #0B325E;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+button:hover{
+  background-color: #6dd9df;
+  cursor: pointer;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+button:active{
+  background-color: #519da1;
+}
+
+.site-container{
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.page-container{
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  width: 1025px;
+  display: flex;
+  flex-direction: column;
 }
 
-.App-link {
-  color: #61dafb;
+
+/* title bar styling begins */
+.title-bar{
+  width: 95%;
+  max-width: 1642.98px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.logo-image-container{
+  width: 373px;
+  height: 105px;
+}
+
+.title-bar button{
+  width: 158px;
+  height: 44px;
+  margin: 2.5rem;
+}
+
+/* title bar styling ends */
+
+/* nav styling begins*/
+
+.nav-container{
+  width: 100%;
+}
+
+.nav-list{
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  text-decoration: none;
+  list-style-type: none;
+  padding: 0;
+}
+
+.nav-option{
+  margin: 0 20px 0 20px;
+}
+
+/* nav styling ends */
+
+/* jobpage styling*/
+.job-page-body{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content:  center;
+  align-items:  center;
+}
+
+.job-page-body h1{
+  font-weight: bolder;
+  margin-top: 126px;
+  padding: 0 120px;
+}
+
+.job-page-body p {
+  font-size: 20px;
+  margin: 0 250px;
+}
+
+/* job page forms components*/
+.form-component{
+  margin-top: 50px;
+}
+.form-component input{
+  width: 379px;
+  height: 48px;
+  border-radius: 10px;
+  padding: 0 15px;
+}
+
+.form-component button{
+  width: 158px;
+  height: 48px;
+  margin: 0;
+  font-size: medium;
+}
+
+/*job page form component ends*/
+
+/*Job posting styling begins*/
+
+.job-posting{
+  font-weight: bolder;
+  padding: 20px 20px;
+  text-align: left;
+  border: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.job-posting h1, h2{
+  margin: 0;
+  padding: 0;
+}
+
+.job-posting button{
+  height: 60px;
+  width: 150px;
+}
+
+.posting-text-container{
+  width: 80%;
+}
+
+.posting-text-container h2{
+  font-weight: 300;
+  font-size: 17px;
+}
+
+.posting-text-container h1{
+  font-size: 26px;
+  font-weight: 700;
 }
