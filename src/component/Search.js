@@ -27,8 +27,8 @@ function Search({keyword : keywordField,
    
    useEffect( () => {
        
-       const apiReqString = `${BACKEND_SVR_URL}/jobs?search_terms='${search_terms}'&location='${location}'&page='${pageNum}'&fetch_full_text='${fetch_full_text}' `
-       console.log(apiReqString)
+       const apiReqString = `${BACKEND_SVR_URL}/jobs?search_terms=${search_terms}&location=${location}&page=${pageNum}&fetch_full_text=${fetch_full_text} `
+    //    console.log(apiReqString)
        setLoading(true)
         axios.get(apiReqString).then(res => {
                 setLoading(false)

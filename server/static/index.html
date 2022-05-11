@@ -21,15 +21,21 @@
                     
                     jsonRequest.email = prompt("Enter new subscriber's email address!")
 
-
-                    let result = await fetch("http://localhost:5000/eamil/subscribe", {method: "POST", 
-                    headers: {"content-type": "application/json"}, body: jsonRequest })
+                    // console.log(typeof jsonRequest)
+                    // Unexpected token o in JSON at position 1 error in JS
+                    // https://bobbyhadz.com/blog/javascript-unexpected-token-o-in-json-at-position-1
+                    await fetch("http://localhost:5000/database/subscribe", {method: "POST", 
+                    headers: {"content-type": "application/json"}, body: JSON.stringify(jsonRequest) }).then(
+                        (res) => {
+                            console.log('[admin] add : ', res)
+                        }
+                    )
                     
                     // result = await result.json();
                     
                     readTodos()
                     
-                    if (!result.success)  alert("FAILED! ", result)
+                    // if (!result.success)  alert("FAILED! ", result)
 
      })
 
@@ -42,7 +48,7 @@
             const subscriberList = document.getElementById("subscriberList")
             while(subscriberList.firstChild) subscriberList.removeChild(subscriberList.firstChild)
 
-            const result = await fetch("http://localhost:5000/email/subscribe", {method:"GET"})
+            const result = await fetch("http://localhost:5000/database/subscribe", {method:"GET"})
             const userEmails = await result.json();
             console.log("userEmails ", userEmails)
             userEmails.forEach(item =>{
@@ -55,12 +61,15 @@
                     try{
                         const jsonRequest = {}
                         jsonRequest.id = e.target.id;
-                        let result = await fetch("http://localhost:5000/email/subscribe", {method: "DELETE", 
-                        headers: {"content-type": "application/json"}, body: JSON.stringify(jsonRequest) })
-                            
-                        result  = await result.json();
-                        readTodos();
-                        if (!result.success)  alert("FAILED! ")
+                        console.log(jsonRequest)
+                        await fetch("http://localhost:5000/database/subscribe", {method: "DELETE", 
+                        headers: {"content-type": "application/json"}, body: JSON.stringify(jsonRequest) }).then(
+                            (res) => {
+                                console.log('[admin] delete : ', res)
+                            }
+                        )
+
+                        readTodos();  
                     }catch(error)
                     {
                         console.log("html deletion error" , error)

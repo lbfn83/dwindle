@@ -47,7 +47,7 @@ export const EmailSignUp = () => {
   useEffect( () => {
     if(clickChanged&&emailAddrValidation)
     {
-      const apiReqString = `${BACKEND_SVR_URL}/email/subscribe`
+      const apiReqString = `${BACKEND_SVR_URL}/database/subscribe`
       // Just in case for the future extension of this feature 
       // leave firstname and lastname columns here 
       // TODO: email address should be regex inpected with xxxx@xxxx.xxx form
