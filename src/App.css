@@ -32,9 +32,10 @@ button:active{
 .page-container{
   display: flex;
   justify-content: center;
-  width: 1025px;
+  max-width: 1025px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 
@@ -42,6 +43,7 @@ button:active{
 .title-bar{
   width: 95%;
   max-width: 1642.98px;
+  min-width: 958px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -75,8 +77,17 @@ button:active{
   padding: 0;
 }
 
+.nav-mobile{
+  display: none;
+
+}
+
 .nav-option{
   margin: 0 20px 0 20px;
+}
+
+.burger-menu{
+  display: none;
 }
 
 /* nav styling ends */
@@ -155,4 +166,93 @@ button:active{
 .posting-text-container h1{
   font-size: 26px;
   font-weight: 700;
+}
+
+
+
+@media screen and (max-width: 940px){
+
+
+  .title-bar{
+    min-width: 0;
+
+  }
+
+  .nav-container{
+    width: 82%;
+  }
+
+  .logo-image-container{
+    width: auto;
+  }
+
+  .burger-menu{
+    display: block;
+  }
+
+  .nav-list{
+    display: none;
+    flex-direction: column;
+  }
+
+  .nav-mobile{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 100%;
+    text-decoration: none;
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .form-component{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .job-page-body h1{
+    margin-top: 88px;
+  }
+}
+
+@media screen and (max-width: 720px){
+  .job-page-body h1{
+    font-weight: 600;
+    font-size: x-large;
+    padding: 0 59px;
+  }
+  
+  .job-page-body p{
+    margin: 0;
+    font-size: medium;
+  }
+}
+
+@media screen and (max-width: 500px){
+  .job-page-body h1{
+    padding: 0;
+  }
+
+  .form-component input{
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 414px){
+  .title-bar{
+    flex-direction: column;
+  }
+
+  .nav-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .nav-option{
+    margin: 0;
+  }
 }

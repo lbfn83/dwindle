@@ -94,10 +94,10 @@ export const EmailSignUp = () => {
 {/* TODO : regular expression for email address filtering  */}
 
 {/* Either of forms should be displayed depending on the button event */}
-        {(clickCnt === 0 || emailAddrValidation === false )&&<form className='before-subscribe'>
+        {(clickCnt === 0 || emailAddrValidation === false )&&<form className='before-subscribe form-component'>
 
             <input type="email" placeholder='Type Your Email' value={emailField} onChange={handleChange}/>
-            <button type="button" onClick={handleClick} disabled = {emailField==""}>Sign up for Free</button>
+            <button type="button" onClick={handleClick} disabled = {emailField===""}>Sign up for Free</button>
 
         </form>}
         {/* @Bethold I guess you can prettify below form? */}
