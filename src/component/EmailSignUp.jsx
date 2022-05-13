@@ -116,22 +116,15 @@ export const EmailSignUp = () => {
 {/* In the context of UI, it has three different states and display any of forms defined below
  depending on state hooks */}
  
-            {(emailAddrValidation === false )&&<form className='before-subscribe' onSubmit={handleClick}>
+            {(emailAddrValidation === false )&&<form className='before-subscribe form-component' onSubmit={handleClick}>
 
-<<<<<<< HEAD
-{/* Either of forms should be displayed depending on the button event */}
-        {(clickCnt === 0 || emailAddrValidation === false )&&<form className='before-subscribe form-component'>
-
-            <input type="email" placeholder='Type Your Email' value={emailField} onChange={handleChange}/>
-            <button type="button" onClick={handleClick} disabled = {emailField===""}>Sign up for Free</button>
-=======
                 <input type="text" placeholder='Type Your Email' value={emailField} onChange={handleChange}/>
                 <button type="submit"  disabled = {emailField==""}>Sign up for Free</button>
                 {/* <input type="button" onClick={handleClick} disabled = {emailField==""}>Sign up for Free</input> */}
 
             </form>}
             {/* @Bethold I guess you can prettify below form? */}
-            {(clickCnt > 0 && emailAddrValidation)&&<form className='after-subscribe'>
+            {(clickCnt > 0 && emailAddrValidation)&&<form className='after-subscribe form-component'>
                 <p> Thanks for subscribing. </p>
               
             </form>}
@@ -139,7 +132,6 @@ export const EmailSignUp = () => {
                 <p> Already Registered email address </p>
               
             </form>}
->>>>>>> 03c49b46ba1c7f0ac9e07983f4af3ca5012a5609
 
     </div>
   )
