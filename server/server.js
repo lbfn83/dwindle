@@ -15,9 +15,11 @@ const subscribeRouter = require('./routers/subscribeRouter.js')
 const testRouter = require('./routers/testRouter.js')
 const bp = require('body-parser')
 const {Client} = require('pg')
+// const Client= require('pg-promise')
 
 // Sequelize model import
 const {sequelize} = require('./models')
+
 
 // This on can also bring it from ... pool or whatever?
 require('dotenv').config()
@@ -36,7 +38,22 @@ let initialDBconnectionParam =
   user : 'postgres',
   password: process.env.POSTGRES_PWD
 }
+
 initDatabase();
+
+
+// Alternative method that can be used in case of handling multiple routers
+// https://www.cloudnativemaster.com/post/how-to-add-multiple-routers-in-a-node-application-without-using-app-use-for-each-router
+/*
+fs.readdirSync(routes_directory).forEach(route_file => {
+  try {
+    app.use('/', require(routes_directory + route_file)());
+  } catch (error) {
+    console.log(`Encountered Error initializing routes from ${route_file}`);
+    console.log(error);
+  }
+});
+*/
 
 app.use('/database' , subscribeRouter)
 app.use('/database' , testRouter)
@@ -110,11 +127,12 @@ async function initDatabase() {
   const client = new Client(
     initialDBconnectionParam
   );
-  
+
   // console.log(client)
   
-  let dbExist = false;
-  const dbName = process.env.DATABASE_NAME;
+  // all the queries in postgres are by default converted to lowercase letters.
+  // Sequelize connection info is defined in models/index.js
+  const dbName = process.env.DATABASE_NAME.toLowerCase();
   
   // connect to db with default credential in Postgres
   client.connect( async (err) => {
@@ -123,32 +141,27 @@ async function initDatabase() {
 
     } else {
         console.log('[initDatabase] DB connected');
-        CheckDBexist().then( async () => {await sequelize.sync({force : true})} );
+        await CreateDB().then( async () => {await sequelize.sync()} );// {force : true}
         //  console.log("[server.js]",sequelize)
         
     }
   })
 
-  async function CheckDBexist()
-  {
 
-    // Check if Database already exists
-    // but when you create Database should change its credentials to USER not postgres
-    const result = await client.query('SELECT datname FROM pg_database');
-            
-    result.rows.forEach(item => {  
-        // console.log('[initDatabase] datname : ',item.datname);
-        if(item.datname === dbName)
-        {
-          dbExist = true;
-        }
-    })
+  
+  async function CreateDB()
+  {
+    const dbExist = await CheckDBexist(dbName);
+    // console.log('[initDatabase] dbExist : ', dbExist )
+
     // if it doesn't exist, create one 
     if(!dbExist)
     {
         console.log(`[initDatabase] Start \'${dbName}\' Database Creation`);
         try {
-          await client.query(`CREATE DATABASE ${dbName}`);
+          const response = await client.query(`CREATE DATABASE ${dbName}`);
+          // console.log(`[initDatabase] db creation result : `, response);
+          // return await new Promise(r => setTimeout(r, 3000));
         }catch(error)
         {
           console.error('[initDatabase] DB Creation error : ', error)
@@ -157,9 +170,27 @@ async function initDatabase() {
     {
         console.log(`[initDatabase] Database ${dbName} already exists`)
     }
+    // return;
   }
 
+  async function CheckDBexist(dbName)
+  {
+    // Check if Database already exists
+    // but when you create Database should change its credentials to USER not postgres
+    const result = await client.query('SELECT datname FROM pg_database');
+    // console.log(`[initDatabase] CheckDBexist : `, result, ` : ` , dbName)       
     
+    let rtnVal = false
+
+    result.rows.forEach( (item) => {  
+        // console.log('[initDatabase] datname : ',item.datname);
+        if(item.datname === dbName)
+        {
+           rtnVal = true;
+        }
+    })
+    return rtnVal;
+  } 
           
   // DB connection with Sequelize
   /*
