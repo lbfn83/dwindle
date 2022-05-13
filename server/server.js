@@ -6,13 +6,20 @@ const path = require('path');
 const axios = require('axios');
 const cors = require('cors');
 const express = require('express');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+
 const buildPath = path.join(__dirname, '..', 'build');
 const subscribeRouter = require('./routers/subscribeRouter.js')
+const testRouter = require('./routers/testRouter.js')
 const bp = require('body-parser')
+const {Client} = require('pg')
 
+// Sequelize model import
+const {sequelize} = require('./models')
 
+// This on can also bring it from ... pool or whatever?
 require('dotenv').config()
 // console.log(process.env)
 
@@ -22,6 +29,17 @@ require('dotenv').config()
 app.use(cors());
 app.use(bp.json())
 
+let initialDBconnectionParam = 
+{
+  host : process.env.DATABASE_HOST,
+  port : process.env.DATABASE_PORT,
+  user : 'postgres',
+  password: process.env.POSTGRES_PWD
+}
+initDatabase();
+
+app.use('/database' , subscribeRouter)
+app.use('/database' , testRouter)
 // '{"search_terms":"target","location":"","page":"1","fetch_full_text":"yes"}'
 app.get('/jobs', async (req, res) => {
     // console.log("req from client : ", req)
@@ -57,13 +75,14 @@ app.get('/jobs', async (req, res) => {
           'X-RapidAPI-Host': 'linkedin-jobs-search.p.rapidapi.com',
           'X-RapidAPI-Key': `${process.env.API_KEY}`
         },  
+        // TODO : should  replace 'single quote into null 
         data: `{"search_terms":"${search_terms}","location":"${location}","page":"${page}","fetch_full_text": "${fetch_full_text}"}`
       };  
-
+    // console.log("query!!!!!!   ", query)
     const result = await axios.request(query)
     // From Linked in to our backend server, we got object as a response, not string
-    // console.log("result : " , result)
-    console.log("result Data in server: ", result)
+
+    // console.log("result Data in server: ", result)
     res.send(result.data);
 
   } catch (error) {
@@ -72,9 +91,137 @@ app.get('/jobs', async (req, res) => {
   }
 });
 
-app.use('/email' , subscribeRouter)
 
+// TODO: preliminary admin console. might have to build a seperate router for this 
+// When all of DB tables are set up 
+app.get("/admin", (req, res) => res.sendFile(`${__dirname}/static/index.html`))
 
 app.listen(PORT, () => {
   console.log(`server started on port ${PORT}`);
 });
+
+
+// Automatically create Database if it doesn't exist and same applies to tables
+// This function will try connection to local DB with postgres credential ( defualt credential)
+async function initDatabase() {
+  // create db if it doesn't already exist
+  // let's say someone just installed postgresql without adding any extra user or any configuration
+  // how can you make things easier for them to create users
+  const client = new Client(
+    initialDBconnectionParam
+  );
+  
+  // console.log(client)
+  
+  let dbExist = false;
+  const dbName = process.env.DATABASE_NAME;
+  
+  // connect to db with default credential in Postgres
+  client.connect( async (err) => {
+    if(err){
+        console.error('[initDatabase] DB connection error : ', err);
+
+    } else {
+        console.log('[initDatabase] DB connected');
+        CheckDBexist().then( async () => {await sequelize.sync({force : true})} );
+        //  console.log("[server.js]",sequelize)
+        
+    }
+  })
+
+  async function CheckDBexist()
+  {
+
+    // Check if Database already exists
+    // but when you create Database should change its credentials to USER not postgres
+    const result = await client.query('SELECT datname FROM pg_database');
+            
+    result.rows.forEach(item => {  
+        // console.log('[initDatabase] datname : ',item.datname);
+        if(item.datname === dbName)
+        {
+          dbExist = true;
+        }
+    })
+    // if it doesn't exist, create one 
+    if(!dbExist)
+    {
+        console.log(`[initDatabase] Start \'${dbName}\' Database Creation`);
+        try {
+          await client.query(`CREATE DATABASE ${dbName}`);
+        }catch(error)
+        {
+          console.error('[initDatabase] DB Creation error : ', error)
+        }
+    }else
+    {
+        console.log(`[initDatabase] Database ${dbName} already exists`)
+    }
+  }
+
+    
+          
+  // DB connection with Sequelize
+  /*
+  sequelize.authenticate().then(() => {
+    console.log('Connection established successfully.');
+  }).catch(err => {
+    console.error('Unable to connect to the database:', err)});
+    */
+   
+   // // init models and add them to the exported db object
+   // db.User = require('../users/user.model')(sequelize);
+   
+   
+   
+   /*
+    1. This is most important point that I was confused about Sequelize
+    thought that define sequelize instance manually like below will work
+    but invoking sync() with below doesnt create models(tables) defined in models folder. 
+    that is because "models: { subscriberTest: subscriberTest }" props should also be manually defined 
+    with manual approach.  
+
+
+    const sequelize = new Sequelize(dbName, process.env.DATABASE_USER, process.env.DATABASE_PWD, { dialect: 'postgres' });
+    
+    2. console.log("[server.js]",sequelize)
+    sequelize instance read from model index actually have correct db connection information
+    when and how does it get this information?
+    models/index.js fetch this information from config.json
+
+    3. For now, my implementation contains both of pg and sequelize libs and
+    for that reason, parameters for db connection should be typed in
+    seperately both of config.js and .env. Should fix this by injecting 
+    environment variables, defined in .env, into config instance in models/index.js file
+  
+    */
+   
+
+   
+}
+
+
+/*Check USER exist */
+        // check DB user is defined. 
+        // try{
+        //   const userExistQueryResult = await client.query(`SELECT 1 FROM pg_roles WHERE rolname=\'${process.env.DATABASE_USER}\'`);
+          
+        //   // Result contains 'rows: []' and 'rowCount: 0' if user doens't exist
+        //   // console.log('[initDatabase] ', userExistQueryResult);
+        //   // const userExist = Object.values(userExistQueryResult.rows);
+
+          
+        //   if( userExistQueryResult.rowCount === 0 )
+        //   { 
+        //     console.log('[initDatabase] user doesn\'t exist, so let\'s create ');
+        //     // user creation
+        //     // you can't use with password thouh
+        //     client.query(`CREATE USER ${process.env.DATABASE_USER}  WITH PASSWORD '${process.env.DATABASE_PWD}'`)
+        //      client.query(`alter user ${process.env.DATABASE_USER} superuser `)
+        //      client.query(`alter user ${process.env.DATABASE_USER} with CREATEDB CREATEROLE;`)
+        //   }
+                    
+        //   }catch(error)
+        //   {
+        //     console.log('[initDatabase] User credential check error :', error)
+        //   }
