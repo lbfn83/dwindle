@@ -12,71 +12,93 @@ export const EmailSignUp = () => {
   
   // dotenv.config(); 
 
-
+  // Regular expression to filter out strings with the incorrect email format (  xxxx@xxx.xxx )
   const regex = new RegExp('[a-z0-9]+@[a-z]+[.][a-z]{2,}');
+  
+  /* Regular expressing test
   let testEmails = ["notanemail@.com", "notanemail@com.ab", "workingexample@email", "another_working@somethingelse.org", "notworking@1.com"];
 
   testEmails.forEach((address, idx) => {
       console.log(`reg test : ${idx}`, regex.test(address))
   });
-  
+  */
+
   const [emailField, setEmailField] = useState("");
+
+  // Email address validation process should be executed right after submission
+  // if string is validated as a correct email address form, don't go back to the input form 
+  // since one user should submit only one email address
+  // 
+  // This state is used to diplay sucessful subscribing message
+  // Set : When new input string passes Regex inspection
+  // Reset : When new input string fails Regex inspection &&  When this component receives error from server
   const [emailAddrValidation, setEmailAddrValidation] = useState(false)
+  
   const [clickCnt, setclickCnt] = useState(0);
-  // clickChanged is designed to detect the change of clicked value
-  // clicked becomes 0 -> 1 and it also becomes 1 and then instantly reset to 0
-  const [clickChanged, setclickChanged] = useState(false);
-  // validation should be done right after click. 
+
+  // When error comes from server ( usually code 400 with ERR_BAD_REQUEST / SequelizeContraintError)
+  // it should be duplicate email address that has been entered in input form
+  // Set : When this component receives error from server
+  // Reset : When new input string is submitted
+  const [registrErr, setRegistrErr] = useState(false);
+
   const handleChange = (event) => {
+    
     setEmailField(event.target.value);
   }
+  
+  // validation should be only done right after click. 
+  // TODO : How about enter?
   const handleClick = (event) =>{
+    // prevent form to be submitted in undefined logic
+    event.preventDefault();
+
+    setRegistrErr(false);
     setclickCnt(clickCnt+1);
-    setclickChanged(true);
+    
     if(regex.test(emailField))
     {
-      setEmailAddrValidation(true) 
+      setEmailAddrValidation(true); 
     }else{  
-      setEmailAddrValidation(false)   
+      setEmailAddrValidation(false);   
     }
     
   }
+
   /* Query POST request to Server / Effect HOOk?  */
-  /* How to inject props into the body of payload with Axios post request?
-  Good thing */ 
+  /* How to inject props into the body of payload with Axios post request?*/
   useEffect( () => {
-    if(clickChanged&&emailAddrValidation)
+    
+    if(emailAddrValidation)
     {
       const apiReqString = `${BACKEND_SVR_URL}/database/subscribe`
       // Just in case for the future extension of this feature 
       // leave firstname and lastname columns here 
-      // TODO: email address should be regex inpected with xxxx@xxxx.xxx form
       const data = {
         "firstname" : "",
         "lastname" : "",
         "email" : `${emailField}`      
        }
        console.log("data  ",data)
-      // Resetting clickchange right away to prevent unwanted execution of sending api request
+      // 
       // TODO: not sure if its logic is correct  
       axios.post(apiReqString, data)
             .then((res)=> {
-              console.log(res);
+              console.log('[EmailSignUp]', res);
             })
-            .catch(err => console.log(err))
-            .finally(() => {
-              // Reset state hooks
-              setclickChanged(false);
+            .catch(err => {
+              console.log('[EmailSignUp]', err);
+              setRegistrErr(true);
               setEmailAddrValidation(false);
+            })
+            .finally(() => {
               setEmailField("");
             })        
       
 
     }else{
       
-      setclickChanged(false);
-      setEmailAddrValidation(false);
-      setEmailField("")
+      // setEmailField("")
       console.log("sign up request is not sent due to wrong email address")
     }
 
@@ -91,20 +113,34 @@ export const EmailSignUp = () => {
         
         <p>Get weekly alerts for new job postings</p>
 
-{/* TODO : regular expression for email address filtering  */}
+{/* In the context of UI, it has three different states and display any of forms defined below
+ depending on state hooks */}
+ 
+            {(emailAddrValidation === false )&&<form className='before-subscribe' onSubmit={handleClick}>
 
+<<<<<<< HEAD
 {/* Either of forms should be displayed depending on the button event */}
         {(clickCnt === 0 || emailAddrValidation === false )&&<form className='before-subscribe form-component'>
 
             <input type="email" placeholder='Type Your Email' value={emailField} onChange={handleChange}/>
             <button type="button" onClick={handleClick} disabled = {emailField===""}>Sign up for Free</button>
+=======
+                <input type="text" placeholder='Type Your Email' value={emailField} onChange={handleChange}/>
+                <button type="submit"  disabled = {emailField==""}>Sign up for Free</button>
+                {/* <input type="button" onClick={handleClick} disabled = {emailField==""}>Sign up for Free</input> */}
 
-        </form>}
-        {/* @Bethold I guess you can prettify below form? */}
-        {(clickCnt > 0 && emailAddrValidation)&&<form className='after-subscribe'>
-            <p> Thanks for subscribing. </p>
-          
-        </form>}
+            </form>}
+            {/* @Bethold I guess you can prettify below form? */}
+            {(clickCnt > 0 && emailAddrValidation)&&<form className='after-subscribe'>
+                <p> Thanks for subscribing. </p>
+              
+            </form>}
+            {(clickCnt > 0 && registrErr)&&<form className='duplicate-input'>
+                <p> Already Registered email address </p>
+              
+            </form>}
+>>>>>>> 03c49b46ba1c7f0ac9e07983f4af3ca5012a5609
+
     </div>
   )
 }
