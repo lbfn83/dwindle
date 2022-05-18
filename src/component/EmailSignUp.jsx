@@ -115,8 +115,10 @@ export const EmailSignUp = () => {
 
 {/* In the context of UI, it has three different states and display any of forms defined below
  depending on state hooks */}
- {/* Press enter and click button should be handled in a same manner, so button type has been changed into submit */}
-            {(emailAddrValidation === false )&&<form className='before-subscribe' onSubmit={handleClick}>
+
+ 
+            {(emailAddrValidation === false )&&<form className='before-subscribe form-component' onSubmit={handleClick}>
+
 
                 <input type="text" placeholder='Type Your Email' value={emailField} onChange={handleChange}/>
                 <button type="submit"  disabled = {emailField==""}>Sign up for Free</button>
@@ -124,7 +126,7 @@ export const EmailSignUp = () => {
 
             </form>}
             {/* @Bethold I guess you can prettify below form? */}
-            {(clickCnt > 0 && emailAddrValidation)&&<form className='after-subscribe'>
+            {(clickCnt > 0 && emailAddrValidation)&&<form className='after-subscribe form-component'>
                 <p> Thanks for subscribing. </p>
               
             </form>}
