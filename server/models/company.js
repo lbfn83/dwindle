@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const jobposting = require('./jobposting');
 
 module.exports = (sequelize, DataTypes) => {
   class company extends Model {
@@ -10,8 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate({jobposting}) {
       // define association here
+      this.hasMany(jobposting, {
+    
+        foreignKey : "company_name",
+        
+      })
     }
   }
   company.init({
@@ -20,13 +26,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
-      unique :true
+      unique :true,
+      // references : {
+      //   model : jobposting,
+      //   key : "company_name"
+      // }
     },
-    description: DataTypes.STRING,
-    benefits: DataTypes.STRING
+    // test: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    benefits: DataTypes.TEXT, 
+    // test: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'company',
+    paranoid: true
   });
   return company;
 };

@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      
     }
   }
   subscriber.init({
@@ -29,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'subscriber',
+    // soft deletion
+    paranoid: true
   });
   return subscriber;
 };
