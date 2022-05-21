@@ -17,12 +17,17 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(company, {
 
          targetKey : "companyname",
-         foreignKey : "company_name"
+         foreignKey : "company_name",
+        //  as : 'Asjobposting'
       })
     }
   }
   
   jobposting.init({
+    uuid: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+    },
     linkedin_job_url_cleaned: {
       type : DataTypes.STRING,
       primaryKey: true

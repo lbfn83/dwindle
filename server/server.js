@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 
 const buildPath = path.join(__dirname, '..', 'build');
 const subscribeRouter = require('./routers/subscribeRouter.js')
+const jobpostingRouter = require('./routers/jobPostingRouter.js')
 const testRouter = require('./routers/testRouter.js')
 const bp = require('body-parser')
 const {Client} = require('pg')
@@ -55,6 +56,7 @@ fs.readdirSync(routes_directory).forEach(route_file => {
 });
 */
 
+app.use('/database', jobpostingRouter)
 app.use('/database' , subscribeRouter)
 app.use('/database' , testRouter)
 // '{"search_terms":"target","location":"","page":"1","fetch_full_text":"yes"}'
