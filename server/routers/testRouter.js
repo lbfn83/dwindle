@@ -62,10 +62,9 @@ router.get('/resWriteTest2', async (req, res) => {
 })
 
 
-router.get('/setupCompanyListFromTxt/:uuid', async (req, res) => {
-    // how to use uuid and req.params 
-    const uuid = req.params.uuid
-    console.log('[testRouter] request: ',uuid)
+router.get('/setupCompanyListFromTxt/', async (req, res) => {
+
+
     try{
         const data = []
         const fileContent = fs.readFileSync('./data/company_list.txt', 'utf-8');
@@ -84,7 +83,10 @@ router.get('/setupCompanyListFromTxt/:uuid', async (req, res) => {
 
         // console.log(dbEntries)
         // What is bulkCreate's return? some sequelize auto created field with dbEntries
-        await company.bulkCreate(dbEntries);
+        // TODO : change into upsert
+        await company.bulkCreate(dbEntries, {
+            updateOnDuplicate: ['companyname']
+          });
         // console.log(`[testRouter] bulkInsert result : `, result);
         return res.status(200).json(dbEntries);
     }catch(error)

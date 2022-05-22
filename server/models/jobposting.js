@@ -2,10 +2,10 @@
 const {
   Model
 } = require('sequelize');
-const company = require('./company');
+// const company = require('./company');
 module.exports = (sequelize, DataTypes) => {
-  console.log("sequelize" ,sequelize)
-  console.log("company", company)
+  // console.log("sequelize" ,sequelize)
+  // console.log("company", company)
   class jobposting extends Model {
     /**
      * Helper method for defining associations.

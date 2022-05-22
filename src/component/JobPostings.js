@@ -25,7 +25,7 @@ export default function JobPostings({jobList}) {
                             <h1> {p.job_title} </h1> 
                             <div >{p.job_location} | {p.posted_date} </div>
                           </div>
-                          <a href={p.job_url} target="_blanck">Apply</a>
+                          <a href={p.linkedin_job_url_cleaned} target="_blanck">Apply</a>
                         </div>
                       ]
               ))

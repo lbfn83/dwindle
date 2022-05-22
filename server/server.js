@@ -20,8 +20,8 @@ const {Client} = require('pg')
 
 // Sequelize model import
 const {sequelize} = require('./models')
-
-
+const  jobPostingFetcher = require('./controllers/jobPostingFetcher')
+const {setupCompanyListFromTxt} = require('./controllers/companyListInit')
 // This on can also bring it from ... pool or whatever?
 require('dotenv').config()
 // console.log(process.env)
@@ -123,6 +123,7 @@ app.listen(PORT, () => {
 // Automatically create Database if it doesn't exist and same applies to tables
 // This function will try connection to local DB with postgres credential ( defualt credential)
 async function initDatabase() {
+
   // create db if it doesn't already exist
   // let's say someone just installed postgresql without adding any extra user or any configuration
   // how can you make things easier for them to create users
@@ -145,9 +146,21 @@ async function initDatabase() {
         console.log('[initDatabase] DB connected');
         await CreateDB().then( async () => {
           try {
-            // await sequelize.authenticate();
-            await sequelize.sync({alter : true})
+            
+            await sequelize.authenticate();
+            // await sequelize.sync({alter : true})
+            
             console.log('Connection has been established successfully.');
+
+            /* Below is just one time usage for first set up production database*/
+            const CompanyEntriesInserted = await setupCompanyListFromTxt().then((rtn) => 
+              {
+                console.log('[initDatabase]CompanyEntriesInserted : ' , rtn)
+              })
+            
+            // console.log(jobPostingFetcher)
+            // await jobPostingFetcher.jobPostingQueryOptionBuilder()//result should be fixed.then((results) => {console.log(results)})
+            
           } catch (error) {
             console.error('Unable to connect to the database:', error);
           }
