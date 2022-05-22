@@ -147,8 +147,8 @@ async function initDatabase() {
         await CreateDB().then( async () => {
           try {
             
-            await sequelize.authenticate();
-            // await sequelize.sync({alter : true})
+            // await sequelize.authenticate();
+            await sequelize.sync({force : true})
             
             console.log('Connection has been established successfully.');
 
@@ -159,7 +159,7 @@ async function initDatabase() {
               })
             
             // console.log(jobPostingFetcher)
-            // await jobPostingFetcher.jobPostingQueryOptionBuilder()//result should be fixed.then((results) => {console.log(results)})
+            await jobPostingFetcher.jobPostingQueryOptionBuilder()//result should be fixed.then((results) => {console.log(results)})
             
           } catch (error) {
             console.error('Unable to connect to the database:', error);
