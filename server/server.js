@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 
 const buildPath = path.join(__dirname, '..', 'build');
 const subscribeRouter = require('./routers/subscribeRouter.js')
+const jobpostingRouter = require('./routers/jobPostingRouter.js')
 const testRouter = require('./routers/testRouter.js')
 const bp = require('body-parser')
 const {Client} = require('pg')
@@ -19,8 +20,8 @@ const {Client} = require('pg')
 
 // Sequelize model import
 const {sequelize} = require('./models')
-
-
+const  jobPostingFetcher = require('./controllers/jobPostingFetcher')
+const {setupCompanyListFromTxt} = require('./controllers/companyListInit')
 // This on can also bring it from ... pool or whatever?
 require('dotenv').config()
 // console.log(process.env)
@@ -55,6 +56,7 @@ fs.readdirSync(routes_directory).forEach(route_file => {
 });
 */
 
+app.use('/database', jobpostingRouter)
 app.use('/database' , subscribeRouter)
 app.use('/database' , testRouter)
 // '{"search_terms":"target","location":"","page":"1","fetch_full_text":"yes"}'
@@ -121,6 +123,7 @@ app.listen(PORT, () => {
 // Automatically create Database if it doesn't exist and same applies to tables
 // This function will try connection to local DB with postgres credential ( defualt credential)
 async function initDatabase() {
+
   // create db if it doesn't already exist
   // let's say someone just installed postgresql without adding any extra user or any configuration
   // how can you make things easier for them to create users
@@ -141,7 +144,29 @@ async function initDatabase() {
 
     } else {
         console.log('[initDatabase] DB connected');
-        await CreateDB().then( async () => {await sequelize.sync()} );// {force : true}
+        await CreateDB().then( async () => {
+          try {
+            
+            // await sequelize.authenticate();
+            await sequelize.sync({force : true})
+            
+            console.log('Connection has been established successfully.');
+
+            /* Below is just one time usage for first set up production database*/
+            const CompanyEntriesInserted = await setupCompanyListFromTxt().then((rtn) => 
+              {
+                console.log('[initDatabase]CompanyEntriesInserted : ' , rtn)
+              })
+            
+            // console.log(jobPostingFetcher)
+            await jobPostingFetcher.jobPostingQueryOptionBuilder()//result should be fixed.then((results) => {console.log(results)})
+            
+          } catch (error) {
+            console.error('Unable to connect to the database:', error);
+          }
+          // await sequelize.sync({alter : true})
+        
+        } );
         //  console.log("[server.js]",sequelize)
         
     }

@@ -17,7 +17,6 @@ function Search({keyword : keywordField,
    const search_terms = keywordField
    const location = locationField 
    const pageNum = 1
-   const fetch_full_text = 'yes'
 
 
    const [loading, setLoading] = useState(false)
@@ -27,7 +26,7 @@ function Search({keyword : keywordField,
    
    useEffect( () => {
        
-       const apiReqString = `${BACKEND_SVR_URL}/jobs?search_terms=${search_terms}&location=${location}&page=${pageNum}&fetch_full_text=${fetch_full_text} `
+       const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
     //    console.log(apiReqString)
        setLoading(true)
         axios.get(apiReqString).then(res => {
