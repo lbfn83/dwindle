@@ -12,7 +12,8 @@ require("dotenv").config();
 /*injecting environment variables into config.json instance*/ 
 config.username = process.env.DATABASE_USER
 config.password = process.env.DATABASE_PWD
-config.database = process.env.DATABASE_NAME
+// all the queries in postgres are by default converted to lowercase letters.
+config.database = process.env.DATABASE_NAME.toLowerCase()
 config.host = process.env.DATABASE_HOST
 config.dialect = 'postgres'
 config.define = {"freezeTableName" : true}

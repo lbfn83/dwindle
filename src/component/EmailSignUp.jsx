@@ -48,7 +48,7 @@ export const EmailSignUp = () => {
   }
   
   // validation should be only done right after click. 
-  // TODO : How about enter?
+
   const handleClick = (event) =>{
     // prevent form to be submitted in undefined logic
     event.preventDefault();
@@ -115,8 +115,10 @@ export const EmailSignUp = () => {
 
 {/* In the context of UI, it has three different states and display any of forms defined below
  depending on state hooks */}
+
  
             {(emailAddrValidation === false )&&<form className='before-subscribe form-component' onSubmit={handleClick}>
+
 
                 <input type="text" placeholder='Type Your Email' value={emailField} onChange={handleChange}/>
                 <button type="submit"  disabled = {emailField==""}>Sign up for Free</button>
