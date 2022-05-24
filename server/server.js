@@ -147,19 +147,19 @@ async function initDatabase() {
         await CreateDB().then( async () => {
           try {
             
-            // await sequelize.authenticate();
-            await sequelize.sync({force : true})
+            await sequelize.authenticate();
+            // await sequelize.sync({force : true})
             
             console.log('Connection has been established successfully.');
 
             /* Below is just one time usage for first set up production database*/
-            const CompanyEntriesInserted = await setupCompanyListFromTxt().then((rtn) => 
-              {
-                console.log('[initDatabase]CompanyEntriesInserted : ' , rtn)
-              })
             
-            // console.log(jobPostingFetcher)
-            await jobPostingFetcher.jobPostingQueryOptionBuilder()//result should be fixed.then((results) => {console.log(results)})
+            // const CompanyEntriesInserted = await setupCompanyListFromTxt().then((rtn) => 
+            //   {
+            //     console.log('[initDatabase]CompanyEntriesInserted : ' , rtn)
+            //   })
+            
+            // await jobPostingFetcher.jobPostingQueryOptionBuilder()//result should be fixed.then((results) => {console.log(results)})
             
           } catch (error) {
             console.error('Unable to connect to the database:', error);
