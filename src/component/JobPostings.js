@@ -6,7 +6,7 @@ export default function JobPostings({jobList}) {
     //   if use props as an argument, props.pokemon is the right way to refer to
       console.log("jobitems from JobPostings function: ", jobList)
       let temp = jobList.map(p => (<div> {p} </div>) )
-      console.log("mapped array in JobItems", temp) 
+      // console.log("mapped array in JobItems", temp) 
       // const temp = Object.keys(joblist)
         // console.log("keys" , temp)
 
