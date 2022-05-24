@@ -121,7 +121,7 @@ export const EmailSignUp = () => {
 
 
                 <input type="text" placeholder='Type Your Email' value={emailField} onChange={handleChange}/>
-                <button type="submit"  disabled = {emailField==""}>Sign up for Free</button>
+                <button type="submit"  disabled = {emailField===""}>Sign up for Free</button>
                 {/* <input type="button" onClick={handleClick} disabled = {emailField==""}>Sign up for Free</input> */}
 
             </form>}
