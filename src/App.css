@@ -140,9 +140,18 @@ button:active{
 }
 .form-component input{
   width: 379px;
-  height: 48px;
+  height: 51px;
   border-radius: 10px;
   padding: 0 15px;
+  border: 2px solid black;
+}
+
+.form-component select{
+  width: 379px;
+  height: 51px;
+  border-radius: 10px;
+  padding: 0 15px;
+  border: 2px solid black;
 }
 
 .form-component button{
@@ -156,7 +165,7 @@ button:active{
 
 /*Job posting styling begins*/
 
-.search-result {
+.search-result{
   margin-top: 50px;
 }
 
