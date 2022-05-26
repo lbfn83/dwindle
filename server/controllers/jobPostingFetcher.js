@@ -6,7 +6,8 @@ const company = db.company
 const jobposting = db.jobposting
 
 // TODO: this should be a function without returning response object
- async function jobPostingQueryOptionBuilder() 
+// jobPostingQueryOptionBuilder
+ async function pullJobPostings() 
 {
     try{
         const dateLib  = new Date()
@@ -15,6 +16,8 @@ const jobposting = db.jobposting
         var Logging = fs.createWriteStream(`./Log/logging${dateStr}.txt`, {
         flags: 'a' // 'a' means appending (old data will be preserved)
         })
+        // TODO: gotta add Daily Scrape column in company table and
+        // add "where" to filter out those companies marked with false in this column
         const companyDBentries = await company.findAll()//.then((entries ) => {console.log("[Company DB entri]",entries)})
         const companyList = companyDBentries.map((element) => element.companyname )
         const location = ['USA', 'CANADA']
@@ -195,4 +198,4 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc, Logging)
     }
 }
 
-module.exports = { jobPostingQueryOptionBuilder}
+module.exports = {pullJobPostings}

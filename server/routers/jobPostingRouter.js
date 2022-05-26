@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const {jobposting, company} = require('../models');
 const sequelize = require('sequelize')
-const {toHttp} = require('../util/helper')
-const {jobPostingQueryOptionBuilder} = require('../controllers/jobPostingFetcher')
+const {toHttp} = require('../util/toHttp')
+const {pullJobPostings} = require('../controllers/jobPostingFetcher')
 const util = require('util')
 
 const limit = 250
@@ -135,7 +135,7 @@ router.put('/jobposting/:uuid', async (req, res) => {
 
 
 router.get('/fetchJOBpostingData', async(req, res)=> {
-              await toHttp(jobPostingQueryOptionBuilder, req, res)})
+              await toHttp(pullJobPostings, req, res)})
   
 
 module.exports = router

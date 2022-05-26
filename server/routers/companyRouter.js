@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const fs = require("fs");
 const {jobposting, company} = require('../models');
-
+const {setupCompanyListFromTxt} = require('../controllers/companyListInit')
+const {toHttp} = require('../util/toHttp')
 
 //give full list of companies
 router.get('/company', async (req, res) => {
@@ -36,6 +37,10 @@ router.get('/company/:uuid', async (req, res) => {
 
     }
   })
+router.get('/setupCompanyListFromTxt2/', async (req, res) => {
+    await toHttp(setupCompanyListFromTxt, req, res)
+  }
+)
 
 router.get('/setupCompanyListFromTxt/', async (req, res) => {
 
