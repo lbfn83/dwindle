@@ -21,11 +21,16 @@ const {Client} = require('pg')
 
 // Sequelize model import
 const {sequelize} = require('./models')
-const  jobPostingFetcher = require('./controllers/jobPostingFetcher')
+
+
+const {dailyJobScraping} = require('./util/scheduler')
+
+const {pullJobPostings} = require('./controllers/jobPostingFetcher')
+const {jobPostingDataPurge} = require('./controllers/jobPostingDataPurge')
 const {setupCompanyListFromTxt} = require('./controllers/companyListInit')
+
 require('dotenv').config()
 // console.log(process.env)
-
 
 // console.log("build path : " , buildPath)
 // app.use(express.static(buildPath));
@@ -41,7 +46,11 @@ let initialDBconnectionParam =
 }
 
 initDatabase();
+dailyJobScraping();
 
+// Promise.all([pullJobPostings(),jobPostingDataPurge()]).then(()=>{
+//   console.log("[daily job scraping] finished! ")
+// })
 
 // Alternative method that can be used in case of handling multiple routers
 // https://www.cloudnativemaster.com/post/how-to-add-multiple-routers-in-a-node-application-without-using-app-use-for-each-router
@@ -59,6 +68,20 @@ fs.readdirSync(routes_directory).forEach(route_file => {
 app.use('/database', jobpostingRouter)
 app.use('/database' , subscribeRouter)
 app.use('/database' , companyRouter)
+
+
+app.get('/files', (req, res, next) => {
+  const options = {
+    root: path.join(__dirname, 'data'),
+    dotfiles: 'deny',
+    headers: {
+      'x-timestamp': Date.now(),
+      'x-sent': true
+    }
+  }
+  res.sendFile('company_list.txt', options);
+})
+
 
 /* Below API End point is now obsolete as this application is not designed for open and exhaustive job search 
 only pull job postings from RapidAPI/LinkedIn once in a day that are from company providing student debt benefits   */
@@ -155,7 +178,7 @@ async function initDatabase() {
                 //     console.log('[initDatabase]CompanyEntriesInserted : ' , rtn)
                 //   })
             
-                // await jobPostingFetcher.jobPostingQueryOptionBuilder().then((rtn) => {
+                // await pullJobPostings().then((rtn) => {
                 //   rtn.forEach((elem, idx) => {
                 //     console.log('[initDatabase]Job Postings pulled in ', idx, '. ' , elem);  
                 //   })  

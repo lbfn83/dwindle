@@ -16,6 +16,7 @@ router.get('/sendVSjson', async (req, res) => {
     // res.send({hello: 'world'})
     // res.send(undefined)
     // res.json(undefined)
+    //  when null is passed there is difference in send and json
     // res.json(null)
     res.send(null)
 })
@@ -72,44 +73,10 @@ router.get('/resWriteTest2', async (req, res) => {
 })
 
 
-router.get('/setupCompanyListFromTxt/', async (req, res) => {
 
 
-    try{
-        const data = []
-        const fileContent = fs.readFileSync('./data/company_list.txt', 'utf-8');
-        fileContent.split(/\r?\n/).forEach(line =>  {
-            if(line != "")
-            {
-                const trimedWord  = line.trim();
-                data.push(trimedWord)
-                // console.log(`[testRouter] Line from file: ${trimedWord}`);
-            }
-          });
 
-        const dbEntries = data.map( elem => {
-            return {"companyname": elem};
-        })
-
-        // console.log(dbEntries)
-        // What is bulkCreate's return? some sequelize auto created field with dbEntries
-        // TODO : change into upsert
-        await company.bulkCreate(dbEntries, {
-            updateOnDuplicate: ['companyname']
-          });
-        // console.log(`[testRouter] bulkInsert result : `, result);
-        return res.status(200).json(dbEntries);
-    }catch(error)
-    {
-        // console.log(`[testRouter] Err : `, error);
-        // 500 Internal Server Error
-        // 400 Bad Request
-        return res.status(500).json({message : error})
-    }
-});
-
-
-const {toHttp} = require('../util/helper')
+const {toHttp} = require('../util/toHttp')
 
 const {jobPostingQueryOptionBuilder} = require('../controllers/jobPostingFetcher')
 
