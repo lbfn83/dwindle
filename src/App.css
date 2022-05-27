@@ -229,7 +229,56 @@ button:active{
   font-weight: 700;
 }
 
+/*Job Post styling ends*/
 
+/*Blog post styling begins*/
+
+.blog-home{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blog-home div{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 15px 0;
+}
+
+.post-item{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 45px;
+  padding: 10px;
+  border-radius: 3px;
+  width: 30%;
+  text-decoration: none;
+}
+
+.post-item:hover{
+  background-color: rgb(222,222,222);
+  transition: all 0.5s ease-out;
+}
+
+.post-item:nth-child(5n+1){
+  width: 62%;
+}
+
+.post-item:nth-child(5n+1) img{
+  max-height: 300px;
+  object-fit: cover;
+  object-position: 50% 39%;
+}
+
+.post-item img{
+  max-height: 150px;
+  margin-bottom: 10px;
+  object-fit: cover;
+}
+
+/* blog post styling ends */
 
 @media screen and (max-width: 940px){
 
@@ -280,6 +329,20 @@ button:active{
   .posting-text-container h1{
     margin: 0px;
   }
+
+  .post-item{
+    flex-direction: column;
+    width: 100%;
+     
+  }
+  .post-item img{
+    max-height: 300px;
+  }
+
+  .post-item:nth-child(5n+1) {
+    width: 100%;
+  }
+
 }
 
 @media screen and (max-width: 720px){
