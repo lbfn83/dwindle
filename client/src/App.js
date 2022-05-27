@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { JobPage } from './page/JobPage';
 import { BlogPage } from './page/BlogPage';
+import { PartnersPage } from './page/PartnersPage';
 import { Navbar } from './component/Navbar';
 
 import logo from './images/dwindleTMbigfinal.png'
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<JobPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/partners" element={<PartnersPage />} />
           </Routes>
           
         </div>
