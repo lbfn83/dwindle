@@ -2,8 +2,12 @@ const express = require('express');
 const router = express.Router();
 const {jobposting, company} = require('../models');
 const sequelize = require('sequelize')
+const {toHttp} = require('../util/toHttp')
+const {pullJobPostings} = require('../controllers/jobPostingFetcher')
+const util = require('util')
 
 const limit = 250
+// promisify
 
 // Referenced project :: https://github.com/hidjou/classsed-orms-sequelize/blob/master/app.js
 
@@ -52,45 +56,6 @@ router.get('/jobposting', async (req, res) => {
         return res.status(500).json({ error: `Something went wrong: ${err}` })
     }
 })
-
-
-//give full list of companies
-router.get('/company', async (req, res) => {
-    try {
-      const companyList = await company.findAll()
-  
-      return res.json(companyList)
-    } catch (err) {
-      console.log(err)
-      return res.status(500).json({ error: `Something went wrong: ${err}` })
-
-    }
-  })
-
-// returns all the job postings that falls under a certain comapny name
-// plase note that it returns all of jobpostings from every location
-router.get('/company/:uuid', async (req, res) => {
-    const uuid = req.params.uuid
-    try {
-      const user = await company.findOne({
-        where: { uuid },
-        // I did freeze table but wht it takes plural in association name?
-        // find out how other people freezetable in each model to see if it works
-        include: 'jobpostings',
-      })
-  
-      return res.json(user)
-    } catch (err) {
-      console.log(err)
-      return res.status(500).json({ error: `Something went wrong: ${err}` })
-
-    }
-  })
-
-
-
-
-
 
 
 // post might be needed for future when any company wants to register a job posting
@@ -168,4 +133,9 @@ router.put('/jobposting/:uuid', async (req, res) => {
     }
   })
 
-  module.exports = router
+
+router.get('/fetchJOBpostingData', async(req, res)=> {
+              await toHttp(pullJobPostings, req, res)})
+  
+
+module.exports = router

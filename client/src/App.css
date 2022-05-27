@@ -1,0 +1,483 @@
+img{
+  max-width: 100%;
+  max-height: 100%;
+}
+
+button{
+  font-family: 'Poppins', sans-serif;
+  background-color: #96DFE3;
+  font-weight: 700;
+  font-size: larger;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 5px 16px 0px #0B325E;
+}
+
+button:hover{
+  background-color: #6dd9df;
+  cursor: pointer;
+}
+
+button:active{
+  background-color: #519da1;
+}
+
+.site-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.page-container{
+  display: flex;
+  justify-content: center;
+  max-width: 1025px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* title bar styling begins */
+.title-bar{
+  width: 95%;
+  max-width: 1642.98px;
+  min-width: 958px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-image-container{
+  width: 373px;
+  height: 105px;
+}
+
+.title-bar button{
+  width: 158px;
+  height: 44px;
+  margin: 2.5rem;
+}
+
+/* title bar styling ends */
+
+/* nav styling begins*/
+
+.nav-container{
+  width: 100%;
+}
+
+.nav-list{
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  text-decoration: none;
+  list-style-type: none;
+  padding: 0;
+}
+
+.nav-mobile{
+  display: none;
+
+}
+
+.nav-option{
+  margin: 0 20px 0 20px;
+}
+
+.nav-option a{
+    display: block;
+    font-size: 1.17em;
+    /* margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px; */
+    height: 100%;
+    width: 100%;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    transition: all .2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-option a:hover{
+  transform: translate(0rem, -4px);
+  transition: all .2s;
+}
+.burger-menu{
+  display: none;
+}
+
+/* nav styling ends */
+
+/* jobpage styling*/
+.job-page-body{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content:  center;
+  align-items:  center;
+}
+
+.job-page-body h1{
+  font-weight: bolder;
+  margin-top: 126px;
+  padding: 0 120px;
+}
+
+.job-page-body p {
+  font-size: 20px;
+  margin: 0 250px;
+}
+
+/* job page forms components*/
+.form-component{
+  margin-top: 50px;
+}
+.form-component input{
+  width: 379px;
+  height: 51px;
+  border-radius: 10px;
+  padding: 0 15px;
+  border: 2px solid black;
+}
+
+.form-component select{
+  width: 379px;
+  height: 51px;
+  border-radius: 10px;
+  padding: 0 15px;
+  border: 2px solid black;
+}
+
+.form-component button{
+  width: 158px;
+  height: 48px;
+  margin: 0;
+  font-size: medium;
+}
+
+/*job page form component ends*/
+
+/*Job posting styling begins*/
+
+.search-result{
+  margin-top: 50px;
+}
+
+.job-posting{
+  font-weight: bolder;
+  padding: 20px 20px;
+  text-align: left;
+  border: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.job-posting h1, h2{
+  margin: 0;
+  padding: 0;
+
+  
+}
+
+.job-posting a{
+  height: 60px;
+  width: 150px;
+  font-family: 'Poppins', sans-serif;
+  background-color: #96DFE3;
+  font-weight: 700;
+  font-size: larger;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 5px 16px 0px #0B325E;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+  
+  
+}
+
+.job-posting a:hover{
+  background-color: #6dd9df;
+  cursor: pointer;
+}
+
+.job-posting a:active{
+  background-color: #519da1;
+}
+
+
+.posting-text-container{
+  width: 80%;
+}
+
+.posting-text-container h2{
+  font-weight: 300;
+  font-size: 17px;
+}
+
+.posting-text-container h1{
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/*Job Post styling ends*/
+
+/*Blog post styling begins*/
+
+.blog-home{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blog-home div{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 15px 0;
+}
+
+.post-item{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 45px;
+  padding: 10px;
+  border-radius: 3px;
+  width: 30%;
+  text-decoration: none;
+}
+
+.post-item:hover{
+  background-color: rgb(222,222,222);
+  transition: all 0.5s ease-out;
+}
+
+.post-item:nth-child(5n+1){
+  width: 62%;
+}
+
+.post-item:nth-child(5n+1) img{
+  max-height: 300px;
+  object-fit: cover;
+  object-position: 50% 39%;
+}
+
+.post-item img{
+  max-height: 150px;
+  margin-bottom: 10px;
+  object-fit: cover;
+}
+
+/* blog post styling ends */
+
+/* partner page styling begins */
+
+.partner-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.partner-title-container{
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.partners-section{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: -15px;
+}
+
+.partner-posts{
+    display: block;
+    overflow: hidden;
+    width: 30%;
+    margin: 15px;
+    min-width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px 0 rgb(136 144 195 / 20%), 0 5px 15px 0 rgb(37 44 97 / 15%);
+    background-color: white;
+}
+
+.image-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    height: 140px;
+}
+
+.image-container img{
+  max-width: 70%;
+  height: 100px;
+}
+.dolr{
+  background-color: #fafafa
+}
+
+.dolr img{
+  max-width: 70%;
+  height: 48px;
+}
+
+.topresume{
+  background-color: #040c37
+}
+
+.colorfullife{
+  background-color: #cedee9
+}
+
+.post-text{
+  padding: 15px 45px 25px;
+  
+}
+
+.post-text span{
+  opacity: 0.6;
+  margin-left: 7px;
+  font-size: 14px;
+  white-space: nowrap;
+  font-weight: 400;
+}
+
+.button-box a{
+  color: #303030;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 940px){
+
+
+  .title-bar{
+    min-width: 0;
+
+  }
+
+  .nav-container{
+    width: 82%;
+  }
+
+  .logo-image-container{
+    width: auto;
+  }
+
+  .burger-menu{
+    display: block;
+  }
+
+  .nav-list{
+    display: none;
+    flex-direction: column;
+  }
+
+  .nav-mobile{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 100%;
+    text-decoration: none;
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .form-component{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .job-page-body h1{
+    margin-top: 88px;
+  }
+
+  .posting-text-container h1{
+    margin: 0px;
+  }
+
+  .post-item{
+    flex-direction: column;
+    width: 100%;
+     
+  }
+  .post-item img{
+    max-height: 300px;
+  }
+
+  .post-item:nth-child(5n+1) {
+    width: 100%;
+  }
+
+}
+
+@media screen and (max-width: 720px){
+  .job-page-body{
+    width: 100%;
+  }
+  
+  .job-page-body h1{
+    font-weight: 600;
+    font-size: x-large;
+    padding: 0 59px;
+  }
+  
+  .job-page-body p{
+    margin: 0;
+    font-size: medium;
+  }
+
+  .posting-text-container h1{
+    padding: 0px;
+  }
+}
+
+@media screen and (max-width: 500px){
+  .job-page-body h1{
+    padding: 0;
+  }
+
+  .form-component input{
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 414px){
+  .title-bar{
+    flex-direction: column;
+  }
+
+  .job-posting{
+    flex-direction: column;
+  }
+
+  .job-posting button{
+    margin-top: 20px;
+  }
+  .nav-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .nav-option{
+    margin: 0;
+  }
+}
