@@ -229,7 +229,138 @@ button:active{
   font-weight: 700;
 }
 
+/*Job Post styling ends*/
 
+/*Blog post styling begins*/
+
+.blog-home{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blog-home div{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 15px 0;
+}
+
+.post-item{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 45px;
+  padding: 10px;
+  border-radius: 3px;
+  width: 30%;
+  text-decoration: none;
+}
+
+.post-item:hover{
+  background-color: rgb(222,222,222);
+  transition: all 0.5s ease-out;
+}
+
+.post-item:nth-child(5n+1){
+  width: 62%;
+}
+
+.post-item:nth-child(5n+1) img{
+  max-height: 300px;
+  object-fit: cover;
+  object-position: 50% 39%;
+}
+
+.post-item img{
+  max-height: 150px;
+  margin-bottom: 10px;
+  object-fit: cover;
+}
+
+/* blog post styling ends */
+
+/* partner page styling begins */
+
+.partner-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.partner-title-container{
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.partners-section{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: -15px;
+}
+
+.partner-posts{
+    display: block;
+    overflow: hidden;
+    width: 30%;
+    margin: 15px;
+    min-width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px 0 rgb(136 144 195 / 20%), 0 5px 15px 0 rgb(37 44 97 / 15%);
+    background-color: white;
+}
+
+.image-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    height: 140px;
+}
+
+.image-container img{
+  max-width: 70%;
+  height: 100px;
+}
+.dolr{
+  background-color: #fafafa
+}
+
+.dolr img{
+  max-width: 70%;
+  height: 48px;
+}
+
+.topresume{
+  background-color: #040c37
+}
+
+.colorfullife{
+  background-color: #cedee9
+}
+
+.post-text{
+  padding: 15px 45px 25px;
+  
+}
+
+.post-text span{
+  opacity: 0.6;
+  margin-left: 7px;
+  font-size: 14px;
+  white-space: nowrap;
+  font-weight: 400;
+}
+
+.button-box a{
+  color: #303030;
+  text-decoration: none;
+}
 
 @media screen and (max-width: 940px){
 
@@ -280,6 +411,20 @@ button:active{
   .posting-text-container h1{
     margin: 0px;
   }
+
+  .post-item{
+    flex-direction: column;
+    width: 100%;
+     
+  }
+  .post-item img{
+    max-height: 300px;
+  }
+
+  .post-item:nth-child(5n+1) {
+    width: 100%;
+  }
+
 }
 
 @media screen and (max-width: 720px){
