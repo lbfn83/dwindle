@@ -1,25 +1,16 @@
 'use strict';
 
+require('dotenv').config(); // to utilize .env file
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
-require("dotenv").config();
 
-/*injecting environment variables into config.json instance*/ 
-config.username = process.env.DATABASE_USER
-config.password = process.env.DATABASE_PWD
-// all the queries in postgres are by default converted to lowercase letters.
-config.database = process.env.DATABASE_NAME.toLowerCase()
-config.host = process.env.DATABASE_HOST
-config.dialect = 'postgres'
+// don't want to pluralize table name
 config.define = {"freezeTableName" : true}
-// console.log('[model debug]', config)
-/**/ 
-
 
 let sequelize;
 if (config.use_env_variable) {
