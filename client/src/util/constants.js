@@ -1,1 +1,1 @@
-export const BACKEND_SVR_URL = 'http://localhost:5000';
+export const BACKEND_SVR_URL = 'https://dwindle-backend.herokuapp.com/';
