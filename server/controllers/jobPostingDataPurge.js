@@ -74,13 +74,14 @@ async function jobPostingDataPurge()
 function convertFromStringToRefDate(responseDate, dayPassed) {
     let dateComponents = responseDate.split('T');
     let datePieces = dateComponents[0].split("-");
+    let hourPieces = dateComponents[1].split(":");
     // Don't need to process time information. 
     // but in the future if it is needed take a note of the below
     // let timePieces = dateComponents[1].split(":");
     // timePieces[2].split(".") and only take the former as milliseconds is unrecognized by this function
     
-    // returns today date with 00:00:00
-    return(new Date(datePieces[0], datePieces[1]-1, datePieces[2]-dayPassed+1, 0, 0, 0))//+1 should come later
+    // calculate the correct reference timestamp for obsolete records ( for soft delete : record whose latest update was yesterday )
+    return(new Date(datePieces[0], datePieces[1]-1, datePieces[2]-dayPassed, hourPieces[0]+1, hourPieces[1], 0))//+1 should come later
 }
 
 module.exports = {jobPostingDataPurge}

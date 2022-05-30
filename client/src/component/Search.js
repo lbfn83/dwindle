@@ -25,8 +25,34 @@ function Search({keyword : keywordField,
 //    console.log("evtTriggered : ", btnCounter)
    
    useEffect( () => {
-       
-       const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
+    // build up query Parameter string
+        let isPrevParamExist = false // identifier to see whether inserting "&" in the string or not
+        setArryJobPosting([])
+        let queryParams = "?"
+        if(search_terms === "")
+        {
+            // queryParams += ""        
+        }else{
+            queryParams += `company=${search_terms}`
+            isPrevParamExist = true 
+        }
+        if(location === "")
+        {
+            // queryParams += ""        
+        }else{
+            if(isPrevParamExist)
+                queryParams += '&'
+            queryParams += `country=${location}` 
+            isPrevParamExist = true
+        }
+
+        if(isPrevParamExist)
+            queryParams += '&'
+        queryParams += `page=${pageNum}`
+
+        const apiReqString = `${BACKEND_SVR_URL}/database/jobposting` + queryParams
+
+        // const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
     //    console.log(apiReqString)
        setLoading(true)
         axios.get(apiReqString).then(res => {
