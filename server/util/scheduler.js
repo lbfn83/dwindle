@@ -15,7 +15,7 @@ function dailyJobScraping() {
     },
     {
         // recover missed executions 
-        recoverMissedExecutions : true
+        // recoverMissedExecutions : true
     })
 }
 
