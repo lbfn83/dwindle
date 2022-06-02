@@ -5,6 +5,15 @@ const db = require('../models')
 const company = db.company
 const jobposting = db.jobposting
 
+function sliceIntoChunks(arr, chunkSize) {
+    const res = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        const chunk = arr.slice(i, i + chunkSize);
+        res.push(chunk);
+    }
+    return res;
+}
+
 // TODO: this should be a function without returning response object
 // jobPostingQueryOptionBuilder
  async function pullJobPostings() 
@@ -18,7 +27,10 @@ const jobposting = db.jobposting
         })
         // TODO: gotta add Daily Scrape column in company table and
         // add "where" to filter out those companies marked with false in this column
-        const companyDBentries = await company.findAll()//.then((entries ) => {console.log("[Company DB entri]",entries)})
+        const companyDBentries = await company.findAll({
+            where: {
+                job_scraper : true
+            }})//.then((entries ) => {console.log("[Company DB entri]",entries)})
         const companyList = companyDBentries.map((element) => element.companyname )
         const location = ['USA', 'CANADA']
         Logging.write("<<<<<<<<"+ dateStr +">>>>>>>>>>")
@@ -58,36 +70,72 @@ const jobposting = db.jobposting
             await processAPIRequestAndSQL( queryOption , item.company, item.location, Logging).then((rtn) => {
                 // res.write(JSON.stringify(rtn)+"/n")
                 results.push(rtn)
-                cb();
+                cb(rtn);
             })
         }
-        // Promisify
-        const promisePoolSearchKeywords = combinedList.map((item) => {
-            // console.log("[item]",  item)
-            return new Promise((resolve) => {
-                setupQueryOption(item, resolve);
-            });
-        })
-        // let rtnResult = undefined
-        await Promise.all(promisePoolSearchKeywords).then( () => {
-            // The return value of Promise.all is "," which is odd
-            
-            // results.push({"fetched" : " done "})
-            
-            results.forEach((elem)=> {
-                Logging.write("[jobpostingfetcher result] : \n")
-                Logging.write(JSON.stringify(elem) + '\n')
-            })
-            console.log("[jobpostingfetcher task complete]")
-            // Async Await ... complex concept ... forgot to put return in outer loop 
-            // also forgot to put await in Promise.all
-            // which caused malfunction of this function  
-            // that was not returning promise( return value )  
-            
-            // rtnResult = new Promise((resolve) => resolve(results))
-            
-        }); 
         
+        /*Asynchornous way : 429 error returned*/ 
+        
+        // https://stackabuse.com/how-to-split-an-array-into-even-chunks-in-javascript/
+        // slice combinedList into size of 4 or 5 and each chuck runs its elements asynchonously??
+        // taskChunks= sliceIntoChunks(combinedList, 2 )
+
+        // for(const singleTaskChunk of taskChunks)
+        // {
+        //     const promisePooltaskChunk = singleTaskChunk.map((item) => {
+        //         // console.log("[item]",  item)
+        //         return new Promise((resolve) => {
+        //             setupQueryOption(item, resolve);
+        //         });
+        //     })
+        //     await Promise.all(promisePooltaskChunk).then( (results) => {
+        //         // The return value of Promise.all is "," which is odd
+        //         // results.push({"fetched" : " done "})
+        //         results.forEach((elem)=> {
+        //             Logging.write("[jobpostingfetcher result] : \n")
+        //             Logging.write(JSON.stringify(elem) + '\n')
+        //         }) 
+        //     }) 
+        // }
+
+        /* full on Asynchronous way : 429 error returned */
+        // // Promisify
+        // const promisePoolSearchKeywords = combinedList.map((item) => {
+        //     // console.log("[item]",  item)
+        //     return new Promise((resolve) => {
+        //         setupQueryOption(item, resolve);
+        //     });
+        // })
+        // // let rtnResult = undefined
+        // await Promise.all(promisePoolSearchKeywords).then( () => {
+        //     // The return value of Promise.all is "," which is odd
+            
+        //     // results.push({"fetched" : " done "})
+            
+        //     results.forEach((elem)=> {
+        //         Logging.write("[jobpostingfetcher result] : \n")
+        //         Logging.write(JSON.stringify(elem) + '\n')
+        //     })
+        //     console.log("[jobpostingfetcher task complete]")
+        //     // Async Await ... complex concept ... forgot to put return in outer loop 
+        //     // also forgot to put await in Promise.all
+        //     // which caused malfunction of this function  
+        //     // that was not returning promise( return value )  
+            
+        //     // rtnResult = new Promise((resolve) => resolve(results))
+            
+        // }); 
+        
+
+        /* Synchronous Way : too slow */     
+        for(const singleQuery of combinedList)
+        {
+            await setupQueryOption(singleQuery, (rtn)=>{
+                console.log("[jobpostingfetcher result]", rtn.fetched)
+                Logging.write("[jobpostingfetcher result]" + JSON.stringify(rtn.fetched))
+            })
+        }
+
         return results//rtnResult
     }
     catch(err)
@@ -108,13 +156,13 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc, Logging)
         Logging.write("\n---queryOption : " + queryOption.data + "----\n")
         
         const result = await axios.request(queryOption)
-        
-        Logging.write("[rowData] : " + JSON.stringify(result.data.length) + "[rowData End]\n")  
+        Logging.write("[Rate limit remaining]: " + JSON.stringify(result.headers["x-ratelimit-requests-remaining"]))
+        Logging.write("[rowData length] : " + JSON.stringify(result.data.length) + "[rowData End]\n")  
 
         if(  result.data !== undefined && result.data.length > 0   )//|| result.data.length>0 )
         {
             result.data.forEach( async (element) => {
-                Logging.write("[eachElem] : " + JSON.stringify(element) + "\n")
+                // Logging.write("[eachElem] : " + JSON.stringify(element) + "\n")
 
                 // If API sends wrong data having different company name, simply ignore 
                 // Chegg INC from API.. our database Chegg
@@ -180,7 +228,7 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc, Logging)
         }
         else
         {
-            Logging.write("[no data]\n")
+            // Logging.write("[no data]\n")
             return {
                 "fetched" : result.config.data
             }

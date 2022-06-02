@@ -11,14 +11,16 @@ async function jobPostingDataPurge()
         limit : 1,
         order : [['updatedAt' , 'DESC']]
     })
-    // console.log(latestRecord.updatedAt)
+    console.log("[JobPostingDataPurge] refTimestamp",latestRecord.updatedAt)
     
     // await jobposting.restore()
     if(latestRecord !== null && latestRecord !== undefined)
     {
         // Record is wrapped with "double quote" so remove it
+        // This time is automatically converted to UTC
         let strLatestRecord =  JSON.stringify(latestRecord.updatedAt).replace(/["]+/g, '')
         // Soft deletion handling
+        // but somehow this function takes UTC timestamp as local time where all the confusion starts => use Date.UTC
         let softDelRefDate = convertFromStringToRefDate(strLatestRecord, softDeletePeriod)
     
         // Genrated SQL : UPDATE "jobposting" SET "deletedAt"=$1 WHERE "deletedAt" IS NULL AND "updatedAt" < '2022-05-24 04:00:00.000 +00:00'
@@ -81,7 +83,7 @@ function convertFromStringToRefDate(responseDate, dayPassed) {
     // timePieces[2].split(".") and only take the former as milliseconds is unrecognized by this function
     
     // calculate the correct reference timestamp for obsolete records ( for soft delete : record whose latest update was yesterday )
-    return(new Date(datePieces[0], datePieces[1]-1, datePieces[2]-dayPassed, hourPieces[0]+1, hourPieces[1], 0))//+1 should come later
+    return(new Date(Date.UTC(datePieces[0], datePieces[1]-1, parseInt(datePieces[2])-dayPassed, parseInt(hourPieces[0])+1, hourPieces[1])))//+1 should come later)
 }
 
 module.exports = {jobPostingDataPurge}
