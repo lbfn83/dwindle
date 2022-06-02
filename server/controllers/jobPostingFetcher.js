@@ -27,7 +27,10 @@ function sliceIntoChunks(arr, chunkSize) {
         })
         // TODO: gotta add Daily Scrape column in company table and
         // add "where" to filter out those companies marked with false in this column
-        const companyDBentries = await company.findAll()//.then((entries ) => {console.log("[Company DB entri]",entries)})
+        const companyDBentries = await company.findAll({
+            where: {
+                job_scraper : true
+            }})//.then((entries ) => {console.log("[Company DB entri]",entries)})
         const companyList = companyDBentries.map((element) => element.companyname )
         const location = ['USA', 'CANADA']
         Logging.write("<<<<<<<<"+ dateStr +">>>>>>>>>>")
