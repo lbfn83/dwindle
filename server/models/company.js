@@ -38,6 +38,11 @@ module.exports = (sequelize, DataTypes) => {
     // test: DataTypes.STRING,
     description: DataTypes.TEXT,
     benefits: DataTypes.TEXT, 
+    job_scraper: {
+      type: DataTypes.BOOLEAN,
+      defaultValue : true,
+      allowNull: false
+    }
     // test: DataTypes.STRING
   }, {
     sequelize,
