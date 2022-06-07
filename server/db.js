@@ -8,7 +8,8 @@ const pool = new Pool({
     password : seqIdx.sequelize.config.password,
     database : seqIdx.sequelize.config.database,
     host : seqIdx.sequelize.config.host,
-    port : seqIdx.sequelize.config.port
+    port : seqIdx.sequelize.config.port,
+    ssl : { rejectUnauthorized: false }
 });
 
 module.exports = pool
