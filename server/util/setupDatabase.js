@@ -1,6 +1,7 @@
 // Sequelize model import
 const {sequelize} = require('../models')
 const {Client} = require('pg');
+require('dotenv').config()
 
 // const Client= require('pg-promise')
 

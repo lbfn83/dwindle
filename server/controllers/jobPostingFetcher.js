@@ -1,9 +1,10 @@
-const express = require('express');
+
 const fs = require("fs");
 const axios = require('axios');
 const db = require('../models')
 const company = db.company
 const jobposting = db.jobposting
+require('dotenv').config()
 
 function sliceIntoChunks(arr, chunkSize) {
     const res = [];

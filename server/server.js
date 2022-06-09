@@ -25,7 +25,7 @@ const {jobPostingDataPurge} = require('./controllers/jobPostingDataPurge')
 const {setupCompanyListFromTxt} = require('./controllers/companyListInit');
 const { sequelize } = require('./models');
 
-require('dotenv').config()
+// require('dotenv').config()
 // console.log(process.env)
 
 // console.log("build path : " , buildPath)
@@ -34,15 +34,17 @@ app.use(cors());
 app.use(bp.json())
 
 
-/* !!!! use below to use sync command to create database and tables !!!!*/ 
-// initDatabase();
+/* !!!! use below to invoke sync() to newly create database and tables 
+* only use this in Iaas or Local server to initialize database !!!! 
+* // initDatabase();
+*/
 
 sequelize.authenticate().then(() => {
   console.log('[Server]Connection established successfully.');
 }).catch(err => {
   console.error('[Server]Unable to connect to the database:', err)});
-dailyJobScraping();
-// pullJobPostings();
+
+// dailyJobScraping();
 
 // Alternative method that can be used in case of handling multiple routers
 // https://www.cloudnativemaster.com/post/how-to-add-multiple-routers-in-a-node-application-without-using-app-use-for-each-router
@@ -56,6 +58,7 @@ fs.readdirSync(routes_directory).forEach(route_file => {
   }
 });
 */
+
 
 app.use('/database', jobpostingRouter)
 app.use('/database' , subscribeRouter)
@@ -74,7 +77,15 @@ app.get('/files', (req, res, next) => {
   res.sendFile('company_list.txt', options);
 })
 
+/*  Test for winston logger in production*/
 
+const logger = require('./util/logger')
+
+setInterval(()=>{
+  logger.info('TEST')
+  logger.log('info', 'Hi, guys')
+}, 10000)
+/*        **************        */
 
 // TODO: preliminary admin console. might have to build a seperate router for this 
 // When all of DB tables are set up 
