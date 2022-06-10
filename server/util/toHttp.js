@@ -18,6 +18,7 @@
 //     };
 //   }
 
+const logger = require('./logger')
 
 async function toHttp(func, req, res){
   async function wrapper(req, res) {
@@ -29,13 +30,16 @@ async function toHttp(func, req, res){
         if(data.length !== undefined)
         {
           data.forEach( (element) => {
+            logger.log('debug', `[toHttp] response element : ${JSON.stringify(element)}`)
             res.write(JSON.stringify(element) + '\n')
             // console.log("[toHttp]", element)
             
           });
-          res.end("[toHttp]finito")
+          logger.log('debug', `[toHttp] response element finished`)
+          res.end("[toHttp] finito")
         }
         else{
+          logger.log('debug', `[toHttp] total response : ${JSON.stringify(data)}`)
           res.send(JSON.stringify(data))
         }
 
@@ -44,9 +48,10 @@ async function toHttp(func, req, res){
       // console.log('rtn : ' + rtn)
       // return res.send(rtn)
     }
-    catch(e)
+    catch(err)
     {
-      console.log("[toHttp]: " +e)
+      logger.log('error', `[toHttp] error : ${err}`)
+
     }
  
   }

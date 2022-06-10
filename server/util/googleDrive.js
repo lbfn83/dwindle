@@ -17,6 +17,8 @@ require('dotenv').config()
 const { google } = require('googleapis');
 const path = require('path');
 const fs = require('fs');
+// const logger = require('./logger')
+
 
 const CLIENT_ID = process.env.CLIENT_ID
 const CLIENT_SECRET = process.env.CLIENT_SECRET
@@ -46,8 +48,9 @@ const drive = google.drive({
 // Instead stick to the google api to synchonize the file
 // https://cloud.google.com/blog/products/application-development/sync-google-drive-files-to-apps-using-the-drive-rest-api-bidding-farewell-to-the-drive-android-api
 
-async function uploadFile(file) {
+async function uploadFile(file, logger) {
   try {
+    
     // parents : Folder id should be fetched to put files under this folder
     const response = await drive.files.create({
       requestBody: {
@@ -60,10 +63,10 @@ async function uploadFile(file) {
         body: fs.createReadStream(file),
       },
     });
-
-    console.log(response.data);
+    logger.log('info', `[GoogleAPI] File uploaded : ${response.data}`)
+    
   } catch (error) {
-    console.log(error);
+    logger.log('error', `[GoogleAPI] File upload error : ${error}`)
   }
 }
 

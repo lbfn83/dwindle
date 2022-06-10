@@ -1,9 +1,10 @@
 const fs = require("fs");
 const {company} = require('../models')
-
+const logger = require('../util/logger')
 
 async function setupCompanyListFromTxt() 
 {
+    logger.warning("[CompanyListInit] : This will be deprecated ")
     try{
         const data = []
         const fileContent = fs.readFileSync('./data/company_list.txt', 'utf-8');
