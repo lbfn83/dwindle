@@ -228,7 +228,8 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
                 }else
                 {
                     // res.write
-                    logger.warning(`[processRequest] IncorrectDatafromAPI : ${element.normalized_company_name} is not a seach keyword `) 
+                    
+                    logger.warn(`[processRequest] IncorrectDatafromAPI : ${element.normalized_company_name} is not a seach keyword `) 
                     // Logging.write("[error_from_API]"+element.normalized_company_name +" is not a search keyword\n")
                 }
             })

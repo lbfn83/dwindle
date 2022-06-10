@@ -18,13 +18,15 @@ const bp = require('body-parser')
 
 const {initDatabase} = require('./util/setupDatabase')
 
-const {dailyJobScraping} = require('./util/scheduler')
+const {dailyJobScraping} = require('./util/cronScheduler')
 
 const {pullJobPostings} = require('./controllers/jobPostingFetcher')
 const {jobPostingDataPurge} = require('./controllers/jobPostingDataPurge')
 const {setupCompanyListFromTxt} = require('./controllers/companyListInit');
 const { sequelize } = require('./models');
 
+const logger = require('./util/logger')
+const jpProcessQueue = require('./util/bullScheduler')
 // require('dotenv').config()
 // console.log(process.env)
 
@@ -40,9 +42,18 @@ app.use(bp.json())
 */
 
 sequelize.authenticate().then(() => {
-  console.log('[Server]Connection established successfully.');
+  logger.log('info', `[Server] Connection established successfully.`)
+ 
 }).catch(err => {
-  console.error('[Server]Unable to connect to the database:', err)});
+  logger.log('error', `[Server] Unable to connect to the database : ${err}`)
+});
+
+/* daily jobscraping testing */
+jpProcessQueue.add({ jobprocess : 'start' } , {repeat:
+  {
+      cron : '48 13 * * *'
+  }
+})
 
 // dailyJobScraping();
 
@@ -58,6 +69,9 @@ fs.readdirSync(routes_directory).forEach(route_file => {
   }
 });
 */
+
+
+
 
 
 app.use('/database', jobpostingRouter)
@@ -79,12 +93,11 @@ app.get('/files', (req, res, next) => {
 
 /*  Test for winston logger in production*/
 
-const logger = require('./util/logger')
+// setInterval(()=>{
+//   logger.info('TEST')
+//   logger.log('info', 'Hi, guys')
+// }, 10000)
 
-setInterval(()=>{
-  logger.info('TEST')
-  logger.log('info', 'Hi, guys')
-}, 10000)
 /*        **************        */
 
 // TODO: preliminary admin console. might have to build a seperate router for this 
@@ -92,7 +105,7 @@ setInterval(()=>{
 app.get("/admin", (req, res) => res.sendFile(`${__dirname}/static/index.html`))
 
 app.listen(PORT, () => {
-  console.log(`server started on port ${PORT}`);
+  logger.log('info', `[server] : server started on port ${PORT}`)
 });
 
 
