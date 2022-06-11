@@ -7,6 +7,9 @@ const jobposting = db.jobposting
 const logger = require('../util/logger')
 require('dotenv').config()
 
+const MaxPageToProbe = 15 // In case of not using page limit, please put undefined or comment this line out
+
+
 function sliceIntoChunks(arr, chunkSize) {
     const res = [];
     for (let i = 0; i < arr.length; i += chunkSize) {
@@ -170,8 +173,16 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
         // Logging.write("\n------API response---------\n")
         // Logging.write("\n---queryOption : " + queryOption.data + "----\n")
         
-        const result = await axios.request(queryOption)
+        // const result = await axios.request(queryOption)
         
+        const pageNum = JSON.parse(queryOption.data).page
+        let result
+        if(MaxPageToProbe === undefined || MaxPageToProbe >= pageNum)
+        {
+            result = await axios.request(queryOption)
+        }else{
+            result = {}
+        }
         logger.info(`[processRequest] Rate limit remaining : ${result.headers["x-ratelimit-requests-remaining"]}`)
         logger.info(`[processRequest] rowData length : ${JSON.stringify(result.data.length) }`)
         // Logging.write("[Rate limit remaining]: " + JSON.stringify(result.headers["x-ratelimit-requests-remaining"]))
@@ -207,21 +218,31 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
                     */
                     
                     /* Insert new jobposting item or Update existing DB entry corresponding to jobposting item*/
-                    const foundEntry = await jobposting.findOne({where : {
-                        linkedin_job_url_cleaned: element.linkedin_job_url_cleaned 
-                    }})
+                    /* Since RapidAPI's data set is inconsistent, some of jobpostings that was already soft-deleted might 
+                    be brought in again later query, so the logic should be able to detect this and restore the record accordingly  */ 
+                    const foundEntry = await jobposting.findOne({
+                        paranoid : false, 
+                        where : { linkedin_job_url_cleaned: element.linkedin_job_url_cleaned }
+                    })
                     // console.log("[Select result]: " + foundEntry)
                     if(foundEntry !== null)
                     {
-                        // update
-                        foundEntry.set(element)
-                        logger.info(`[processRequest] Update : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `)
-                        // Logging.write("[update] : " + JSON.stringify(foundEntry.linkedin_job_url_cleaned)+"\n")
-                        await foundEntry.save()
+                        // sort out whether it is soft deleted or not 
+                        if(foundEntry.deletedAt !== null)
+                        {
+                            logger.info(`[processRequest] restore : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `)
+                            await foundEntry.restore()
+                        }else{
+                            // update
+                            await foundEntry.set(element)
+                            logger.info(`[processRequest] Update : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `)
+                            // Logging.write("[update] : " + JSON.stringify(foundEntry.linkedin_job_url_cleaned)+"\n")
+                            await foundEntry.save()
+                        }
                     
                     }else{
-                        await jobposting.create(element)   
                         logger.info(`[processRequest] insert : ${JSON.stringify(element.linkedin_job_url_cleaned)} `) 
+                        await jobposting.create(element)   
                         // Logging.write("[insert]"+JSON.stringify(element.linkedin_job_url_cleaned)+"\n");    
                     }
 
@@ -265,6 +286,9 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
     {
         logger.error(`[processRequest] error : ${error}`)
         // Logging.write("[error] : "+ error+ "\n")
+        return {
+            "fetched" : error
+        }
     }
 }
 

@@ -17,7 +17,7 @@ const logFormat = winston.format.combine(
 
 const transport = new DailyRotateFile({
     // frequency: '24h',
-    frequency : '2h',
+    frequency : '1h',
 
     // if you want to rotate files every five minutes... gotta change 
     // file name pattern as well
@@ -31,17 +31,20 @@ const transport = new DailyRotateFile({
     maxFiles: '14d',
     prepend: true,
     level: 'info',
+
 });
 
 // Daily Rotate file is also file stream 
 // so you can define specific listner with on
 // in this case, in every 'rotate' we are doing something
+// be careful it might be skipped when server is restarting around 
+// the time of rotation
 transport.on('rotate', async function (oldFilename, newFilename) {
 // call function like upload to s3 or on cloud
 
     logger.log('info', `[Logger] rotating file from ${oldFilename} to ${newFilename}`)
   
-    // google is also pinicky :  Error: invalid_grant
+    // google is also finicky :  Error: invalid_grant
     await uploadFile(oldFilename, logger)
   
     // https://unix.stackexchange.com/questions/151951/what-is-the-difference-between-rm-and-unlink
@@ -59,4 +62,5 @@ const logger = winston.createLogger({
         new winston.transports.Console({
             level: 'info'}),
 ]});
+
 module.exports = logger;
