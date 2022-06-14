@@ -38,6 +38,15 @@ button:active{
   align-items: center;
 }
 
+.content-container{
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 1141px;
+}
+
 
 /* title bar styling begins */
 .title-bar{
@@ -361,6 +370,147 @@ button:active{
   color: #303030;
   text-decoration: none;
 }
+
+/*partners page styling ends8/
+
+/* company page styling begins*/
+
+.company-intro-container{
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.company-title-intro{
+  max-width: 550px;
+}
+
+.company-title-intro p{
+  max-width: 400px;
+}
+
+.company-button{
+  margin-top: 45px;
+}
+
+.company-button a{
+  display: flex;
+  font-family: 'Poppins', sans-serif;
+  background-color: #96DFE3;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 2px 5px 0px #0B325E;
+  text-decoration: none;
+  color: black;
+  width: 120px;
+  height: 44px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+}
+
+.company-description-container{
+  width: 550px;
+  margin-top: 80px;
+}
+
+
+/* company page styling ends */
+
+/*company list page styling begins*/
+
+
+.header-container{
+  display: flex;
+  flex-direction: column;
+  max-width: 550px;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+
+/*company list page styling begins*/
+
+/*company card styling begins*/
+
+.company-card{
+  width: 260px;
+  padding: 25px 20px 10px;
+  margin: 0 20px 40px;
+  background-color: white;
+  box-shadow: 0 5px 15px 0 rgb(37 44 97 / 15%);
+  border-radius: 10px;
+  text-align: center;
+
+}
+
+.company-page-link{
+  text-decoration: none;
+  color: black;
+}
+
+.image-box{
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    box-shadow: 0 7px 25px 0 rgb(37 44 97 / 10%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: #eee;
+}
+
+.tag-container{
+  margin-bottom: 15px;
+}
+
+.tag{
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  background-color: #303030;
+  color: #96DFE3;
+  text-transform: uppercase;
+}
+
+.tag-text{
+  text-decoration: none;
+}
+
+.social-buttons-container{
+  margin-bottom: 15px;
+}
+
+.social-buttons-list{
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.social-buttons-item{
+  margin: 0 6px 5px;
+  width: 18px;
+  height: 18px;
+}
+
+
+.social-buttons-icon{
+  vertical-align: middle;
+}
+
+/*company card styling ends*/
 
 @media screen and (max-width: 940px){
 
