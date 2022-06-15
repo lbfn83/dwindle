@@ -11,7 +11,7 @@ import { CompanyCard } from '../component/CompanyCard'
 
 export const CompanyListPage = () => {
 
-    const [companyData, setCompanyData] = useState()
+    const [companyData, setCompanyData] = useState([])
 
 
     const getData = async() => {
@@ -22,10 +22,6 @@ export const CompanyListPage = () => {
     useEffect(() => {
         getData()
     }, [])
-
-    // const companyData = fetch("http://localhost:5000/database/company")
-    // .then(response => response.json())
-    // .then(data => {return data})
 
   return (
     <div className='content-container'>
@@ -38,7 +34,10 @@ export const CompanyListPage = () => {
             <p>Click the links within the company profiles below to view open jobs at companies that care about your future.</p>
         </div>
 
-        <CompanyCard companyData={companyData}/>
+        {companyData.map((companyData, id) => (
+            <CompanyCard key={id} companyData={companyData} />
+        ))}
+        {/* <CompanyCard companyData={companyData}/> */}
         {/* <button onClick={response}>button</button> */}
     </div>
   )

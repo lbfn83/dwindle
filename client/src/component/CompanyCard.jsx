@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export const CompanyCard = ( {companyData} ) => {
 
-
+    const { companyname } = companyData
 
     return (
         <div className='company-card'>
@@ -12,7 +12,7 @@ export const CompanyCard = ( {companyData} ) => {
                     <div className='image-box'>
                         <img src="https://ucarecdn.com/ec44459c-9002-4b40-a6bc-c556351ac4dd/abbott-logo-500x313.png" alt="Abbott logo 500x313"/>
                     </div>
-                    <p>{companyData[1].companyname}</p>
+                    <p>{companyname}</p>
                 
                     <div className='tag-container'>
                         <span className='tag'>
