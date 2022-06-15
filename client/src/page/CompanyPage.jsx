@@ -1,12 +1,5 @@
 import React from 'react'
 
-
-const checkFetch = () => {
-    fetch("http://localhost:5000/database/company")
-    .then(response => response.json())
-    .then(data => console.log(data))
-}
-
 export const CompanyPage = () => {
   return (
     <div className='content-container'>
@@ -49,7 +42,6 @@ export const CompanyPage = () => {
                 
             </div>
         </div>
-        <button onClick={checkFetch}>Check fetch</button>
     </div>
   )
 }
