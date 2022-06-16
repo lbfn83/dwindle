@@ -18,7 +18,7 @@
 //     };
 //   }
 
-const logger = require('./logger')
+const logger = require('../config/logger')
 
 async function toHttp(func, req, res){
   async function wrapper(req, res) {
