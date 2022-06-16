@@ -1,14 +1,20 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom"
 
 export const CompanyCard = ( {companyData} ) => {
 
-    const { companyname } = companyData
+    const { companyname, description, benefitsubtitle1, benefitsubtitle2, benefitdesc1, benefitdesc2 } = companyData
 
+    const navigate = useNavigate()
+
+    const toCompanyPage = () => {
+        navigate(`/company/${companyname}`, {state:{name: companyname, desc: description, benefitTitle1: benefitsubtitle1, benefitTitle2: benefitsubtitle2, beneDesc1: benefitdesc1, benDesc2: benefitdesc2  }})
+    }
+    
     return (
         <div className='company-card'>
             <div>
-                <Link to="/abbott" className='company-page-link'>
+                <div onClick={toCompanyPage} className='company-page-link' >
                     <div className='image-box'>
                         <img src="https://ucarecdn.com/ec44459c-9002-4b40-a6bc-c556351ac4dd/abbott-logo-500x313.png" alt="Abbott logo 500x313"/>
                     </div>
@@ -21,7 +27,7 @@ export const CompanyCard = ( {companyData} ) => {
                             </span>
                         </span>
                     </div>
-                </Link>
+                </div>
                 <div className='social-buttons-container'>
                     <ul className='social-buttons-list'>
                         <li className='social-buttons-item'>

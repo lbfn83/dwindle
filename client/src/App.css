@@ -444,6 +444,10 @@ button:active{
 
 }
 
+.company-card:hover{
+  cursor: pointer;
+}
+
 .company-page-link{
   text-decoration: none;
   color: black;
