@@ -10,6 +10,7 @@ export const CompanyCard = ( {companyData} ) => {
     const toCompanyPage = () => {
         navigate(`/companies/${companyname}`, {state:{name: companyname, desc: description, benefitTitle1: benefitsubtitle1, benefitTitle2: benefitsubtitle2, beneDesc1: benefitdesc1, benDesc2: benefitdesc2  }})
     }
+    
 
     return (
         <div className='company-card'>
