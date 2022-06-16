@@ -1,5 +1,30 @@
 // Load environment variable from .env file
 require('dotenv').config();
+const parseDbUrl = require("parse-database-url");
+
+// Below is for heroku production environment deploying heroku postgres
+// DATABASE_URL is automatically registered in heroku app and updated on regular basis
+let usernamePD
+let passwordPD
+let databasePD
+let hostPD
+let portPD 
+
+if(process.env.DATABASE_URL !== undefined)
+{
+    const dbConfig = parseDbUrl(process.env.DATABASE_URL);
+    usernamePD = dbConfig.user;
+    passwordPD = dbConfig.password;
+    databasePD = dbConfig.database;
+    hostPD = dbConfig.host;
+    portPD = dbConfig.port;
+}else{
+    usernamePD = process.env.PROD_DB_USERNAME;
+    passwordPD = process.env.PROD_DB_PASSWORD;
+    databasePD = process.env.PROD_DB_NAME;
+    hostPD = process.env.PROD_DB_HOST;
+    portPD = process.env.PROD_DB_PORT;
+}
 
 
 module.exports = {
@@ -22,11 +47,12 @@ module.exports = {
         port : process.env.TEST_DB_PORT 
     },
     production: {
-        username: process.env.PROD_DB_USERNAME,
-        password: process.env.PROD_DB_PASSWORD,
-        database: String(process.env.PROD_DB_NAME).toLowerCase(),
-        host: process.env.PROD_DB_HOST,
+        username: usernamePD,
+        password: passwordPD,
+        database: String(databasePD).toLowerCase(),
+        host: hostPD,
         dialect: 'postgres',
-        port : process.env.PROD_DB_PORT 
+        port : portPD
     }
 };
+
