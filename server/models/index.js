@@ -11,10 +11,10 @@ const db = {};
 
 // don't want to pluralize table name
 config.define = {"freezeTableName" : true}
-// config.dialectOptions = {ssl: {
-//   require: true,
-//   rejectUnauthorized: false, // very important
-// }}
+config.dialectOptions = {ssl: {
+  require: true,
+  rejectUnauthorized: false, // very important
+}}
 
 
 let sequelize;

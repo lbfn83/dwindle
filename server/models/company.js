@@ -21,40 +21,32 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   company.init({
-    // uuid: {
-    //   type: DataTypes.UUID,
-    //   defaultValue: DataTypes.UUIDV4,
-    // },
+    uuid: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+    },
     companyname: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
       unique :true,
-      references : {
-        model : jobposting,
-        key : "company_name"
-      }
+      // references : {
+      //   model : jobposting,
+      //   key : "company_name"
+      // }
     },
     // test: DataTypes.STRING,
     description: DataTypes.TEXT,
-    // benefits: DataTypes.TEXT, 
- 
-    
-    benefitsubtitle1: DataTypes.STRING,
-    benefitsubtitle2: DataTypes.STRING,
-    benefitdesc1: DataTypes.STRING,
-    benefitdesc2: DataTypes.STRING,
-    // job_scraper: {
-    //   type: DataTypes.BOOLEAN,
-    //   defaultValue : true,
-    //   allowNull: false
-    // }
-    // test: DataTypes.STRING
-    
+    benefits: DataTypes.TEXT, 
+    job_scraper: {
+      type: DataTypes.BOOLEAN,
+      defaultValue : true,
+      allowNull: false
+    }
   }, {
     sequelize,
     modelName: 'company',
-    paranoid: false
+    paranoid: true
   });
   return company;
 };
