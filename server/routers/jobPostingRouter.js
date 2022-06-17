@@ -90,9 +90,9 @@ router.get('/jobposting/:uuid', async (req, res) => {
     try {
       const user = await jobposting.findOne({
         where: { uuid },
-        include: 'posts',
+        include: 'company',
       })
-  
+
       return res.json(user)
     } catch (err) {
       console.log(err)

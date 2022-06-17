@@ -3,6 +3,7 @@ const {jobposting} = require('../models')
 const { Op } = require("sequelize");
 const softDeletePeriod = 1
 const hardDeletePeriod = 5
+const logger = require('../config/logger')
 
 async function jobPostingDataPurge()
 {
@@ -11,6 +12,7 @@ async function jobPostingDataPurge()
         limit : 1,
         order : [['updatedAt' , 'DESC']]
     })
+    logger.info(`[JobPostingDataPurge] refTimestamp : ${latestRecord.updatedAt}`)
     console.log("[JobPostingDataPurge] refTimestamp",latestRecord.updatedAt)
     
     // await jobposting.restore()
@@ -32,6 +34,7 @@ async function jobPostingDataPurge()
             // exclude soft deleted records, false is defualt value
             force: false
         })
+        logger.info(`[JobPostingDataPurge] Soft Deleted Data : ${numOfSDData}`)
         console.log("[JobPostingDataPurge] Soft Deleted Data:" + numOfSDData)
         // let SDRecords = await jobposting.findAll({
         //     where: {
@@ -58,6 +61,7 @@ async function jobPostingDataPurge()
             // include soft deleted records
             force: true
         })
+        logger.info(`[JobPostingDataPurge] Hard Deleted Data : ${numOfHDData}`)
         console.log("[JobPostingDataPurge] Hard Deleted Data:" + numOfHDData)
         // let numOfHDData = await jobposting.findAll({
         //     where: {
@@ -69,7 +73,7 @@ async function jobPostingDataPurge()
         //    
         // })
     }
-
+    logger.info(`[JobPostingDataPurge] finito`)
     console.log("[JobPostingDataPurge]finito")
 }
 

@@ -1,7 +1,8 @@
 // Sequelize model import
 const {sequelize} = require('../models')
 const {Client} = require('pg');
-
+require('dotenv').config()
+const logger = require('../config/logger')
 // const Client= require('pg-promise')
 
 let initialDBconnectionParam = 
