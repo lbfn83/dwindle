@@ -14,7 +14,7 @@ export const Navbar = () => {
         <ul className='nav-list'>
             <li className="nav-option"><a href="/">About</a></li>
             <li className="nav-option"><Link to="/">Jobs</Link></li>
-            <li className="nav-option"><Link to="/">Companies</Link></li>
+            <li className="nav-option"><Link to="/companies">Companies</Link></li>
             <li className="nav-option"><Link to="/">Benefits</Link></li>
             <li className="nav-option"><a href='/'>Community</a></li>
             <li className="nav-option"><Link to='/blog'>Blog</Link></li>
@@ -24,7 +24,7 @@ export const Navbar = () => {
         <ul className='nav-mobile' style={{display: open ? 'block' : 'none'}}>
             <li className="nav-option"><a href="/">About</a></li>
             <li className="nav-option"><Link to="/">Jobs</Link></li>
-            <li className="nav-option"><Link to="/">Companies</Link></li>
+            <li className="nav-option"><Link to="/companies">Companies</Link></li>
             <li className="nav-option"><Link to="/">Benefits</Link></li>
             <li className="nav-option"><a href='/'>Community</a></li>
             <li className="nav-option"><Link to='/blog'>Blog</Link></li>
