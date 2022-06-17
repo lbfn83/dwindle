@@ -43,7 +43,6 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue : true,
       allowNull: false
     }
-    // test: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'company',
