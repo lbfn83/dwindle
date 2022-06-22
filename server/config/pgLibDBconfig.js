@@ -1,14 +1,14 @@
 
-const seqIdx = require('./models/index');
+const {sequelize} = require('../models');
 const {Pool} = require('pg');
 require("dotenv").config();
 
 const pool = new Pool({
-    user : seqIdx.sequelize.config.username,
-    password : seqIdx.sequelize.config.password,
-    database : seqIdx.sequelize.config.database,
-    host : seqIdx.sequelize.config.host,
-    port : seqIdx.sequelize.config.port,
+    user : sequelize.config.username,
+    password : sequelize.config.password,
+    database : sequelize.config.database,
+    host : sequelize.config.host,
+    port : sequelize.config.port,
     ssl : { rejectUnauthorized: false }
 });
 
