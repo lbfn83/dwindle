@@ -23,13 +23,15 @@ const database = db.sequelize.config.database;
 
 const { NODE_ENV } = process.env;
 
+
+logger.info(`[Bull DBDumpScheduler] NODE_ENV ${NODE_ENV} `)
 const cronOpt = (() => {
     if(NODE_ENV === 'test' || NODE_ENV === 'development')
     {
         return { cron : '*/2 * * * *'};
     }
     else{
-        return { cron : '0 10 * * *'};
+        return { cron : '12 17 * * *'};
     }
 })();
 
