@@ -5,15 +5,21 @@ const {pullJobPostings} = require('../../controllers/jobPostingFetcher')
 const {jobPostingDataPurge} = require('../../controllers/jobPostingDataPurge')
 
 const {jpProcessQueue} = require('../../config/bullConfig')
-// producer : it hsould be defined in worker.js process later in production
+
+// TODO : for now I am thinking breaking down each query in producer
+// is not going to improve as RapidAPI server itself is very high latency 
+// and will return error in case of short interval of incoming queries
+
+// producer : it should be defined in worker.js process later in production
 // for now below code should be placed in server.js for testing
-function registerJPProcess()
+async function registerJPProcess()
 {
+    
     logger.info(`[Bull jpProcessQueue] registered! `)
-    // jpProcessQueue.obliterate({force : true})
+    await jpProcessQueue.obliterate({force : true})
     jpProcessQueue.add({ jobprocess : 'start' } , {repeat:
         {
-            cron : '35 18 * * *'
+            cron : '08 11 * * *'
         }
     })
 }
@@ -22,7 +28,7 @@ function registerJPProcess()
 jpProcessQueue.process( async(job) => {
     logger.info(`[Bull jpProcessQueue] : ${JSON.stringify(job)}`)
     
-    pullJobPostings().then( async()=>{
+    await pullJobPostings().then( async()=>{
         await jobPostingDataPurge()
     })
     .then((data)=> {

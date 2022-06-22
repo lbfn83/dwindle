@@ -1,6 +1,7 @@
 const logger = require('../../config/logger')
 const {loggingQueue} = require('../../config/bullConfig')
 
+// Obsolete : don't need it
 // every hour it just generates notification log
 // Not sure if this is really needed. My initial thought was
 // to make sure invoking logger.js's rotation event without skipping it.

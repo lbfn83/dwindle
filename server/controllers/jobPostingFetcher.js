@@ -139,11 +139,12 @@ function sliceIntoChunks(arr, chunkSize) {
         //     // rtnResult = new Promise((resolve) => resolve(results))
             
         // }); 
-        
+
 
         /* Synchronous Way : too slow */     
         for(const singleQuery of combinedList)
         {
+            await sleep(10000)
             logger.info(`[jobpostingfetcher single query] : ${JSON.stringify(singleQuery)}`)
             await setupQueryOption(singleQuery, (rtn)=>{
                 console.log("[jobpostingfetcher result]", rtn.fetched)
@@ -164,11 +165,16 @@ function sliceIntoChunks(arr, chunkSize) {
 
 }
 
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function processAPIRequestAndSQL( queryOption, companyName, loc)
 {
     try
     {    
-        
+        await sleep(10000)
+
         logger.info(`[processRequest] queryOption : ${queryOption.data}`)
         // Logging.write("\n------API response---------\n")
         // Logging.write("\n---queryOption : " + queryOption.data + "----\n")
