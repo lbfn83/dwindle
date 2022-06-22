@@ -1,25 +1,24 @@
 const {registerJPProcess} = require('./util/taskScheduler/jobpostingFetchScheduler')
-const {registerLogging} = require('./util/taskScheduler/loggingScheduler')
-const {backup} = require('./util/taskScheduler/dbDumpScheduler')
-const {importFromCSV} = require('./util/obsolete/dbBackupToCSV')
-const {registerDBBackupScheduler} = require('./util/taskScheduler/dbBackupScheduler')
+const {registerDBDumpScheduler} = require('./util/taskScheduler/dbDumpScheduler')
+// const {registerEmailService} = require('./util/taskScheduler/emailScheduler')
+const {logger} = require('./config/logger')
 const path = require('path')
+const {initOAuthTokens} = require('./config/googleDrive')
 
-const {dailyJobScraping} = require('./util/obsolete/cronScheduler')
+// const {registerLogging} = require('./util/taskScheduler/loggingScheduler')
+// const {psqlDump} = require('./util/taskScheduler/dbDumpScheduler')
 
-const {pullJobPostings} = require('./controllers/jobPostingFetcher')
-const {jobPostingDataPurge} = require('./controllers/jobPostingDataPurge')
-const {setupCompanyListFromTxt} = require('./controllers/companyListInit');
+// Only execute this when first deploying the app
+// Please go to backend_server_url:3000 to grant access to google drive
+logger.info(`[worker] started`)
+// OAuth server for google drive 
+initOAuthTokens(logger).catch((err) => {
+    logger.error(`[Server] Unable process OAuth request for Google Drive : ${err}`)
+  });
+  
 
-
-
-const tablename = 'company'
-const filename = 'company.csv'
-const backupLoc = path.join(__dirname, filename)
-
-importFromCSV(tablename, backupLoc)
 /* daily jobscraping testing : the below should be migrated into worker.js later*/
-// registerJPProcess()
-// registerLogging()
-// registerDBBackupScheduler()
-// backup()
+registerJPProcess()
+registerDBDumpScheduler()
+// registerEmailService()
+

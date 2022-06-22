@@ -16,12 +16,11 @@ const jobpostingRouter = require('./routers/jobPostingRouter')
 
 const bp = require('body-parser')
 
-const {initDatabase} = require('./util/setupDatabase')
-
 const { sequelize,Sequelize } = require('./models');
 
-const logger = require('./config/logger')
+const {logger} = require('./config/logger')
 
+// const {initDatabase} = require('./util/setupDatabase')
 // require('dotenv').config()
 // console.log(process.env)
 
@@ -65,7 +64,6 @@ fs.readdirSync(routes_directory).forEach(route_file => {
   }
 });
 */
-
 
 
 app.use('/database', jobpostingRouter)

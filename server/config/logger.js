@@ -16,16 +16,16 @@ const logFormat = winston.format.combine(
 ),);
 
 const transport = new DailyRotateFile({
-    // frequency: '24h',
-    frequency : '1h',
+    frequency: '24h',
+    // frequency : '1h',
 
     // if you want to rotate files every five minutes... gotta change 
     // file name pattern as well
 
     filename: 'dwindle-%DATE%.log',
 
-    //datePattern : 'YYYY-MM-DD',
-    datePattern: 'YYYY-MM-DD-HH',
+    datePattern : 'YYYY-MM-DD',
+    // datePattern: 'YYYY-MM-DD-HH',
     zippedArchive: false,
     maxSize: '20m',
     maxFiles: '14d',
@@ -63,4 +63,4 @@ const logger = winston.createLogger({
             level: 'info'}),
 ]});
 
-module.exports = logger;
+module.exports = {logger};

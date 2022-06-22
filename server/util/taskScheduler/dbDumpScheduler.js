@@ -1,11 +1,12 @@
 
-const { execSync, exec } = require('child_process');
+const { execSync } = require('child_process');
 const {dbDumpScheduler} = require('../../config/bullConfig')
 const compress = require('gzipme');
 const fs = require('fs')
 const db = require('../../models/')
-const logger = require('../../config/logger')
+const {logger} = require('../../config/logger')
 const {uploadFile}= require('../../config/googleDrive')
+require('dotenv').config();
 // Below information is obsolete
 
 // const dotenv = require('dotenv');
@@ -20,18 +21,24 @@ const password =  db.sequelize.config.password;
 const host = db.sequelize.config.host;
 const database = db.sequelize.config.database;
 
+const { NODE_ENV } = process.env;
 
+const cronOpt = (() => {
+    if(NODE_ENV === 'test' || NODE_ENV === 'development')
+    {
+        return { cron : '*/2 * * * *'};
+    }
+    else{
+        return { cron : '0 10 * * *'};
+    }
+})();
 
 
 async function registerDBDumpScheduler()
 {
     logger.info(`[Bull DBDumpScheduler] registered! `)
     await dbDumpScheduler.obliterate({force : true})
-    dbDumpScheduler.add({ message : 'db dump finished!' } , {repeat:
-        {
-            cron : '*/10 * * * *'
-        }
-    })
+    dbDumpScheduler.add({ message : 'db dump finished!' } , {repeat: cronOpt})
 }
 
 dbDumpScheduler.process( async(job) => {
@@ -64,7 +71,8 @@ async function psqlDump() {
             
             logger.info(`[Bull DBDumpScheduler] psqlDump compress and upload : ${fileName}`)
             compressedFileName = fileName + ".gz"
-            await uploadFile(compressedFileName, logger).then(()=> {
+            await uploadFile(compressedFileName, logger).then((msg)=> {
+                logger.error(`[Bull DBDumpScheduler] Google upload finished : ${msg}`)
                 fs.unlinkSync(compressedFileName);
             }).catch((error)=>{
                 logger.error(`[Bull DBDumpScheduler] Google upload error : ${error}`)

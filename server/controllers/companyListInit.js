@@ -1,6 +1,6 @@
 const fs = require("fs");
 const {company} = require('../models')
-const logger = require('../config/logger')
+const {logger} = require('../config/logger')
 
 async function setupCompanyListFromTxt() 
 {

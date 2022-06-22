@@ -4,7 +4,7 @@ const axios = require('axios');
 const db = require('../models')
 const company = db.company
 const jobposting = db.jobposting
-const logger = require('../config/logger')
+const {logger} = require('../config/logger')
 require('dotenv').config()
 
 const MaxPageToProbe = 15 // In case of not using page limit, please put undefined or comment this line out

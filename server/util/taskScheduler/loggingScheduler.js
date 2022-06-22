@@ -1,4 +1,4 @@
-const logger = require('../../config/logger')
+const {logger} = require('../../config/logger')
 const {loggingQueue} = require('../../config/bullConfig')
 
 // Obsolete : don't need it

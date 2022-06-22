@@ -1,14 +1,29 @@
 
-const logger = require('../../config/logger')
+const {logger} = require('../../config/logger')
 
 const {pullJobPostings} = require('../../controllers/jobPostingFetcher')
 const {jobPostingDataPurge} = require('../../controllers/jobPostingDataPurge')
 
 const {jpProcessQueue} = require('../../config/bullConfig')
+require('dotenv').config();
 
 // TODO : for now I am thinking breaking down each query in producer
 // is not going to improve as RapidAPI server itself is very high latency 
-// and will return error in case of short interval of incoming queries
+// and will return error in case of repeated incoming queries at short interval
+
+const { NODE_ENV } = process.env;
+
+const cronOpt = (() => {
+    if(NODE_ENV === 'test' || NODE_ENV === 'development')
+    {
+        return { cron : '08 10 * * *'};
+    }
+    else{
+        // At 10:00 UTC on Monday, Tuesday, Wednesday, Thursday, and Friday.
+        return { cron : '0 17 * * 1,2,3,4,5'};
+    }
+})();
+
 
 // producer : it should be defined in worker.js process later in production
 // for now below code should be placed in server.js for testing
@@ -17,11 +32,7 @@ async function registerJPProcess()
     
     logger.info(`[Bull jpProcessQueue] registered! `)
     await jpProcessQueue.obliterate({force : true})
-    jpProcessQueue.add({ jobprocess : 'start' } , {repeat:
-        {
-            cron : '08 11 * * *'
-        }
-    })
+    jpProcessQueue.add({ jobprocess : 'start' } , {repeat: cronOpt})
 }
 
 // consumer
