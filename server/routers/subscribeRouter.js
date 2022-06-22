@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../db.js');
+const pool = require('../config/pgLibDBconfig.js');
 const {subscriber} = require('../models')
 
 //  Insert DB module to populate data in an empty DB 

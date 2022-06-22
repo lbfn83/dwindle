@@ -3,7 +3,7 @@ const {jobposting} = require('../models')
 const { Op } = require("sequelize");
 const softDeletePeriod = 1
 const hardDeletePeriod = 5
-const logger = require('../config/logger')
+const {logger} = require('../config/logger')
 
 async function jobPostingDataPurge()
 {

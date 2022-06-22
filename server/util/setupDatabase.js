@@ -1,14 +1,17 @@
-// Sequelize model import
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+* This Script is designed for setting up local postgres database for development
+* TODO :  didn't implement create user function yet
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
 const {sequelize} = require('../models')
 const {Client} = require('pg');
 require('dotenv').config()
-const logger = require('../config/logger')
-// const Client= require('pg-promise')
+const {logger} = require('../config/logger')
 
 let initialDBconnectionParam = 
 {
-  host : process.env.DATABASE_HOST,
-  port : process.env.DATABASE_PORT,
+  host : process.env.DEV_DB_HOST,
+  port : process.env.DEV_DB_PORT,
   user : 'postgres',
   password: process.env.POSTGRES_PWD
 }
