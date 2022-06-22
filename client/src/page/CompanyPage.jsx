@@ -8,7 +8,7 @@ export const CompanyPage = () => {
 
     const { state } = location
 
-    const { name, desc, benefitTitle1, benefitTitle2, beneDesc1, benDesc2 } = state
+    const { name, jobs, website, companyindustry, description, benefits, links } = state
 
     return (
         <div className='content-container'>
@@ -17,7 +17,7 @@ export const CompanyPage = () => {
                     <h1>{name}</h1>
                     <p>Abbott's life-changing technology helps people live fully and offers information, medicines and breakthroughs to help you manage your health.</p>
                     <div className='company-button'>
-                        <a href="https://www.jobs.abbott/us/en/search-results?utm_source=dwindlestudentdebt.com&utm_medium=dwindlestudentdebt.com&utm_campaign=dwindlestudentdebt.com&ref=dwindlestudentdebt.com&source=dwindlestudentdebt.com">
+                        <a href={jobs}>
                             <span>View Jobs</span>
                         </a>
                     </div>
@@ -30,23 +30,14 @@ export const CompanyPage = () => {
                 <div className='who-we-are'>
                     <h2>Who we are</h2>
                     <div>           
-                        <p>{desc}</p>
+                        <p>{description}</p>
                     </div>
         
                 </div>
                 <div className='our-education-benefits'>
                     <h2>Our Education Benefits</h2>
                     <div>
-                        <h3>{benefitTitle1}</h3>
-                        <div>
-                            <p>{beneDesc1}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <h3>{benefitTitle2}</h3>
-                        <div>
-                            <p>{benDesc2}</p>
-                        </div>
+                        <p>{benefits}</p>
                     </div>
                     
                 </div>
