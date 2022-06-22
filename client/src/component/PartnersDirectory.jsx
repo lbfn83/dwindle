@@ -4,6 +4,14 @@ import React from 'react'
 export const PartnersDirectory = () => {
   const partners =[
     {
+      title: 'Sparrow',
+      titleInfo: 'Student Loan Refinancing',
+      postInfo: 'Sparrow allows users to search and compare personalized student loan offers through a single application. Click below to learn more:',
+      image: 'https://ucarecdn.com/3d1ba4b6-8179-49f5-a780-5c417252d983/sparrowfi-logo.png',
+      link: 'https://www.sparrowfi.com/?utm_source=dwindlestudentdebt.com&utm_medium=dwindlestudentdebt.com&utm_campaign=dwindlestudentdebt.com&ref=dwindlestudentdebt.com&source=dwindlestudentdebt.com/',
+      ButtonText:'Refinance' 
+    },
+    {
         title: 'Dolr',
         titleInfo: 'Lower Your Student Loan Payments',
         postInfo: 'Dolr gets you more money for student loan repayment from where you shop and work so you can get to $0 debt earlier. Check out their website below:',

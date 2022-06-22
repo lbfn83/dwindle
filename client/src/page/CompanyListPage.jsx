@@ -33,10 +33,11 @@ export const CompanyListPage = () => {
 
             <p>Click the links within the company profiles below to view open jobs at companies that care about your future.</p>
         </div>
-
-        {companyData.map((companyData, id) => (
-            <CompanyCard key={id} companyData={companyData} />
-        ))}
+        <div className='card-list-container'>
+            {companyData.map((companyData, id) => (
+                <CompanyCard key={id} companyData={companyData} />
+            ))}
+        </div>
         {/* <CompanyCard companyData={companyData}/> */}
         {/* <button onClick={response}>button</button> */}
     </div>
