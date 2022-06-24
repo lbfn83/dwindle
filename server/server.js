@@ -72,9 +72,10 @@ registerJPProcess()
 registerDBDumpScheduler()
 
 /* **** google API OAuth2 ****** */
-
-global.googleUserCredential = null;
+const {initGoogleDrive} = require('./config/googleDrive')
+global.googleToken = null;
 global.googleDrive = null;
+initGoogleDrive()
 app.use('/googleAuth', googleOAuth2Router)
 
 /* ***************************************** */

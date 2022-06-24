@@ -20,7 +20,7 @@ const cronOpt = (() => {
     }
     else{
         // At 10:00 UTC on Monday, Tuesday, Wednesday, Thursday, and Friday.
-        return { cron : '11 17 * * 1,2,3,4,5'};
+        return { cron : '00 01 * * 1,2,3,4,5'};
     }
 })();
 

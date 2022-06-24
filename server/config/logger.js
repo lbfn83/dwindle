@@ -2,7 +2,9 @@ const winston = require('winston');
 const DailyRotateFile = require('winston-daily-rotate-file');
 const fs = require('fs')
 const {uploadFile}= require('./googleDrive')
+require('dotenv').config();
 
+const { NODE_ENV } = process.env;
 
 const logFormat = winston.format.combine(
     // below colorize cause escape charaters getting in the string
@@ -15,24 +17,67 @@ const logFormat = winston.format.combine(
   (info) => `${info.level} : ${info.timestamp} : ${info.message}`,
 ),);
 
-const transport = new DailyRotateFile({
-    frequency: '24h',
-    // frequency : '1h',
+const transport = (() => {
+    if(NODE_ENV === 'test' || NODE_ENV === 'development')
+    {
+        return new DailyRotateFile({
+            frequency : '10m',
+        
+            // if you want to rotate files every five minutes... gotta change 
+            // file name pattern as well
+        
+            filename: 'dwindle-test-%DATE%.log',
+        
+            datePattern : 'YYYY-MM-DD-HH-mm',
+            zippedArchive: false,
+            maxSize: '20m',
+            maxFiles: '14d',
+            prepend: true,
+            level: 'info',
+        
+        });
+    }
+    else{
+        return new DailyRotateFile({
+            frequency: '24h',
+            // frequency : '1h',
+        
+            // if you want to rotate files every five minutes... gotta change 
+            // file name pattern as well
+        
+            filename: 'dwindle-%DATE%.log',
+        
+            datePattern : 'YYYY-MM-DD',
+            // datePattern: 'YYYY-MM-DD-HH',
+            zippedArchive: false,
+            maxSize: '20m',
+            maxFiles: '14d',
+            prepend: true,
+            level: 'info',
+        
+        });
+    }
+})();
 
-    // if you want to rotate files every five minutes... gotta change 
-    // file name pattern as well
 
-    filename: 'dwindle-%DATE%.log',
+// const transport = new DailyRotateFile({
+//     frequency: '24h',
+//     // frequency : '1h',
 
-    datePattern : 'YYYY-MM-DD',
-    // datePattern: 'YYYY-MM-DD-HH',
-    zippedArchive: false,
-    maxSize: '20m',
-    maxFiles: '14d',
-    prepend: true,
-    level: 'info',
+//     // if you want to rotate files every five minutes... gotta change 
+//     // file name pattern as well
 
-});
+//     filename: 'dwindle-%DATE%.log',
+
+//     datePattern : 'YYYY-MM-DD',
+//     // datePattern: 'YYYY-MM-DD-HH',
+//     zippedArchive: false,
+//     maxSize: '20m',
+//     maxFiles: '14d',
+//     prepend: true,
+//     level: 'info',
+
+// });
 
 // Daily Rotate file is also file stream 
 // so you can define specific listner with on
@@ -45,7 +90,7 @@ transport.on('rotate', async function (oldFilename, newFilename) {
     logger.log('info', `[Logger] rotating file from ${oldFilename} to ${newFilename}`)
   
     // google is also finicky :  Error: invalid_grant
-    await uploadFile(oldFilename, logger)
+    await uploadFile(oldFilename)
   
     // https://unix.stackexchange.com/questions/151951/what-is-the-difference-between-rm-and-unlink
     // rm is too clever, so we need to use safer alternative which is unlink

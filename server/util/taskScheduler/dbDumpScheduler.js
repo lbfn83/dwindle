@@ -23,7 +23,6 @@ const database = db.sequelize.config.database;
 
 const { NODE_ENV } = process.env;
 
-
 logger.info(`[Bull DBDumpScheduler] NODE_ENV ${NODE_ENV} `)
 const cronOpt = (() => {
     if(NODE_ENV === 'test' || NODE_ENV === 'development')
@@ -31,7 +30,7 @@ const cronOpt = (() => {
         return { cron : '*/2 * * * *'};
     }
     else{
-        return { cron : '12 17 * * *'};
+        return { cron : '20 12 * * *'};
     }
 })();
 
@@ -58,9 +57,19 @@ dbDumpScheduler.on('completed', function (job) {
 })
 
 async function psqlDump() {
+    
     const date = new Date();
     const currentDate = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
-    const fileName = `database-backup-${currentDate}.tar`;
+    const fileName = (() => {
+        if(NODE_ENV === 'test' || NODE_ENV === 'development')
+        {
+            return `database-backup-test-${currentDate}.tar`;
+        }
+        else{
+            return `database-backup-${currentDate}.tar`;
+        }
+    })();
+    // const fileName = `database-backup-${currentDate}.tar`;
     // `pg_dump -U ${username} -d ${database} -f ${fileName} -F t`
     // https://www.codegrepper.com/code-examples/javascript/run+command+line+command+from+javascript
     // const output = await execSync("dir",{ encoding: 'utf-8' })
@@ -73,7 +82,7 @@ async function psqlDump() {
             
             logger.info(`[Bull DBDumpScheduler] psqlDump compress and upload : ${fileName}`)
             compressedFileName = fileName + ".gz"
-            await uploadFile(compressedFileName, logger).then((msg)=> {
+            await uploadFile(compressedFileName).then((msg)=> {
                 logger.error(`[Bull DBDumpScheduler] Google upload finished : ${msg}`)
                 fs.unlinkSync(compressedFileName);
             }).catch((error)=>{
