@@ -57,14 +57,15 @@ async function processOAuthToken(tokens)
       global.googleToken = tokens
     }
     else{
-
+      
+      logger.info(`[GoogleAPI oauth2Client token process] tokens without refresh token received`)
       let latestToken = await google_token.findOne({
         limit : 1,
         order : [['updatedAt' , 'DESC']]
       })
       // https://stackoverflow.com/questions/34698905/how-can-i-clone-a-javascript-object-except-for-one-key
-      global.googleToken={...tokens, ...JSON.parse(latestToken.refresh_token)}
-      logger.info(`[GoogleAPI oauth2Client token process] tokens without refresh token received`)
+      global.googleToken = {...tokens}
+      global.googleToken.refresh_token = latestToken.refresh_token
     }
     oauth2Client.setCredentials(global.googleToken);
     
