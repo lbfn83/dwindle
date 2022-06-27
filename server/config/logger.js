@@ -1,5 +1,6 @@
 const winston = require('winston');
 const DailyRotateFile = require('winston-daily-rotate-file');
+// const path = require('path')
 const fs = require('fs');
 const {uploadFile}= require('./googleDrive');
 require('dotenv').config();
@@ -154,20 +155,38 @@ const transport = (() => {
 // the time of rotation
 transport.on('rotate', async function (oldFilename, newFilename) {
 // call function like upload to s3 or on cloud
+    try{
+        logger.log('info', `[Logger] rotating file from ${oldFilename} to ${newFilename}`)
+        
+        // Renaming file by adding an extra timestamp info here 
+        // to set separators for multiple log files that are generated in one rotation period
+        const date = new Date();
+        const filenameTS = `_${date.getHours()}.${date.getMinutes()}`;
+        const filenameUploaded = oldFilename.split(".")[0]+ filenameTS + ".log" 
+        // logger.info(path.join(__dirname, '../', oldFilename))
+        // logger.info(path.join(__dirname, '../', filenameUploaded))
+        // fs.renameSync(path.join(__dirname, oldFilename), path.join(__dirname, filenameUploaded))
+        fs.renameSync( oldFilename, filenameUploaded)
+    
+        await uploadFile(filenameUploaded)
+        fs.unlinkSync(filenameUploaded)
+        // google is also finicky :  Error: invalid_grant
+      
+        // https://unix.stackexchange.com/questions/151951/what-is-the-difference-between-rm-and-unlink
+        // rm is too clever, so we need to use safer alternative which is unlink
 
-    logger.log('info', `[Logger] rotating file from ${oldFilename} to ${newFilename}`)
-  
-    // google is also finicky :  Error: invalid_grant
-    await uploadFile(oldFilename)
-  
-    // https://unix.stackexchange.com/questions/151951/what-is-the-difference-between-rm-and-unlink
-    // rm is too clever, so we need to use safer alternative which is unlink
-    fs.unlinkSync(oldFilename)
+    }catch(err)
+    {
+        console.log(`err : ${err}`)
+    }
 });
 transport.on('new', async function ( newFilename) {
     logger.log('info', `[Logger] START A NEW LOGGING : ${newFilename}`);
-  
+    global.logfileName = newFilename;
+    // logger.log('info', `[Logger] START A NEW LOGGING : ${global.logfileName}`);
 });
+
+
 // transport.on('logRemoved', async function ( removedFilename) {
 //     logger.log('info', `[Logger] FILE REMOVED  : ${removedFilename}`);
   
