@@ -5,11 +5,6 @@ import { useLocation } from 'react-router-dom'
 
 import { CompanyCard } from '../component/CompanyCard'
 
-// const companyData = () => {
-//     fetch("http://localhost:5000/database/company")
-//     .then(response => response.json())
-//     .then(data => JSON.stringify(data))
-// }
 
 export const CompanyListPage = () => {
 

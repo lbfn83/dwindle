@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom"
 
 export const CompanyCard = ( {companyData} ) => {
 
-    const { companyname, companyjobpage, companywebsite, industry, compaydescription, benefitdetails, linktobenefitdetails } = companyData
+    const { companyname, companyjobpage, companywebsite, industry, imagelink, companysummary, companydescription, benefitdetails, } = companyData
 
     const navigate = useNavigate()
 
     const toCompanyPage = () => {
-        navigate(`/companies/benefits/${companyname}`, {state:{name: companyname, jobs: companyjobpage, website: companywebsite, companyindustry: industry, description: compaydescription, benefits: benefitdetails, links: linktobenefitdetails }})
+        navigate(`/companies/benefits/${companyname}`, {state:{name: companyname, jobs: companyjobpage, website: companywebsite, companyindustry: industry, image: imagelink, summary:companysummary, description: companydescription, benefits: benefitdetails }})
     }
     
 
@@ -17,7 +17,7 @@ export const CompanyCard = ( {companyData} ) => {
             <div>
                 <div onClick={toCompanyPage} className='company-page-link' >
                     <div className='image-box'>
-                        <img src="https://ucarecdn.com/ec44459c-9002-4b40-a6bc-c556351ac4dd/abbott-logo-500x313.png" alt="Abbott logo 500x313"/>
+                        <img src={imagelink} alt={companyname}/>
                     </div>
                     <p>{companyname}</p>
                 
