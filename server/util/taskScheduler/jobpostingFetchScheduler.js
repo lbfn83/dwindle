@@ -16,11 +16,11 @@ logger.info(`[Bull jpProcessQueue] NODE_ENV ${NODE_ENV} `)
 const cronOpt = (() => {
     if(NODE_ENV === 'test' || NODE_ENV === 'development')
     {
-        return { cron : '08 10 * * *'};
+        return { cron : '06 14 * * *'};
     }
     else{
         // At 10:00 UTC on Monday, Tuesday, Wednesday, Thursday, and Friday.
-        return { cron : '00 01 * * 1,2,3,4,5'};
+        return { cron : '00 04 * * 1,2,3,4,5'};
     }
 })();
 
