@@ -30,7 +30,7 @@ const cronOpt = (() => {
         return { cron : '*/2 * * * *'};
     }
     else{
-        return { cron : '20 12 * * *'};
+        return { cron : '10 00 * * *'};
     }
 })();
 

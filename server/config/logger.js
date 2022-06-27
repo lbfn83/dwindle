@@ -1,7 +1,7 @@
 const winston = require('winston');
 const DailyRotateFile = require('winston-daily-rotate-file');
-const fs = require('fs')
-const {uploadFile}= require('./googleDrive')
+const fs = require('fs');
+const {uploadFile}= require('./googleDrive');
 require('dotenv').config();
 
 const { NODE_ENV } = process.env;
@@ -16,46 +16,114 @@ const logFormat = winston.format.combine(
  winston.format.printf(
   (info) => `${info.level} : ${info.timestamp} : ${info.message}`,
 ),);
+// const transport = new DailyRotateFile({
+//             frequency : '1m',
+        
+//             // if you want to rotate files every five minutes... gotta change 
+//             // file name pattern as well
+        
+//             filename: 'dwindle-test-%DATE%.log',
+        
+//             // datePattern : 'YYYY-MM-DD-HH-mm',
+//             datePattern : 'YYYY-MM-DD-HH-mm',
+//             zippedArchive: false,
+//             maxSize: '20m',
+//             maxFiles: '14d',
+//             prepend: true,
+//             level: 'info',
+        
+//         });
+/***************** */
+// let options
+// if(NODE_ENV === 'test' || NODE_ENV === 'development')
+// {
+//     options = {
+//         frequency : '1m',
+    
+//         // if you want to rotate files every five minutes... gotta change 
+//         // file name pattern as well
+    
+//         filename: 'dwindle-test-%DATE%.log',
+    
+//         // datePattern : 'YYYY-MM-DD-HH-mm',
+//         datePattern : 'YYYY-MM-DD-HH-mm',
+//         zippedArchive: false,
+//         maxSize: '20m',
+//         maxFiles: '14d',
+//         prepend: true,
+//         level: 'info',
+    
+//     }
+// }else{
+//     options = {
+//         frequency: '24h',
+//         // frequency : '1h',
+        
+//         // if you want to rotate files every five minutes... gotta change 
+//         // file name pattern as well
+    
+//         filename: 'dwindle-%DATE%.log',
+    
+//         datePattern : 'YYYY-MM-DD',
+//         // datePattern: 'YYYY-MM-DD-HH',
+//         zippedArchive: false,
+//         maxSize: '20m',
+//         maxFiles: '14d',
+//         prepend: true,
+//         level: 'info',
+    
+//     }
+// }
 
+// const transport = new DailyRotateFile(options)
+/************************************** */
+/* what is the problem in below codes? winston doesn't run at all*/
 const transport = (() => {
-    if(NODE_ENV === 'test' || NODE_ENV === 'development')
+    try{
+
+        if(NODE_ENV === 'test' || NODE_ENV === 'development')
+        {
+            return new DailyRotateFile({
+                frequency : '5m',
+            
+                // if you want to rotate files every five minutes... gotta change 
+                // file name pattern as well
+            
+                filename: 'dwindle-test-%DATE%.log',
+            
+                // datePattern : 'YYYY-MM-DD-HH-mm',
+                datePattern : 'YYYY-MM-DD-HH-mm',
+                zippedArchive: false,
+                maxSize: '20m',
+                maxFiles: '14d',
+                prepend: true,
+                level: 'info',
+            
+            });
+        }
+        else{
+            return new DailyRotateFile({
+                frequency: '12h',
+                // frequency : '1h',
+                
+                // if you want to rotate files every five minutes... gotta change 
+                // file name pattern as well
+            
+                filename: 'dwindle-%DATE%.log',
+            
+                datePattern : 'YYYY-MM-DD-HH',
+                // datePattern: 'YYYY-MM-DD-HH',
+                zippedArchive: false,
+                maxSize: '20m',
+                maxFiles: '14d',
+                prepend: true,
+                level: 'info',
+            
+            });
+        }
+    }catch(err)
     {
-        return new DailyRotateFile({
-            frequency : '10m',
-        
-            // if you want to rotate files every five minutes... gotta change 
-            // file name pattern as well
-        
-            filename: 'dwindle-test-%DATE%.log',
-        
-            datePattern : 'YYYY-MM-DD-HH-mm',
-            zippedArchive: false,
-            maxSize: '20m',
-            maxFiles: '14d',
-            prepend: true,
-            level: 'info',
-        
-        });
-    }
-    else{
-        return new DailyRotateFile({
-            frequency: '24h',
-            // frequency : '1h',
-        
-            // if you want to rotate files every five minutes... gotta change 
-            // file name pattern as well
-        
-            filename: 'dwindle-%DATE%.log',
-        
-            datePattern : 'YYYY-MM-DD',
-            // datePattern: 'YYYY-MM-DD-HH',
-            zippedArchive: false,
-            maxSize: '20m',
-            maxFiles: '14d',
-            prepend: true,
-            level: 'info',
-        
-        });
+        console.log(` what the heck error ":${err}`)
     }
 })();
 
@@ -96,7 +164,14 @@ transport.on('rotate', async function (oldFilename, newFilename) {
     // rm is too clever, so we need to use safer alternative which is unlink
     fs.unlinkSync(oldFilename)
 });
-
+transport.on('new', async function ( newFilename) {
+    logger.log('info', `[Logger] START A NEW LOGGING : ${newFilename}`);
+  
+});
+// transport.on('logRemoved', async function ( removedFilename) {
+//     logger.log('info', `[Logger] FILE REMOVED  : ${removedFilename}`);
+  
+// });
 //change the level later 
 // transport.level = 'error'
 
