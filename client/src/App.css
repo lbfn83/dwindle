@@ -373,7 +373,7 @@ button:active{
 
 /*partners page styling ends8/
 
-/* company page styling begins*/
+/* company benefit page styling begins*/
 
 .company-intro-container{
   display: flex;
@@ -415,19 +415,24 @@ button:active{
 }
 
 
-/* company page styling ends */
+/* company benefit page styling ends */
 
 /*company list page styling begins*/
 
 
-.header-container{
+.companylist-header-container{
   display: flex;
-  flex-direction: column;
-  max-width: 550px;
-  text-align: center;
   margin-bottom: 50px;
 }
+.companylist-header-text{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
+.title-container{
+  text-align: center;
+}
 
 /*company list page styling begins*/
 
@@ -525,6 +530,80 @@ button:active{
 }
 
 /*company card styling ends*/
+
+/* company section begins */
+
+.company-section-header{
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.company-text-container{
+  position: relative;
+  z-index: 20;
+  width: 550px;
+  max-width: 550px;
+}
+
+.company-header-image-container{
+  width: calc(100% - 550px);
+  text-align: center;
+}
+
+/*company section ends*/
+
+/* benefit list styling begins*/
+
+.company-benefit-list{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+/* benefit list styling ends*/
+
+/* benefit card styling begins */
+
+.benefit-card-container{
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px 0 rgb(136 144 195 / 20%), 0 5px 15px 0 rgb(37 44 97 / 15%);
+  background-color: white;
+  text-decoration: none;
+  cursor: pointer;
+  height: 100px;
+  width: 750px;
+  margin-top: 20px;
+  justify-content: space-between;
+}
+
+.benefit-card-image-container{
+  left: 0;
+  top: 0;
+  width: 20%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.benefit-card-image-container img{
+  object-fit: cover;
+  object-position: center;
+}
+
+.benefit-card-text{
+  padding: 20px;
+}
+
+/* benefit card styling ends */
 
 @media screen and (max-width: 940px){
 

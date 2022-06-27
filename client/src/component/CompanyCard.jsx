@@ -8,7 +8,7 @@ export const CompanyCard = ( {companyData} ) => {
     const navigate = useNavigate()
 
     const toCompanyPage = () => {
-        navigate(`/companies/${companyname}`, {state:{name: companyname, jobs: companyjobpage, website: companywebsite, companyindustry: industry, description: compaydescription, benefits: benefitdetails, links: linktobenefitdetails }})
+        navigate(`/companies/benefits/${companyname}`, {state:{name: companyname, jobs: companyjobpage, website: companywebsite, companyindustry: industry, description: compaydescription, benefits: benefitdetails, links: linktobenefitdetails }})
     }
     
 
