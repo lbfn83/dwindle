@@ -13,22 +13,20 @@ const PORT = process.env.PORT || 5000;
 const companyRouter = require('./routers/companyRouter')
 const subscribeRouter = require('./routers/subscribeRouter')
 const jobpostingRouter = require('./routers/jobPostingRouter')
-
+const googleOAuth2Router = require('./routers/googleOAuth2Router')
 const bp = require('body-parser')
 
 const { sequelize,Sequelize } = require('./models');
 
 const {logger} = require('./config/logger')
 
+
 // const {initDatabase} = require('./util/setupDatabase')
-// require('dotenv').config()
-// console.log(process.env)
 
 // console.log("build path : " , buildPath)
 // app.use(express.static(buildPath));
 app.use(cors());
 app.use(bp.json());
-
 
 /* !!!! use below to invoke sync() to newly create database and tables 
 * only use this in Iaas or Local server to initialize database !!!! 
@@ -64,7 +62,23 @@ fs.readdirSync(routes_directory).forEach(route_file => {
   }
 });
 */
+/* ********* Schedulers *********** */
 
+const {registerJPProcess} = require('./util/taskScheduler/jobpostingFetchScheduler')
+const {registerDBDumpScheduler} = require('./util/taskScheduler/dbDumpScheduler')
+
+
+registerJPProcess()
+registerDBDumpScheduler()
+
+/* **** google API OAuth2 ****** */
+const {initGoogleDrive} = require('./config/googleDrive')
+global.googleToken = null;
+global.googleDrive = null;
+initGoogleDrive()
+app.use('/googleAuth', googleOAuth2Router)
+
+/* ***************************************** */
 
 app.use('/database', jobpostingRouter)
 app.use('/database' , subscribeRouter)

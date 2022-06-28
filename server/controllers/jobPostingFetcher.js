@@ -147,9 +147,14 @@ function sliceIntoChunks(arr, chunkSize) {
             await sleep(10000)
             logger.info(`[jobpostingfetcher single query] : ${JSON.stringify(singleQuery)}`)
             await setupQueryOption(singleQuery, (rtn)=>{
-                console.log("[jobpostingfetcher result]", rtn.fetched)
-                logger.info(`[jobpostingfetcher result] : ${rtn.fetched}`)
-                // Logging.write("[jobpostingfetcher result]" + JSON.stringify(rtn.fetched))
+                if(rtn.fetched.page)
+                {
+                    logger.info(`[jobpostingfetcher result] finished before page ${rtn.fetched.page}`)
+                }else
+                {
+                    logger.error(`[jobpostingfetcher result] error : ${rtn.fetched}`)
+                }
+                
             })
         }
 
@@ -187,15 +192,29 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
         {
             result = await axios.request(queryOption)
         }else{
-            result = {}
+            result = {
+                headers : { messege : `MaxPageToProbe (${MaxPageToProbe}) limit reached`},
+                config :  { data : [] }
+            }
+            logger.info(`[processRequest] MaxPageToProbe (${MaxPageToProbe}) limit reached.`)
+            
         }
-        logger.info(`[processRequest] Rate limit remaining : ${result.headers["x-ratelimit-requests-remaining"]}`)
-        logger.info(`[processRequest] rowData length : ${JSON.stringify(result.data.length) }`)
-        // Logging.write("[Rate limit remaining]: " + JSON.stringify(result.headers["x-ratelimit-requests-remaining"]))
-        // Logging.write("[rowData length] : " + JSON.stringify(result.data.length) + "[rowData End]\n")  
-
-        if(  result.data !== undefined && result.data.length > 0   )//|| result.data.length>0 )
+        // Mostly the ratelimit information is included in the response header but sometimes not
+        if('x-ratelimit-requests-remaining' in result.headers)
         {
+            logger.info(`[processRequest] Rate limit remaining : ${result.headers["x-ratelimit-requests-remaining"]}`)
+        }else{
+            logger.info(`[processRequest] Rate limit info is not passed over in the header`)
+        }
+
+        // condition = result.hasOwnProperty('data') && result.data !== undefined && result.data.length > 0
+        
+        if(  result.hasOwnProperty('data') && result.data.length > 0 )
+        {
+            logger.info(`[processRequest] rowData length : ${JSON.stringify(result.data.length) }`)
+            // Logging.write("[Rate limit remaining]: " + JSON.stringify(result.headers["x-ratelimit-requests-remaining"]))
+            // Logging.write("[rowData length] : " + JSON.stringify(result.data.length) + "[rowData End]\n")  
+            
             result.data.forEach( async (element) => {
                 // Logging.write("[eachElem] : " + JSON.stringify(element) + "\n")
 
@@ -277,10 +296,16 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
         }
         else
         {
+            // Before MaxPageToProbe was set, the below served well as alll the result JSON object coming from RapidAPI
+            // But now we have to make our own 
             // Logging.write("[no data]\n")
+            // return {
+            //     "fetched" : result.config.data
+            // }
             return {
-                "fetched" : result.config.data
+                "fetched" : JSON.parse(queryOption.data)
             }
+            
         }   
             //  put validation here. don't allow null or soemthing differet from company NAme
             // also for better analysis, put log into the file

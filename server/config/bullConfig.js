@@ -1,7 +1,15 @@
 const Bull = require('bull')
 require('dotenv').config();
+const { NODE_ENV } = process.env;
 
-const redisURI = process.env.REDIS_URL
+let redisURI = null
+if(NODE_ENV === 'test' || NODE_ENV === 'development')
+{
+    redisURI = process.env.REDIS_URL_DEV
+}else{
+    redisURI = process.env.REDIS_URL
+}
+
 
 const jpProcessQueue = new Bull('jobpostingProcess', redisURI)
 

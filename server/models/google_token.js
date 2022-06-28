@@ -14,12 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   google_token.init({
-    token: {
+    token_chunk: {
       type: DataTypes.TEXT,
       primaryKey: true, 
       allowNull: false,
     },
-
+    refresh_token: {
+      type: DataTypes.TEXT, 
+      allowNull: false
+    },
 
   }, {
     sequelize,

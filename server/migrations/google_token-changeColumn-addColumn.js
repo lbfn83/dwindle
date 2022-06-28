@@ -24,34 +24,22 @@ up(queryInterface, Sequelize.DataTypes);
 
 async function up(queryInterface, DataTypes) {
 
-  // await queryInterface.renameColumn('user', 'userid', 'id')
+  await queryInterface.addColumn('google_token', 'refresh_token', {
+      type: DataTypes.TEXT
+  });
+
+  await queryInterface.renameColumn('google_token', 'token', 'token_chunk')
 
   // await queryInterface.removeColumn('company', 'job_scraper') 
 
   /* */
-  await queryInterface.bulkUpdate('company', {'job_scraper' : true }, 
+  // await queryInterface.bulkUpdate('company', {'job_scraper' : true }, 
         
-            {companyname : 
-                  { [Op.notLike]: 'Carv%'} 
-            } 
+  //           {companyname : 
+  //                 { [Op.notLike]: 'Carv%'} 
+  //           } 
         
-  )
-
-
-  /* 2. after define it with false... chaning it to defaultValue to true is
-  not changing anything */
-  // await queryInterface.changeColumn('company', 'job_scraper', {
-  //         type: DataTypes.BOOLEAN,
-  //         defaultValue : true, 
-  //         allowNull: false
-  // })
-
-  /* 1. add column */
-  // await queryInterface.addColumn('company', 'job_scraper', {
-    
-  //     type: DataTypes.BOOLEAN,
-  //     defaultValue : true
-  // });
+  // )
 }
 
 async function down(queryInterface,DataTypes) {
