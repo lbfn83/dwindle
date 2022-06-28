@@ -8,14 +8,14 @@ export const CompanyPage = () => {
 
     const { state } = location
 
-    const { name, jobs, website, companyindustry, description, benefits, links } = state
+    const { name, jobs, image, summary, description, benefits } = state
 
     return (
         <div className='content-container'>
             <div className='company-intro-container'>
                 <div className='company-title-intro'>
                     <h1>{name}</h1>
-                    <p>Abbott's life-changing technology helps people live fully and offers information, medicines and breakthroughs to help you manage your health.</p>
+                    <p>{summary}</p>
                     <div className='company-button'>
                         <a href={jobs}>
                             <span>View Jobs</span>
@@ -23,7 +23,7 @@ export const CompanyPage = () => {
                     </div>
                 </div>
                 <div>
-                    <img src='https://via.placeholder.com/400' alt=''/>
+                    <img src={image} alt={name}/>
                 </div>
             </div>
             <div className='company-description-container'>

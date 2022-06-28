@@ -42,8 +42,8 @@ export const PartnersDirectory = () => {
   return (
           
     <div className='partners-section'>
-        {partners.map((partners) => (
-          <PartnerItem partners={partners}/>
+        {partners.map((partners, id) => (
+          <PartnerItem key={id} partners={partners}/>
         ))}
     </div>
       

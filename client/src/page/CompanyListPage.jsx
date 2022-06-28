@@ -1,17 +1,18 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+
 
 import { CompanyCard } from '../component/CompanyCard'
 
-// const companyData = () => {
-//     fetch("http://localhost:5000/database/company")
-//     .then(response => response.json())
-//     .then(data => JSON.stringify(data))
-// }
 
 export const CompanyListPage = () => {
 
     const [companyData, setCompanyData] = useState([])
+
+    const location = useLocation()
+    const { state } = location
+    const { Title, PageTitle, PageInfo, Image} = state
 
 
     const getData = async() => {
@@ -25,14 +26,23 @@ export const CompanyListPage = () => {
 
   return (
     <div className='content-container'>
-        <div className='header-container'>
-            <h1>
-                View Thousands of jobs
-            </h1>
-            <p>Each company listed either provides student loan repayment, tuition reimbursement, or tuition assistance benefits.</p>
-
-            <p>Click the links within the company profiles below to view open jobs at companies that care about your future.</p>
+        <div className='companylist-header-container'>
+            <div className='companylist-header-text'>
+                <h1>
+                    {PageTitle}
+                </h1>
+                <p>{PageInfo}</p>
+            </div>
+            <div>
+                <img src={Image} alt={Title} />
+            </div>
+            
         </div>
+        <div className='title-container'>
+            <h2>{Title}</h2>
+            <p>Click the Company Card to learn more!</p>
+        </div>
+
         <div className='card-list-container'>
             {companyData.map((companyData, id) => (
                 <CompanyCard key={id} companyData={companyData} />
