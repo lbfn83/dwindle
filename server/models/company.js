@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
     },
-    companyname: {
+    company_name: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
@@ -35,14 +35,44 @@ module.exports = (sequelize, DataTypes) => {
       //   key : "company_name"
       // }
     },
-    // test: DataTypes.STRING,
-    description: DataTypes.TEXT,
-    benefits: DataTypes.TEXT, 
+    company_jobpage: DataTypes.TEXT,
+    company_website: DataTypes.TEXT,
+    industry: DataTypes.TEXT,
+    imagelink: DataTypes.TEXT,
+    company_summary: DataTypes.TEXT, 
+    company_description: DataTypes.TEXT, //rename it from description: DataTypes.TEXT,
+    benefit_details: DataTypes.TEXT, // rename it from benefits: DataTypes.TEXT,
+    link_to_benefit_details: DataTypes.TEXT,  
+   
     job_scraper: {
       type: DataTypes.BOOLEAN,
       defaultValue : true,
       allowNull: false
-    }
+    },
+
+    // Columns to categorize each company by benefits it offers
+    student_loan_repayment: {
+      type: DataTypes.BOOLEAN,
+      defaultValue : false,
+      allowNull: false
+    },
+    full_tuition_coverage: {
+      type: DataTypes.BOOLEAN,
+      defaultValue : false,
+      allowNull: false
+    },
+    tuition_assistance: {
+      type: DataTypes.BOOLEAN,
+      defaultValue : false,
+      allowNull: false
+    },
+    tuition_reimbursement: {
+      type: DataTypes.BOOLEAN,
+      defaultValue : false,
+      allowNull: false
+    },
+
+
   }, {
     sequelize,
     modelName: 'company',

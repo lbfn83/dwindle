@@ -105,8 +105,10 @@ module.exports = {registerDBDumpScheduler}
 
 command : pg_restore  -d [connection string] [archive file or directory where toc file is]
 
-if any dump file was originally from another database with different name and user, 
+even if it is from another database with diff name and user, 
 
-change toc.dat file's string to have right database information 
+it will work fine with some of warnings that can be ignored
+
+
 
 */
