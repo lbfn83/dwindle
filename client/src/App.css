@@ -44,7 +44,7 @@ button:active{
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* width: 1141px; */
+  width: 1141px;
 }
 
 /* page header styling begins */
@@ -615,6 +615,10 @@ button:active{
 @media screen and (max-width: 1140px){
   .header{
     flex-direction: column;
+  }
+
+  .content-container{
+    width: auto;
   }
 }
 
