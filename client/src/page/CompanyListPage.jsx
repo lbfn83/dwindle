@@ -26,14 +26,14 @@ export const CompanyListPage = () => {
 
   return (
     <div className='content-container'>
-        <div className='companylist-header-container'>
-            <div className='companylist-header-text'>
+        <div className='header'>
+            <div className='header-text-container'>
                 <h1>
                     {PageTitle}
                 </h1>
                 <p>{PageInfo}</p>
             </div>
-            <div>
+            <div className='header-image-container'>
                 <img src={Image} alt={Title} />
             </div>
             
