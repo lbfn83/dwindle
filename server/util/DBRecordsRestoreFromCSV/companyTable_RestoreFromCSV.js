@@ -62,7 +62,6 @@ async function comapnyRecordsRestoreFromCSV(filename)
         });
         console.log(cnt, JSON.stringify(dbObj))   
         dbObjArray.push(dbObj)
-        
     })
     .on("end", async() => {
         console.log("Total elements" + JSON.stringify(dbObjArray))

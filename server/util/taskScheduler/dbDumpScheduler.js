@@ -83,7 +83,7 @@ async function psqlDump() {
             logger.info(`[Bull DBDumpScheduler] psqlDump compress and upload : ${fileName}`)
             compressedFileName = fileName + ".gz"
             await uploadFile(compressedFileName).then((msg)=> {
-                logger.error(`[Bull DBDumpScheduler] Google upload finished : ${msg}`)
+                logger.info(`[Bull DBDumpScheduler] Google upload finished : ${msg}`)
                 fs.unlinkSync(compressedFileName);
             }).catch((error)=>{
                 logger.error(`[Bull DBDumpScheduler] Google upload error : ${error}`)

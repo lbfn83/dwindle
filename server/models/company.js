@@ -3,6 +3,7 @@ const {
   Model
 } = require('sequelize');
 const jobposting = require('./jobposting');
+const benefit = require('./benefit')
 
 module.exports = (sequelize, DataTypes) => {
   class company extends Model {
@@ -11,14 +12,19 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({jobposting}) {
+    static associate({jobposting, benefit}) {
       // define association here
       this.hasMany(jobposting, {
     
         foreignKey : "company_name",
         
       })
-    }
+      this.hasMany(benefit, {
+    
+        foreignKey : "company_name",
+        
+      })
+    } 
   }
   company.init({
     uuid: {

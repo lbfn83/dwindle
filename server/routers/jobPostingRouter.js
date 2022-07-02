@@ -113,7 +113,8 @@ router.delete('/jobposting/:uuid', async (req, res) => {
       return res.status(500).json({ error: 'Something went wrong' })
     }
   })
-  
+  //https://stackoverflow.com/questions/107390/whats-the-difference-between-a-post-and-a-put-http-request
+  // https://www.guru99.com/put-vs-post.html 
 router.put('/jobposting/:uuid', async (req, res) => {
     const uuid = req.params.uuid
     const { name, email, role } = req.body
