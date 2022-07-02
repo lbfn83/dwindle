@@ -15,8 +15,8 @@ export const Navbar = () => {
             {/* <li className="nav-option"><a href="/">About</a></li> */}
             <li className="nav-option"><Link to="/">Jobs</Link></li>
             <li className="nav-option"><Link to="/companies">Companies</Link></li>
-            {/* <li className="nav-option"><Link to="/">Benefits</Link></li>
-            <li className="nav-option"><a href='/'>Community</a></li> */}
+            <li className="nav-option"><Link to="/benefit">Benefit</Link></li>
+            {/* <li className="nav-option"><a href='/'>Community</a></li> */}
             <li className="nav-option"><Link to='/blog'>Blog</Link></li>
             <li className="nav-option"><a href='/partners'>Partners</a></li>
         </ul>
@@ -25,8 +25,8 @@ export const Navbar = () => {
             {/* <li className="nav-option"><a href="/">About</a></li> */}
             <li className="nav-option"><Link to="/">Jobs</Link></li>
             <li className="nav-option"><Link to="/companies">Companies</Link></li>
-            {/* <li className="nav-option"><Link to="/">Benefits</Link></li>
-            <li className="nav-option"><a href='/'>Community</a></li> */}
+            <li className="nav-option"><Link to="/benefit">Benefit</Link></li>
+            {/* <li className="nav-option"><a href='/'>Community</a></li> */}
             <li className="nav-option"><Link to='/blog'>Blog</Link></li>
             <li className="nav-option"><Link to='/partners'>Partners</Link></li>
         </ul>
