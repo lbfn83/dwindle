@@ -16,10 +16,15 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsTo(company, {
 
-         targetKey : "companyname",
+         targetKey : "company_name",
          foreignKey : "company_name",
         //  as : 'Asjobposting'
       })
+    }
+    
+    // https://sebhastian.com/sequelize-class-methods/
+    static classMethod() {
+
     }
   }
   

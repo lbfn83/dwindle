@@ -41,7 +41,7 @@ function sliceIntoChunks(arr, chunkSize) {
             where: {
                 job_scraper : true
             }})//.then((entries ) => {console.log("[Company DB entri]",entries)})
-        const companyList = companyDBentries.map((element) => element.companyname )
+        const companyList = companyDBentries.map((element) => element.company_name )
         const location = ['USA', 'CANADA']
         
         logger.info(`JobPosting Fetcher invoked : ${dateStr}`)    
