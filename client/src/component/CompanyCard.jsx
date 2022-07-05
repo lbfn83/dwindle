@@ -1,30 +1,54 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom"
 
 export const CompanyCard = ( {companyData} ) => {
 
-    const { companyname, companyjobpage, companywebsite, industry, imagelink, companysummary, companydescription, benefitdetails, } = companyData
+    const [compData, setCompData] = useState([])
+
+    //data from companylistpage.jsx
+    const { company_name } = companyData
 
     const navigate = useNavigate()
 
-    const toCompanyPage = () => {
-        navigate(`/companies/benefits/${companyname}`, {state:{name: companyname, jobs: companyjobpage, website: companywebsite, companyindustry: industry, image: imagelink, summary:companysummary, description: companydescription, benefits: benefitdetails }})
-    }
-    
 
+    const getCompanyData = async () => {
+        console.log(company_name)
+        const response = await fetch(`https://dwindle-backend-server.herokuapp.com/database/company/${company_name}`, {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors',
+        })
+        const data = await response.json()
+        setCompData(data)
+    }
+    useEffect(() => {
+        getCompanyData()
+    }, [])
+
+    const toCompanyPage = async() => {
+        navigate(`/companies/benefits/${company_name}`, {
+            state:{
+                name: compData.company_name, 
+                jobs: compData.company_jobpage, 
+                website: compData.company_website, 
+                companyindustry: compData.industry, 
+                image: compData.imagelink, 
+                summary: compData.company_summary, 
+                description: compData.company_description, 
+            }})
+    }
     return (
         <div className='company-card'>
             <div>
                 <div onClick={toCompanyPage} className='company-page-link' >
                     <div className='image-box'>
-                        <img src={imagelink} alt={companyname}/>
+                        <img src={compData.imagelink} alt={company_name}/>
                     </div>
-                    <p>{companyname}</p>
+                    <p>{company_name}</p>
                 
                     <div className='tag-container'>
                         <span className='tag'>
                             <span className='tag-text'>
-                                {industry}
+                                {compData.industry}
                             </span>
                         </span>
                     </div>
@@ -32,7 +56,7 @@ export const CompanyCard = ( {companyData} ) => {
                 <div className='social-buttons-container'>
                     <ul className='social-buttons-list'>
                         <li className='social-buttons-item'>
-                            <a className='social-buttons-link' href={companywebsite} target="_blank" rel="noreferrer">
+                            <a className='social-buttons-link' href={compData.company_website} target="_blank" rel="noreferrer">
                                 <img className='social-button-icon' alt="Jobs icon" src="https://dvzvtsvyecfyp.cloudfront.net/static/img/icons/social/black/link.svg"/>
                             </a>
                         </li>

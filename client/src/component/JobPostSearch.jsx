@@ -24,7 +24,7 @@ export const JobPostSearch = () => {
 
   useEffect( () => {
        
-    const apiReqString = `${BACKEND_SVR_URL}/database/company`
+    const apiReqString = `${BACKEND_SVR_URL}/database/companies`
  //    console.log(apiReqString)
     setLoading(true)
     axios.get(apiReqString).then(res => {
