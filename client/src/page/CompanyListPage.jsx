@@ -11,18 +11,26 @@ export const CompanyListPage = () => {
     const [companyData, setCompanyData] = useState([])
 
     const location = useLocation()
+
+    // data gathered from CompanyBenefitCard.jsx
     const { state } = location
-    const { Title, PageTitle, PageInfo, Image} = state
+    const { Title, PageTitle, PageInfo, Image, BenefitType} = state
 
 
-    const getData = async() => {
-        const response = await fetch('http://localhost:5000/database/company')
+    const getData = async () => {
+        const response = await fetch(`https://dwindle-backend-server.herokuapp.com/database/companies/benefit/${BenefitType}`, {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors',
+        })
         const data =  await response.json()
-        setCompanyData(data)
+        setCompanyData(data[0])
+        console.log(data[0])
     } 
+    
     useEffect(() => {
         getData()
     }, [])
+
 
   return (
     <div className='content-container'>
@@ -48,8 +56,7 @@ export const CompanyListPage = () => {
                 <CompanyCard key={id} companyData={companyData} />
             ))}
         </div>
-        {/* <CompanyCard companyData={companyData}/> */}
-        {/* <button onClick={response}>button</button> */}
+
     </div>
   )
 }

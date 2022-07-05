@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { useLocation } from 'react-router-dom';
 
@@ -8,8 +8,26 @@ export const CompanyPage = () => {
 
     const { state } = location
 
-    const { name, jobs, image, summary, description, benefits } = state
+    const { name, jobs, image, summary, description} = state
 
+    const [ benefitDetails, setBenefitDetails ] = useState([])
+
+    const getBenefitData = async () => {
+        const response = await fetch(`https://dwindle-backend-server.herokuapp.com/database/company/${name}/benefit`, { 
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors',
+        })
+        const data = await response.json()
+        // console.log(JSON.stringify(data.benefits))
+        // const temp = data.benefits
+        setBenefitDetails(data.benefits)
+    
+        
+    }
+    useEffect(() => {
+        getBenefitData()
+    }, [])
+    // console.log(benefitDetails)
     return (
         <div className='content-container'>
             <div className='company-intro-container'>
@@ -37,7 +55,12 @@ export const CompanyPage = () => {
                 <div className='our-education-benefits'>
                     <h2>Our Education Benefits</h2>
                     <div>
-                        <p>{benefits}</p>
+                        {benefitDetails.map((benefit, key) =>
+                            <div key={key}>
+                                <h3>{benefit.benefit_type}</h3>
+                                <p>{benefit.benefit_details}</p>
+                            </div>
+                        )}
                     </div>
                     
                 </div>
