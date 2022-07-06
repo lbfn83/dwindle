@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom"
+import { BACKEND_SVR_URL } from '../util/constants'
 
 export const CompanyCard = ( {companyData} ) => {
 
@@ -13,7 +14,7 @@ export const CompanyCard = ( {companyData} ) => {
 
     const getCompanyData = async () => {
         console.log(company_name)
-        const response = await fetch(`https://dwindle-backend-server.herokuapp.com/database/company/${company_name}`, {
+        const response = await fetch(`${BACKEND_SVR_URL}/database/company/${company_name}`, {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors',
         })

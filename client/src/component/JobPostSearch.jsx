@@ -22,6 +22,16 @@ export const JobPostSearch = () => {
     setClickCounter( clickCounter+1 )
   }
 
+  // const getJobData = async() => {
+  //   const response = await fetch(`${BACKEND_SVR_URL}/database/companies`, {
+  //     method: 'GET', // *GET, POST, PUT, DELETE, etc.
+  //     mode: 'cors',
+  // })
+  // const data =  await response.json()
+  // setCompanyData(data[0])
+  // console.log(data[0])
+  // }
+
   useEffect( () => {
        
     const apiReqString = `${BACKEND_SVR_URL}/database/companies`
@@ -32,6 +42,8 @@ export const JobPostSearch = () => {
           console.log("company list response : ",res.data)
           setArryCompany(res.data)
     })
+    
+
  }, [])
 
 
