@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-
+import { BACKEND_SVR_URL } from '../util/constants'
 
 import { CompanyCard } from '../component/CompanyCard'
 
@@ -18,7 +18,7 @@ export const CompanyListPage = () => {
 
 
     const getData = async () => {
-        const response = await fetch(`https://dwindle-backend-server.herokuapp.com/database/companies/benefit/${BenefitType}`, {
+        const response = await fetch(`${BACKEND_SVR_URL}/database/companies/benefit/${BenefitType}`, {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors',
         })
