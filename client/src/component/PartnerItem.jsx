@@ -6,7 +6,7 @@ export const PartnerItem = ({ partners }) => {
 
     return (
         <div className='partner-posts'>
-            <div className='image-container dolr'>
+            <div className='image-container'>
                 <img alt='' src={image} />
             </div>
             <div className='post-text'>
@@ -18,5 +18,7 @@ export const PartnerItem = ({ partners }) => {
             </div>
 
         </div>
+
+
         )
 }
