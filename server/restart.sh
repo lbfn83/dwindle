@@ -1,0 +1,1 @@
+curl -X DELETE https://api.heroku.com/apps/dwindle-backend-server/dynos --user "${HEROKU_CLI_USER}:${HEROKU_CLI_PWD}"  -H "Content-Type: application/json" -H "Accept: application/vnd.heroku+json; version=3"

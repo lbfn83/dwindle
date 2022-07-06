@@ -3,7 +3,7 @@
 require('dotenv').config(); 
 const  Sequelize=require('sequelize')
 const env = process.env.NODE_ENV || 'development';
-const config = require('../config/config.js')[env];
+const config = require('../config/seqConfig')[env];
 // don't want to pluralize table name
 config.define = {"freezeTableName" : true}
 config.dialectOptions = {ssl: {

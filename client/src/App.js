@@ -3,7 +3,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { JobPage } from './page/JobPage';
 import { BlogPage } from './page/BlogPage';
 import { PartnersPage } from './page/PartnersPage';
+import { CompanyPage } from './page/CompanyPage';
+import { CompanyListPage } from './page/CompanyListPage';
 import { Navbar } from './component/Navbar';
+import { CompaniesSectionPage } from './page/CompaniesSectionPage';
+import { BenefitPage } from './page/BenefitPage'
 
 import logo from './images/dwindleTMbigfinal.png'
 
@@ -24,6 +28,10 @@ function App() {
             <Route path="/" element={<JobPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/partners" element={<PartnersPage />} />
+            <Route path='/companies' element={<CompaniesSectionPage />} />
+            <Route path='/benefit' element={<BenefitPage />} />
+            <Route path="/companies/benefits" element ={<CompanyListPage />} />
+            <Route path="/companies/benefits/:name" element={<CompanyPage />} />
           </Routes>
 
         </div>

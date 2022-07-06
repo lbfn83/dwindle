@@ -13,36 +13,42 @@ const PORT = process.env.PORT || 5000;
 const companyRouter = require('./routers/companyRouter')
 const subscribeRouter = require('./routers/subscribeRouter')
 const jobpostingRouter = require('./routers/jobPostingRouter')
-
+const googleOAuth2Router = require('./routers/googleOAuth2Router')
 const bp = require('body-parser')
 
-const {initDatabase} = require('./util/setupDatabase')
+const { sequelize,Sequelize } = require('./models');
 
-const {dailyJobScraping} = require('./util/scheduler')
+const {logger} = require('./config/logger')
 
-const {pullJobPostings} = require('./controllers/jobPostingFetcher')
-const {jobPostingDataPurge} = require('./controllers/jobPostingDataPurge')
-const {setupCompanyListFromTxt} = require('./controllers/companyListInit');
-const { sequelize } = require('./models');
 
-require('dotenv').config()
-// console.log(process.env)
+// const {initDatabase} = require('./util/setupDatabase')
 
 // console.log("build path : " , buildPath)
 // app.use(express.static(buildPath));
 app.use(cors());
-app.use(bp.json())
+app.use(bp.json());
 
-
-/* !!!! use below to use sync command to create database and tables !!!!*/ 
+/* !!!! use below to invoke sync() to newly create database and tables 
+* only use this in Iaas or Local server to initialize database !!!! 
+*/
 // initDatabase();
 
-sequelize.authenticate().then(() => {
-  console.log('[Server]Connection established successfully.');
-}).catch(err => {
-  console.error('[Server]Unable to connect to the database:', err)});
-dailyJobScraping();
-// pullJobPostings();
+/* forcefully Drop and create Tables : use with caution! */
+// (async() => {
+//   await sequelize.sync({force : true}).then(()=>{
+//     console.log("sync done")
+//   })
+// })();
+
+
+(async() => {
+  await sequelize.authenticate().then(() => {
+    logger.log('info', `[Server] DB Connection established successfully.`);
+  }).catch(err => {
+    logger.log('error', `[Server] Unable to connect to the database : ${err}`);
+})})();
+
+
 
 // Alternative method that can be used in case of handling multiple routers
 // https://www.cloudnativemaster.com/post/how-to-add-multiple-routers-in-a-node-application-without-using-app-use-for-each-router
@@ -56,6 +62,23 @@ fs.readdirSync(routes_directory).forEach(route_file => {
   }
 });
 */
+/* ********* Schedulers *********** */
+
+const {registerJPProcess} = require('./util/taskScheduler/jobpostingFetchScheduler')
+const {registerDBDumpScheduler} = require('./util/taskScheduler/dbDumpScheduler')
+
+
+registerJPProcess()
+registerDBDumpScheduler()
+
+/* **** google API OAuth2 ****** */
+const {initGoogleDrive} = require('./config/googleDrive')
+global.googleToken = null;
+global.googleDrive = null;
+initGoogleDrive()
+app.use('/googleAuth', googleOAuth2Router)
+
+/* ***************************************** */
 
 app.use('/database', jobpostingRouter)
 app.use('/database' , subscribeRouter)
@@ -76,13 +99,23 @@ app.get('/files', (req, res, next) => {
 
 
 
+/*        **************        */
+
 // TODO: preliminary admin console. might have to build a seperate router for this 
 // When all of DB tables are set up 
 app.get("/admin", (req, res) => res.sendFile(`${__dirname}/static/index.html`))
 
 app.listen(PORT, () => {
-  console.log(`server started on port ${PORT}`);
+  logger.log('info', `[server] : server started on port ${PORT}`)
 });
+
+
+/*  Test for winston logger in production*/
+
+// setInterval(()=>{
+//   logger.info('TEST')
+//   logger.log('info', 'Hi, guys')
+// }, 10000)
 
 
 /* Below API End point is now obsolete as this application is not designed for open and exhaustive job search but only for

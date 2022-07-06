@@ -1,9 +1,14 @@
-const express = require('express');
+
 const fs = require("fs");
 const axios = require('axios');
 const db = require('../models')
 const company = db.company
 const jobposting = db.jobposting
+const {logger} = require('../config/logger')
+require('dotenv').config()
+
+const MaxPageToProbe = 15 // In case of not using page limit, please put undefined or comment this line out
+
 
 function sliceIntoChunks(arr, chunkSize) {
     const res = [];
@@ -21,25 +26,33 @@ function sliceIntoChunks(arr, chunkSize) {
     try{
         const dateLib  = new Date()
         const dateStr = (dateLib.toDateString(Date.now())+" "+dateLib.getHours()).replace(/\s/g, '_')
-        fs.promises.mkdir('./Log', { recursive: true }).catch(console.error);
-        var Logging = fs.createWriteStream(`./Log/logging${dateStr}.txt`, {
-        flags: 'a' // 'a' means appending (old data will be preserved)
-        })
+        
+        /* Manual logging file creation is replaced by winston logger */
+
+        // fs.promises.mkdir('./Log', { recursive: true }).catch(console.error);
+        
+        // var Logging = fs.createWriteStream(`./Log/logging${dateStr}.txt`, {
+        // flags: 'a' // 'a' means appending (old data will be preserved)
+        // })
+
         // TODO: gotta add Daily Scrape column in company table and
         // add "where" to filter out those companies marked with false in this column
         const companyDBentries = await company.findAll({
             where: {
                 job_scraper : true
             }})//.then((entries ) => {console.log("[Company DB entri]",entries)})
-        const companyList = companyDBentries.map((element) => element.companyname )
+        const companyList = companyDBentries.map((element) => element.company_name )
         const location = ['USA', 'CANADA']
-        Logging.write("<<<<<<<<"+ dateStr +">>>>>>>>>>")
-        Logging.write("\n------Company List---------\n")
         
-        companyList.forEach((each) => {
-            Logging.write(each+'\n')
-        }) 
-        Logging.write("\n------------------------\n")
+        logger.info(`JobPosting Fetcher invoked : ${dateStr}`)    
+        // Logging.write("<<<<<<<<"+ dateStr +">>>>>>>>>>")
+        
+        // Logging.write("\n------Company List---------\n")
+        
+        // companyList.forEach((each) => {
+        //     Logging.write(each+'\n')
+        // }) 
+        // Logging.write("\n------------------------\n")
         
         let combinedList = []
         
@@ -51,6 +64,7 @@ function sliceIntoChunks(arr, chunkSize) {
                     }
             })
             combinedList = [...combinedList, ...result]
+            
         })
 
         let results = []
@@ -67,7 +81,7 @@ function sliceIntoChunks(arr, chunkSize) {
             
                 data: `{"search_terms":"${item.company}","location":"${item.location}","page":"1","fetch_full_text": "yes"}`
             };  
-            await processAPIRequestAndSQL( queryOption , item.company, item.location, Logging).then((rtn) => {
+            await processAPIRequestAndSQL( queryOption , item.company, item.location).then((rtn) => {
                 // res.write(JSON.stringify(rtn)+"/n")
                 results.push(rtn)
                 cb(rtn);
@@ -125,14 +139,22 @@ function sliceIntoChunks(arr, chunkSize) {
         //     // rtnResult = new Promise((resolve) => resolve(results))
             
         // }); 
-        
+
 
         /* Synchronous Way : too slow */     
         for(const singleQuery of combinedList)
         {
+            await sleep(10000)
+            logger.info(`[jobpostingfetcher single query] : ${JSON.stringify(singleQuery)}`)
             await setupQueryOption(singleQuery, (rtn)=>{
-                console.log("[jobpostingfetcher result]", rtn.fetched)
-                Logging.write("[jobpostingfetcher result]" + JSON.stringify(rtn.fetched))
+                if(rtn.fetched.page)
+                {
+                    logger.info(`[jobpostingfetcher result] finished before page ${rtn.fetched.page}`)
+                }else
+                {
+                    logger.error(`[jobpostingfetcher result] error : ${rtn.fetched}`)
+                }
+                
             })
         }
 
@@ -141,26 +163,58 @@ function sliceIntoChunks(arr, chunkSize) {
     catch(err)
     {
         console.log("[jobpostingfetcher error] : "+ err)
-        Logging.write("[jobpostingfetcher error] : "+ err + "\n")
+        logger.error(`[jobpostingfetcher error] : ${err}`)
+        // Logging.write("[jobpostingfetcher error] : "+ err + "\n")
         return { "error" : err}
     }
 
 }
 
-async function processAPIRequestAndSQL( queryOption, companyName, loc, Logging)
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function processAPIRequestAndSQL( queryOption, companyName, loc)
 {
     try
     {    
-  
-        Logging.write("\n------API response---------\n")
-        Logging.write("\n---queryOption : " + queryOption.data + "----\n")
-        
-        const result = await axios.request(queryOption)
-        Logging.write("[Rate limit remaining]: " + JSON.stringify(result.headers["x-ratelimit-requests-remaining"]))
-        Logging.write("[rowData length] : " + JSON.stringify(result.data.length) + "[rowData End]\n")  
+        await sleep(10000)
 
-        if(  result.data !== undefined && result.data.length > 0   )//|| result.data.length>0 )
+        logger.info(`[processRequest] queryOption : ${queryOption.data}`)
+        // Logging.write("\n------API response---------\n")
+        // Logging.write("\n---queryOption : " + queryOption.data + "----\n")
+        
+        // const result = await axios.request(queryOption)
+        
+        const pageNum = JSON.parse(queryOption.data).page
+        let result
+        if(MaxPageToProbe === undefined || MaxPageToProbe >= pageNum)
         {
+            result = await axios.request(queryOption)
+        }else{
+            result = {
+                headers : { messege : `MaxPageToProbe (${MaxPageToProbe}) limit reached`},
+                config :  { data : [] }
+            }
+            logger.info(`[processRequest] MaxPageToProbe (${MaxPageToProbe}) limit reached.`)
+            
+        }
+        // Mostly the ratelimit information is included in the response header but sometimes not
+        if('x-ratelimit-requests-remaining' in result.headers)
+        {
+            logger.info(`[processRequest] Rate limit remaining : ${result.headers["x-ratelimit-requests-remaining"]}`)
+        }else{
+            logger.info(`[processRequest] Rate limit info is not passed over in the header`)
+        }
+
+        // condition = result.hasOwnProperty('data') && result.data !== undefined && result.data.length > 0
+        
+        if(  result.hasOwnProperty('data') && result.data.length > 0 )
+        {
+            logger.info(`[processRequest] rowData length : ${JSON.stringify(result.data.length) }`)
+            // Logging.write("[Rate limit remaining]: " + JSON.stringify(result.headers["x-ratelimit-requests-remaining"]))
+            // Logging.write("[rowData length] : " + JSON.stringify(result.data.length) + "[rowData End]\n")  
+            
             result.data.forEach( async (element) => {
                 // Logging.write("[eachElem] : " + JSON.stringify(element) + "\n")
 
@@ -189,26 +243,40 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc, Logging)
                     */
                     
                     /* Insert new jobposting item or Update existing DB entry corresponding to jobposting item*/
-                    const foundEntry = await jobposting.findOne({where : {
-                        linkedin_job_url_cleaned: element.linkedin_job_url_cleaned 
-                    }})
+                    /* Since RapidAPI's data set is inconsistent, some of jobpostings that was already soft-deleted might 
+                    be brought in again later query, so the logic should be able to detect this and restore the record accordingly  */ 
+                    const foundEntry = await jobposting.findOne({
+                        paranoid : false, 
+                        where : { linkedin_job_url_cleaned: element.linkedin_job_url_cleaned }
+                    })
                     // console.log("[Select result]: " + foundEntry)
                     if(foundEntry !== null)
                     {
-                        // update
-                        foundEntry.set(element)
-                        Logging.write("[update] : " + JSON.stringify(foundEntry.linkedin_job_url_cleaned)+"\n")
-                        await foundEntry.save()
+                        // sort out whether it is soft deleted or not 
+                        if(foundEntry.deletedAt !== null)
+                        {
+                            logger.info(`[processRequest] restore : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `)
+                            await foundEntry.restore()
+                        }else{
+                            // update
+                            await foundEntry.set(element)
+                            logger.info(`[processRequest] Update : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `)
+                            // Logging.write("[update] : " + JSON.stringify(foundEntry.linkedin_job_url_cleaned)+"\n")
+                            await foundEntry.save()
+                        }
                     
                     }else{
-                        await jobposting.create(element)    
-                        Logging.write("[insert]"+JSON.stringify(element.linkedin_job_url_cleaned)+"\n");    
+                        logger.info(`[processRequest] insert : ${JSON.stringify(element.linkedin_job_url_cleaned)} `) 
+                        await jobposting.create(element)   
+                        // Logging.write("[insert]"+JSON.stringify(element.linkedin_job_url_cleaned)+"\n");    
                     }
 
                 }else
                 {
                     // res.write
-                    Logging.write("[error_from_API]"+element.normalized_company_name +" is not a search keyword\n")
+                    
+                    logger.warn(`[processRequest] IncorrectDatafromAPI : ${element.normalized_company_name} is not a seach keyword `) 
+                    // Logging.write("[error_from_API]"+element.normalized_company_name +" is not a search keyword\n")
                 }
             })
             // In recursive manner, request next page from API end point
@@ -224,14 +292,20 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc, Logging)
             // }
             
             /* Production purpose return */
-            return await processAPIRequestAndSQL( queryOption , companyName, loc, Logging)
+            return await processAPIRequestAndSQL( queryOption , companyName, loc)
         }
         else
         {
+            // Before MaxPageToProbe was set, the below served well as alll the result JSON object coming from RapidAPI
+            // But now we have to make our own 
             // Logging.write("[no data]\n")
+            // return {
+            //     "fetched" : result.config.data
+            // }
             return {
-                "fetched" : result.config.data
+                "fetched" : JSON.parse(queryOption.data)
             }
+            
         }   
             //  put validation here. don't allow null or soemthing differet from company NAme
             // also for better analysis, put log into the file
@@ -241,8 +315,11 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc, Logging)
 
     }catch(error)
     {
-        
-        Logging.write("[error] : "+ error+ "\n")
+        logger.error(`[processRequest] error : ${error}`)
+        // Logging.write("[error] : "+ error+ "\n")
+        return {
+            "fetched" : error
+        }
     }
 }
 

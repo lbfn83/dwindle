@@ -16,10 +16,15 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsTo(company, {
 
-         targetKey : "companyname",
+         targetKey : "company_name",
          foreignKey : "company_name",
         //  as : 'Asjobposting'
       })
+    }
+    
+    // https://sebhastian.com/sequelize-class-methods/
+    static classMethod() {
+
     }
   }
   
@@ -29,14 +34,14 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
     },
     linkedin_job_url_cleaned: {
-      type : DataTypes.STRING,
+      type : DataTypes.TEXT,
       primaryKey: true
     },
     company_name: {
       type: DataTypes.STRING
     },
     normalized_company_name: DataTypes.STRING,
-    job_title: DataTypes.STRING,
+    job_title: DataTypes.TEXT,
     job_location: DataTypes.STRING,
 // Should make this column to only accept either of USA or CANADA
     normalized_job_location : {

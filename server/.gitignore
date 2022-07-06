@@ -1,3 +1,11 @@
 node_modules
 .env
 MISC
+Log
+temp
+temp_dbbackupPrac
+util/obsolete
+#heroku doesn't need below
+yarn.lock
+package-lock.json
+
