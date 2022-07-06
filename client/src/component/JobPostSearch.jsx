@@ -13,7 +13,7 @@ export const JobPostSearch = () => {
   const [locationField, setlocationField] = useState("")
   const [clickCounter, setClickCounter] = useState(0)
   
-  const [loading, setLoading] = useState(false)
+  const [ loading, setLoading ] = useState(false)
   const [arryCompany, setArryCompany] = useState([])
 
   const handleClick = (event) => {
@@ -28,7 +28,7 @@ export const JobPostSearch = () => {
   //     mode: 'cors',
   // })
   // const data =  await response.json()
-  // setCompanyData(data[0])
+  // setArryCompany(data)
   // console.log(data[0])
   // }
 
@@ -42,7 +42,7 @@ export const JobPostSearch = () => {
           console.log("company list response : ",res.data)
           setArryCompany(res.data)
     })
-    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
 
  }, [])
 

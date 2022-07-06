@@ -12,17 +12,19 @@ export const CompanyCard = ( {companyData} ) => {
     const navigate = useNavigate()
 
 
-    const getCompanyData = async () => {
-        console.log(company_name)
-        const response = await fetch(`${BACKEND_SVR_URL}/database/company/${company_name}`, {
-            method: 'GET', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors',
-        })
-        const data = await response.json()
-        setCompData(data)
-    }
-    useEffect(() => {
+
+    useEffect(() => {    
+        const getCompanyData = async () => {
+            console.log(company_name)
+            const response = await fetch(`${BACKEND_SVR_URL}/database/company/${company_name}`, {
+                method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors',
+            })
+            const data = await response.json()
+            setCompData(data)
+        }
         getCompanyData()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const toCompanyPage = async() => {
