@@ -28,10 +28,23 @@ export const CompanyPage = () => {
         getBenefitData()
     }, [])
     // console.log(benefitDetails)
+
+    const fixString = (string) => {
+        const noUnderscore = string.replaceAll("_", " ")
+
+        const words = noUnderscore.split(" ")
+
+        for (let i = 0; i < words.length; i++) {
+            words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+        }
+
+        return words.join(" ");
+    }
+
     return (
         <div className='content-container'>
-            <div className='company-intro-container'>
-                <div className='company-title-intro'>
+            <div className='header'>
+                <div className='header-text-container'>
                     <h1>{name}</h1>
                     <p>{summary}</p>
                     <div className='company-button'>
@@ -57,7 +70,7 @@ export const CompanyPage = () => {
                     <div>
                         {benefitDetails.map((benefit, key) =>
                             <div key={key}>
-                                <h3>{benefit.benefit_type}</h3>
+                                <h3>{fixString(benefit.benefit_type)}</h3>
                                 <p>{benefit.benefit_details}</p>
                             </div>
                         )}

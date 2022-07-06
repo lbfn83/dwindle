@@ -342,7 +342,7 @@ button:active{
 
 .partner-posts{
     display: block;
-    overflow: hidden;
+    overflow:visible;
     width: 30%;
     margin: 15px;
     min-width: 350px;
@@ -763,6 +763,14 @@ button:active{
 
 @media screen and (max-width: 414px){
 
+  .form-component select {
+    width: 100%;
+  }
+
+  .form-component input{
+    width: 90%;
+  }
+
   .company-card{
     width: 100%;
   }
@@ -787,5 +795,13 @@ button:active{
 
   .nav-option{
     margin: 0;
+  }
+
+  .partner-posts{
+    min-width: 100%;
+  }
+
+  .post-text span{
+    white-space: normal;
   }
 }
