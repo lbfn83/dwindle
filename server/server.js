@@ -18,40 +18,7 @@ const bp = require('body-parser')
 
 const { sequelize,Sequelize } = require('./models');
 
-
-/******************************************* */
-global.logfileName = null
 const {logger} = require('./config/logger')
-
-process
-.on('SIGTERM', shutdown('SIGTERM'))
-.on('SIGINT',  shutdown('SIGINT'))
-.on('uncaughtException', shutdown('uncaughtException'))
-
-function shutdown(signal)
-{
-  return  (err) => {
-    logger.info(`Signal triggered : ${signal}`);
-    if(err){
-      console.log(`err : ${err}`)
-      logger.error(`Error ${JSON.stringify(err.stack || err)}`);  
-    }
-    console.log(logger.transports[0].listeners('rotate'))
-    // third argument 'new file name' is not really valid since 
-    // heroku will wipe out any generated file outside from its src code
-    // this file generated with new file name will be soon gone
-    logger.transports[0].emit('rotate', global.logfileName ,'soon-to-be-deleted')
-    setTimeout(() => {
-      console.log('...waited 10s, exiting.')
-      process.exit(err ? 1 : 0);
-    }, 10000)
-
-    
-  }
-}
-
-/**********************************/ 
-
 
 // const {initDatabase} = require('./util/setupDatabase')
 
@@ -71,6 +38,7 @@ app.use(bp.json());
 //     console.log("sync done")
 //   })
 // })();
+
 
 
 (async() => {
@@ -104,6 +72,7 @@ registerDBDumpScheduler()
 
 /* **** google API OAuth2 ****** */
 const {initGoogleDrive} = require('./config/googleDrive');
+
 global.googleToken = null;
 global.googleDrive = null;
 initGoogleDrive()
