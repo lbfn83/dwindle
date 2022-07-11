@@ -691,6 +691,13 @@ button:active{
   .post-item:nth-child(5n+1) {
     width: 100%;
   }
+  .company-button{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
 
 }
 
@@ -726,9 +733,10 @@ button:active{
   .posting-text-container h1{
     padding: 0px;
   }
+
 }
 
-@media screen and (max-width: 500px){
+@media screen and (max-width: 550px){
 
   .header-image-container{
     width: 100%;
@@ -758,7 +766,9 @@ button:active{
   .partner-title-container{
     width: 100%;
   }
-
+  .company-description-container{
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 414px){
