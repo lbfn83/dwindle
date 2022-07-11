@@ -102,7 +102,7 @@ export const JobPostSearch = () => {
                 <option value="">--Please choose an option--</option>
                 {
                   arryCompany.map( (p, index) =>
-                    <option key={index} value={p.companyname} >{p.companyname}</option>
+                    <option key={index} value={p.company_name} >{p.company_name}</option>
                   )
                 }
   
