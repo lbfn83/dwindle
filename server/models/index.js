@@ -12,10 +12,15 @@ const db = {};
 // console.log("[index.js config check] " , JSON.stringify(config))
 // don't want to pluralize table name
 config.define = {"freezeTableName" : true}
-config.dialectOptions = {ssl: {
-  require: true,
-  rejectUnauthorized: false, // very important
-}}
+
+// ssl option is only enabled for the remote database
+if( env !== 'development')
+{
+  config.dialectOptions = {ssl: {
+    require: true,
+    rejectUnauthorized: false, // very important
+  }}
+}        
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);

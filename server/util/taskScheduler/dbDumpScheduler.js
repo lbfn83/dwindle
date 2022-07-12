@@ -1,6 +1,6 @@
 
 const { execSync } = require('child_process');
-const {dbDumpScheduler} = require('../../config/bullConfig')
+const {dbDumpQueue} = require('../../config/bullConfig')
 const compress = require('gzipme');
 const fs = require('fs')
 const db = require('../../models/')
@@ -23,7 +23,7 @@ const database = db.sequelize.config.database;
 
 const { NODE_ENV } = process.env;
 
-logger.info(`[Bull DBDumpScheduler] NODE_ENV ${NODE_ENV} `)
+logger.info(`[Bull dbDumpQueue] NODE_ENV ${NODE_ENV} `)
 const cronOpt = (() => {
     if(NODE_ENV === 'test' || NODE_ENV === 'development')
     {
@@ -37,23 +37,23 @@ const cronOpt = (() => {
 
 async function registerDBDumpScheduler()
 {
-    logger.info(`[Bull DBDumpScheduler] registered! `)
-    await dbDumpScheduler.obliterate({force : true})
-    dbDumpScheduler.add({ message : 'db dump finished!' } , {repeat: cronOpt})
+    logger.info(`[Bull dbDumpQueue] registered! `)
+    await dbDumpQueue.obliterate({force : true})
+    dbDumpQueue.add({ message : 'db dump finished!' } , {repeat: cronOpt})
 }
 
-dbDumpScheduler.process( async(job) => {
-    logger.info(`[Bull DBDumpScheduler] Consumer Started!`)
+dbDumpQueue.process( async(job) => {
+    logger.info(`[Bull dbDumpQueue] Consumer Started!`)
 
     // logger.info(`[Bull DBDumpScheduler] Consumer: job info in consumer: ${JSON.stringify(job.data)}`)
     psqlDump()
 })
 
-dbDumpScheduler.on('completed', function (job) {
+dbDumpQueue.on('completed', function (job) {
     // A job successfully completed with a `result`.
-    logger.debug(`[Bull DBDumpScheduler] Event listner : completed  : ${JSON.stringify(job)}`)
+    logger.debug(`[Bull dbDumpQueue] Event listner : completed  : ${JSON.stringify(job)}`)
     
-    logger.info(`[Bull DBDumpScheduler] Event listner: completed : ${JSON.stringify(job.data.message)}`)
+    logger.info(`[Bull dbDumpQueue] Event listner: completed : ${JSON.stringify(job.data.message)}`)
 })
 
 async function psqlDump() {
@@ -76,17 +76,17 @@ async function psqlDump() {
     
     try{
         const output = execSync(`pg_dump -f ${fileName} -F t postgres://${username}:${password}@${host}:5432/${database} `, { encoding: 'utf-8' })
-        logger.info(`[Bull DBDumpScheduler] psqlDump db dump done `)
+        logger.info(`[Bull dbDumpQueue] psqlDump db dump done `)
         // compress and uploadFile doesn't return anything
         await compress(fileName).then(async () => {
             
-            logger.info(`[Bull DBDumpScheduler] psqlDump compress and upload : ${fileName}`)
+            logger.info(`[Bull dbDumpQueue] psqlDump compress and upload : ${fileName}`)
             compressedFileName = fileName + ".gz"
             await uploadFile(compressedFileName).then((msg)=> {
-                logger.info(`[Bull DBDumpScheduler] Google upload finished : ${msg}`)
+                logger.info(`[Bull dbDumpQueue] Google upload finished : ${msg}`)
                 fs.unlinkSync(compressedFileName);
             }).catch((error)=>{
-                logger.error(`[Bull DBDumpScheduler] Google upload error : ${error}`)
+                logger.error(`[Bull dbDumpQueue] Google upload error : ${error}`)
             })
     
         }).then(()=> {
@@ -94,7 +94,7 @@ async function psqlDump() {
         });
     }catch(error)
     {
-        logger.error(`[Bull DBDumpScheduler] psqlDump error : ${error}`)
+        logger.error(`[Bull dbDumpQueue] psqlDump error : ${error}`)
     }
 
 }

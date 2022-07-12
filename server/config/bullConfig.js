@@ -19,8 +19,10 @@ const emailServiceScheduler = new Bull('emailServiceScheduler', redisURI)
 
 const emailSingleTaskQueue = new Bull('emailSingleTaskQueue', redisURI)
 
-const dbDumpScheduler = new Bull('dbDumpScheduler', redisURI)
+const dbDumpQueue = new Bull('dbDumpScheduler', redisURI)
+
+const googleTKTablePurgeQueue = new Bull('googleTKTablePurge', redisURI)
 
 module.exports = {
-    jpProcessQueue, loggingQueue, emailServiceScheduler, emailSingleTaskQueue, dbDumpScheduler
+    jpProcessQueue, loggingQueue, emailServiceScheduler, emailSingleTaskQueue, dbDumpQueue, googleTKTablePurgeQueue
 }

@@ -64,11 +64,12 @@ fs.readdirSync(routes_directory).forEach(route_file => {
 */
 /* ********* Schedulers *********** */
 
-const {registerJPProcess} = require('./util/taskScheduler/jobpostingFetchScheduler')
-const {registerDBDumpScheduler} = require('./util/taskScheduler/dbDumpScheduler')
-
-registerJPProcess()
-registerDBDumpScheduler()
+const {registerJPProcess} = require('./util/taskScheduler/jobpostingFetchScheduler');
+const {registerDBDumpScheduler} = require('./util/taskScheduler/dbDumpScheduler');
+const {registerGoogleTKpurgeScheduler}= require('./util/taskScheduler/googleTKpurgeScheduler');
+registerGoogleTKpurgeScheduler();
+registerJPProcess();
+registerDBDumpScheduler();
 
 /* **** google API OAuth2 ****** */
 const {initGoogleDrive} = require('./config/googleDrive');

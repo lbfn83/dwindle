@@ -1,8 +1,8 @@
 
 const {logger} = require('../../config/logger')
 
-const {pullJobPostings} = require('../../controllers/jobPostingFetcher')
-const {jobPostingDataPurge} = require('../../controllers/jobPostingDataPurge')
+const {pullJobPostings} = require('../../service/jobPostingFetcher')
+const {jobPostingDataPurge} = require('../../service/jobPostingDataPurge')
 
 const {jpProcessQueue} = require('../../config/bullConfig')
 require('dotenv').config();
