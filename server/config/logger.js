@@ -149,7 +149,7 @@ transport.on('rotate', async function (oldFilename, newFilename) {
         else{
             const filenameTS = `.${date.getHours()}_${date.getMinutes()}`;
             const filenameUploaded = oldFilename.split(".")[0]+ filenameTS + ".log" 
-            fs.renameSync(path.join(__dirname, oldFilename), path.join(__dirname, filenameUploaded))
+            // fs.renameSync(path.join(__dirname, oldFilename), path.join(__dirname, filenameUploaded))
             fs.renameSync( oldFilename, filenameUploaded)
         
             await uploadFile(filenameUploaded)
@@ -157,7 +157,7 @@ transport.on('rotate', async function (oldFilename, newFilename) {
         }
     }catch(err)
     {
-        console.log(`err : ${err}`)
+        logger.error( `[Logger rotation event]err : ${err}`)
     }
 });
 
