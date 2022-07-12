@@ -1,8 +1,8 @@
 
 const {logger} = require('../../config/logger')
 
-const {pullJobPostings} = require('../../controllers/jobPostingFetcher')
-const {jobPostingDataPurge} = require('../../controllers/jobPostingDataPurge')
+const {pullJobPostings} = require('../../service/jobPostingFetcher')
+const {jobPostingDataPurge} = require('../../service/jobPostingDataPurge')
 
 const {jpProcessQueue} = require('../../config/bullConfig')
 require('dotenv').config();
@@ -16,7 +16,7 @@ logger.info(`[Bull jpProcessQueue] NODE_ENV ${NODE_ENV} `)
 const cronOpt = (() => {
     if(NODE_ENV === 'test' || NODE_ENV === 'development')
     {
-        return { cron : '14 10 * * *'};
+        return { cron : '06 14 * * *'};
     }
     else{
         // At 10:00 UTC on Monday, Tuesday, Wednesday, Thursday, and Friday.

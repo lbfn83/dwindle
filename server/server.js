@@ -20,7 +20,6 @@ const { sequelize,Sequelize } = require('./models');
 
 const {logger} = require('./config/logger')
 
-
 // const {initDatabase} = require('./util/setupDatabase')
 
 // console.log("build path : " , buildPath)
@@ -39,6 +38,7 @@ app.use(bp.json());
 //     console.log("sync done")
 //   })
 // })();
+
 
 
 (async() => {
@@ -64,15 +64,16 @@ fs.readdirSync(routes_directory).forEach(route_file => {
 */
 /* ********* Schedulers *********** */
 
-const {registerJPProcess} = require('./util/taskScheduler/jobpostingFetchScheduler')
-const {registerDBDumpScheduler} = require('./util/taskScheduler/dbDumpScheduler')
-
-
-registerJPProcess()
-registerDBDumpScheduler()
+const {registerJPProcess} = require('./util/taskScheduler/jobpostingFetchScheduler');
+const {registerDBDumpScheduler} = require('./util/taskScheduler/dbDumpScheduler');
+const {registerGoogleTKpurgeScheduler}= require('./util/taskScheduler/googleTKpurgeScheduler');
+registerGoogleTKpurgeScheduler();
+registerJPProcess();
+registerDBDumpScheduler();
 
 /* **** google API OAuth2 ****** */
-const {initGoogleDrive} = require('./config/googleDrive')
+const {initGoogleDrive} = require('./config/googleDrive');
+
 global.googleToken = null;
 global.googleDrive = null;
 initGoogleDrive()

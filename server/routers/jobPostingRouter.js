@@ -3,7 +3,7 @@ const router = express.Router();
 const {jobposting, company} = require('../models');
 const sequelize = require('sequelize')
 const {toHttp} = require('../util/toHttp')
-const {pullJobPostings} = require('../controllers/jobPostingFetcher')
+const {pullJobPostings} = require('../service/jobPostingFetcher')
 const util = require('util')
 
 const limit = 250
