@@ -18,8 +18,8 @@ function App() {
     <div className='site-container'>
       <BrowserRouter>
         <div className='title-bar'>
-          <div className='logo-image-container'><img src={logo} alt="dwindle logo" /></div> 
-          <button>Post a Job</button>
+          <a href="/" className='logo-image-container'><img src={logo} alt="dwindle logo" /></a> 
+          <button>Subscribe</button>
         </div>
 
         <div className='page-container'>
