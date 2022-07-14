@@ -8,18 +8,23 @@ import { CompanyListPage } from './page/CompanyListPage';
 import { Navbar } from './component/Navbar';
 import { CompaniesSectionPage } from './page/CompaniesSectionPage';
 import { BenefitPage } from './page/BenefitPage'
+import { Subscribe } from './page/Subscribe';
+
 
 import logo from './images/dwindleTMbigfinal.png'
 
 import './App.css'
 
 function App() {
+
   return (
     <div className='site-container'>
       <BrowserRouter>
         <div className='title-bar'>
           <a href="/" className='logo-image-container'><img src={logo} alt="dwindle logo" /></a> 
-          <button>Subscribe</button>
+          <div className='title-button'>
+            <a href='/subscribe'>Subscribe</a>
+          </div>
         </div>
 
         <div className='page-container'>
@@ -30,6 +35,7 @@ function App() {
             <Route path="/partners" element={<PartnersPage />} />
             <Route path='/companies' element={<CompaniesSectionPage />} />
             <Route path='/benefit' element={<BenefitPage />} />
+            <Route path='/subscribe' element={<Subscribe />} />
             <Route path="/companies/benefits" element ={<CompanyListPage />} />
             <Route path="/companies/benefits/:name" element={<CompanyPage />} />
           </Routes>

@@ -82,6 +82,22 @@ button:active{
   align-items: center;
 }
 
+.title-button a{
+  display: flex;
+  font-family: 'Poppins', sans-serif;
+  background-color: #96DFE3;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 2px 5px 0px #0b325e;
+  text-decoration: none;
+  color: black;
+  width: 120px;
+  height: 44px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  margin-right: 50px;
+}
 .logo-image-container{
   width: 373px;
   height: 105px;
@@ -612,6 +628,45 @@ button:active{
 
 /* benefit page styling ends */
 
+/* Subscribe page styling begins */
+
+.subscribe-container{
+  width: 900px;
+  border: solid 1px black;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.subscribe-text-container{
+  max-width: 550px;
+  text-align: center;
+  
+  
+}
+
+.subscribe-list-container ul {
+  list-style-position: inside;
+  margin: 0;
+  padding: 0;
+}
+
+.subscribe-list-container ul li{
+  color: #3d3d3d;
+}
+
+.subscribe-input-container{
+  margin-top: 50px;
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Subscribe page styling begins */
+
 @media screen and (max-width: 1140px){
   .header{
     flex-direction: column;
@@ -698,10 +753,14 @@ button:active{
     justify-content: center;
     margin-bottom: 40px;
   }
+  .subscribe-container{
+    width: 100%;
+  }
 
 }
 
 @media screen and (max-width: 720px){
+
 
   .header-image-container{
     width: calc(100% - 200px);
@@ -772,6 +831,10 @@ button:active{
 }
 
 @media screen and (max-width: 414px){
+
+  .title-button a {
+    margin-right: 0;
+  }
 
   .form-component select {
     width: 100%;
