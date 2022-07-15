@@ -621,6 +621,38 @@ button:active{
     width: auto;
   }
 }
+/* bebenfit page styling ends */
+
+/*job benefit options styling begins*/
+
+.job-benefit-options{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-top: 50px;;
+}
+
+.benefit-option{
+  background-color: #96DFE3;
+  padding: 5px 25px;
+  border-radius: 20px;
+  transition: 0.3s;
+}
+
+.benefit-option:hover{
+  border-radius: 0;
+  cursor: pointer;
+  background-color: #84c7ca;
+}
+
+
+.benefit-option-focus{
+  border-radius: 0;
+  padding: 5px 25px;
+  cursor: pointer;
+  background-color: #84c7ca;
+}
 
 @media screen and (max-width: 940px){
 

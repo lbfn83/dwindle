@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Search from './Search';
 import axios from 'axios'
 import { BACKEND_SVR_URL } from "../util/constants";
+import { JobBenefitFilter } from './JobBenefitFilter';
 // import AsyncSelect from 'react-select/async' 
 // import Select from 'react-select'
 
@@ -126,12 +127,14 @@ export const JobPostSearch = () => {
             <button onClick={handleClick} >Find Jobs</button> 
             {/* disabled = {!(keywordField&&locationField)} */}
         </form>
-
-        <form className = 'search-result'>
+        <JobBenefitFilter />
+        <div className = 'search-result'>
             <Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter}/>
             
             {/* {(clickCounter>0)?<Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter}/>: null} */}
-        </form>
+        </div>
+
+        
     
     </div>
   )
