@@ -56,4 +56,8 @@ jpProcessQueue.on('completed', function (job, result) {
     logger.info(`[Bull jpProcessQueue] complete event : ${JSON.stringify(job)}, ${result}`)
 })
 
+jpProcessQueue.on('error', function (error) {
+    logger.error(`Error connecting to jpProcessQueue: "${error}"`);
+})
+
 module.exports = {registerJPProcess};

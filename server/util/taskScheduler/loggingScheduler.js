@@ -49,4 +49,8 @@ loggingQueue.on('completed', function (job, result) {
     logger.info(`[Bull loggingQueue]  Event listner: completed : ${JSON.stringify(job.data.message)}`)
 })
 
+loggingQueue.on('error', function (error) {
+    logger.error(`Error connecting to loggingQueue: "${error}"`);
+})
+
 module.exports = {registerLogging};
