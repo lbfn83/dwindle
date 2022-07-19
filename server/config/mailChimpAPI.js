@@ -2,9 +2,6 @@ const mailchimp = require('@mailchimp/mailchimp_marketing');
 const {logger} = require('./logger')
 require('dotenv').config();
 
-/* Should be migrated into config later */
-// apiKey: '9032298564117e029194ab9379de1d51-us14',
-// server: 'us14'
 
 
 mailchimp.setConfig({

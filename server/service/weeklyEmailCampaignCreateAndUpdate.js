@@ -1,8 +1,8 @@
 const {logger} = require('../config/logger');
 const MCAPI = require('../config/mailChimpAPI');
 
-const {weeklyEmailJobpostingPull} = require('./weeklyEmailDynamicContent');
-const {setTestFileTail} = require('./weeklyEmailCampaignSend');
+const {dyanmicConentBuilder} = require('./weeklyEmailDynamicContent');
+
 require('dotenv').config();
 const { NODE_ENV } = process.env;
 
@@ -216,12 +216,12 @@ const weeklyCampaignUpdate = async() => {
         if( status === 'save')
         {
             // TODO : DB에서 JobData 뽑아오기
-            // const dynamicContent = await weeklyEmailJobpostingPull();
+            const dynamicContent = await dyanmicConentBuilder();
 
-            const dynamicContent = `<style>  width: 300px; border: 15px solid green;
-            padding: 50px;
-            margin: 20px; </style>
-            <div class="job-posting"><div class="posting-text-container"><h2>Best Buy</h2><h1> AGENT, AUTOTECH I </h1><div>Northridge, CA | 2022-07-06 </div></div><a href="https://www.linkedin.com/jobs/view/agent-autotech-i-at-best-buy-3151409640" target="_blanck">Apply</a></div>`
+            // const dynamicContent = `<style>  width: 300px; border: 15px solid green;
+            // padding: 50px;
+            // margin: 20px; </style>
+            // <div class="job-posting"><div class="posting-text-container"><h2>Best Buy</h2><h1> AGENT, AUTOTECH I </h1><div>Northridge, CA | 2022-07-06 </div></div><a href="https://www.linkedin.com/jobs/view/agent-autotech-i-at-best-buy-3151409640" target="_blanck">Apply</a></div>`
             
             const contentOpt = {
                 "template": {
