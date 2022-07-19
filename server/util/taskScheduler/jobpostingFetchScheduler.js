@@ -20,7 +20,7 @@ const cronOpt = (() => {
     }
     else{
         // At 10:00 UTC on Monday, Tuesday, Wednesday, Thursday, and Friday.
-        return { cron : '00 04 * * 1,2,3,4,5'};
+        return { cron : '30 04 * * 1,2,3,4,5'};
     }
 })();
 
@@ -54,6 +54,10 @@ jpProcessQueue.process( async(job) => {
 jpProcessQueue.on('completed', function (job, result) {
     // A job successfully completed with a `result`.
     logger.info(`[Bull jpProcessQueue] complete event : ${JSON.stringify(job)}, ${result}`)
+})
+
+jpProcessQueue.on('error', function (error) {
+    logger.error(`Error connecting to jpProcessQueue: "${error}"`);
 })
 
 module.exports = {registerJPProcess};
