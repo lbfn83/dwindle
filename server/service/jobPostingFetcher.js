@@ -76,7 +76,7 @@ function sliceIntoChunks(arr, chunkSize) {
                 headers: {
                 'content-type': 'application/json',
                 'X-RapidAPI-Host': 'linkedin-jobs-search.p.rapidapi.com',
-                'X-RapidAPI-Key': `${process.env.API_KEY}`
+                'X-RapidAPI-Key': `${process.env.RAPID_API_API_KEY}`
                 },  
             
                 data: `{"search_terms":"${item.company}","location":"${item.location}","page":"1","fetch_full_text": "yes"}`
@@ -191,6 +191,7 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
         if(MaxPageToProbe === undefined || MaxPageToProbe >= pageNum)
         {
             result = await axios.request(queryOption)
+            
         }else{
             result = {
                 headers : { messege : `MaxPageToProbe (${MaxPageToProbe}) limit reached`},
@@ -316,7 +317,9 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
     }catch(error)
     {
         logger.error(`[processRequest] error : ${error}`)
-        // Logging.write("[error] : "+ error+ "\n")
+        // To see the full structure of the error : JSON structure => response.data.message
+        // console.log(error)
+     
         return {
             "fetched" : error
         }
