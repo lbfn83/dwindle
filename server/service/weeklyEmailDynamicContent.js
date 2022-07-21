@@ -103,6 +103,7 @@ const fetchJobPostingInformation = async(companyInfo) => {
             for( singleLoc of Object.keys(singleCompanyInfo.count_per_loc))
             {
                 // console.log(singleLoc);
+                // for example 5.5 and 4.5 then it will have one more job posting. However, putting out one more job posting won't do any harm I think
                 actualNumOfJPfromEachLoc[`${singleLoc}_NumOfJP`] = Math.round(parseFloat(MAX_JOBPOSTING_PER_COMPANY) * (singleCompanyInfo.count_per_loc[singleLoc] /  singleCompanyInfo.total_count));   
                 
                 logger.info(`[weeklyEmailDynamicContent] fetchJobPostingInformation : ${singleLoc} should pull ${actualNumOfJPfromEachLoc[`${singleLoc}_NumOfJP`]} jobs out of total ${MAX_JOBPOSTING_PER_COMPANY}`);
