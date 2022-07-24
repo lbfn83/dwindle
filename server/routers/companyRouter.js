@@ -33,7 +33,7 @@ router.get('/companies/benefit/:benefit_type', async (req, res) => {
                             FROM company INNER JOIN benefit on company.company_name = benefit.company_name 
                             where benefit.benefit_type = '${benefit_type}' order by company.company_name asc`)
   
-      return res.json(queryResult)
+      return res.json(queryResult[0])
     }else{
       return res.status(500).json({ error: `benefit type "${benefit_type}" is not defined  in [${total_benefit_type}]` })
     }
