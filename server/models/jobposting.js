@@ -27,9 +27,9 @@ module.exports = (sequelize, DataTypes) => {
     static getSearchVector() {
       return 'jobpostingToken';  
     }
-    // I would prefer run this function in my local computer, since it is only required to run only once
+    // Old comment : I would prefer run this function in my local computer, since it is only required to run only once
     // but of course it can be automated by gettintg the full list of columns and check it is crated or not
-
+    // New comment : As 'IF NOT EXISTS' is stated, it would be okay to run this every time server is restarted.
     // Due to the circular dependency issue, logger should be passed over as an argument
     static async addFullTextIndex(logger){
       try{
@@ -58,33 +58,46 @@ module.exports = (sequelize, DataTypes) => {
         /*********************************** */
         
         /* Creating TSVector column, obsolete version*/        
-        var searchFields = ['company_name', 'normalized_company_name','job_location::text', 'full_text', 'job_title'];// 'coalesce(normalized_job_location::text)' ,
-        // https://kb.objectrocket.com/postgresql/how-to-perform-the-postgres-add-column-if-not-exists-1266
-        const addColumnResult = await sequelize.query(`ALTER TABLE "${jobposting.tableName}" ADD COLUMN IF NOT EXISTS "${vectorName}" TSVECTOR;`);
-        logger.info(`[jobposting classmethods] addFullTextIndex : add column "${JSON.stringify(await addColumnResult)}"`);
+        // var searchFields = ['company_name', 'normalized_company_name','job_location::text', 'full_text', 'job_title'];// 'coalesce(normalized_job_location::text)' ,
+        // // https://kb.objectrocket.com/postgresql/how-to-perform-the-postgres-add-column-if-not-exists-1266
+        // const addColumnResult = await sequelize.query(`ALTER TABLE "${jobposting.tableName}" ADD COLUMN IF NOT EXISTS "${vectorName}" TSVECTOR;`);
+        // logger.info(`[jobposting classmethods] addFullTextIndex : add column "${JSON.stringify(await addColumnResult)}"`);
 
+        // // coalesce is required to handle null as '' in case of unexpected NULL passed over as an input
+        // // to_tsvector : when joining multiple columns make sure put ' ' in the middle, or otherwise each string from different columns will be chained and as a result, tokenized in an unexpected way
+        // const coalesceFields = searchFields.map((elem) => {
+        //   return `COALESCE( ${elem},'')`;
+        // });
+        // const updateColumnResult = await sequelize.query(`UPDATE "${jobposting.tableName}" SET "${vectorName}" = to_tsvector('english', ${coalesceFields.join(' || \' \' || ')})`)
+        // logger.info(`[jobposting classmethods] addFullTextIndex : update tsvector with lexemes "${JSON.stringify(await updateColumnResult)}"`);
+
+
+        // const indexResult = await sequelize.query(`CREATE INDEX IF NOT EXISTS jobposting_search_idx ON "${jobposting.tableName}" USING gin("${vectorName}");`);
+        // logger.info(`[jobposting classmethods] addFullTextIndex : add index "${JSON.stringify(await indexResult)}"`);
+        
+
+        // // tsvector_update_trigger can't take ::text
+        // const triggerFields = searchFields.map((element, index) => {
+        //   return element.split('::')[0];
+        // })  ; 
+        // const triggerResult = await sequelize.query('CREATE OR REPLACE TRIGGER jobposting_vector_update BEFORE INSERT OR UPDATE ON "' + jobposting.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + triggerFields.join(', ') + ')')
+        // logger.info(`[jobposting classmethods] addFullTextIndex : add trigger "${JSON.stringify(await triggerResult)}"`);
+        /*************************** */
+        /* Creating TSVector column, nerwer version*/ 
+        var searchFields = ['company_name', 'normalized_company_name','job_location::text', 'full_text', 'job_title'];// 'coalesce(normalized_job_location::text)' ,
+        
         // coalesce is required to handle null as '' in case of unexpected NULL passed over as an input
         // to_tsvector : when joining multiple columns make sure put ' ' in the middle, or otherwise each string from different columns will be chained and as a result, tokenized in an unexpected way
         const coalesceFields = searchFields.map((elem) => {
           return `COALESCE( ${elem},'')`;
         });
-        const updateColumnResult = await sequelize.query(`UPDATE "${jobposting.tableName}" SET "${vectorName}" = to_tsvector('english', ${coalesceFields.join(' || \' \' || ')})`)
-        logger.info(`[jobposting classmethods] addFullTextIndex : update tsvector with lexemes "${JSON.stringify(await updateColumnResult)}"`);
 
+        const genColumnResult = await sequelize.query(`ALTER TABLE "${jobposting.tableName}" ADD COLUMN IF NOT EXISTS "${vectorName}" TSVECTOR GENERATED ALWAYS AS (to_tsvector('english', ${coalesceFields.join(' || \' \' || ')})) STORED;`);
+        logger.info(`[jobposting classmethods] addFullTextIndex : add column "${JSON.stringify(await genColumnResult)}"`);
 
         const indexResult = await sequelize.query(`CREATE INDEX IF NOT EXISTS jobposting_search_idx ON "${jobposting.tableName}" USING gin("${vectorName}");`);
         logger.info(`[jobposting classmethods] addFullTextIndex : add index "${JSON.stringify(await indexResult)}"`);
         
-
-        // tsvector_update_trigger can't take ::text
-        const triggerFields = searchFields.map((element, index) => {
-          return element.split('::')[0];
-        })  ; 
-        const triggerResult = await sequelize.query('CREATE OR REPLACE TRIGGER jobposting_vector_update BEFORE INSERT OR UPDATE ON "' + jobposting.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + triggerFields.join(', ') + ')')
-        logger.info(`[jobposting classmethods] addFullTextIndex : add trigger "${JSON.stringify(await triggerResult)}"`);
-        /*************************** */
-
-
       }catch(e)
       {
         logger.error(`[jobposting classmethods] addFullTextIndex : Error  "${JSON.stringify(e)}"`);
@@ -105,10 +118,16 @@ module.exports = (sequelize, DataTypes) => {
           // Escape string for SQL, 
           // query = sequelize.getQueryInterface().escape(query);
           // console.log(query);
-          
-          return sequelize.query(`SELECT * FROM "${jobposting.tableName}" WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}');`);
-          // return sequelize
-          //         .query('SELECT * FROM "' + jobposting.tableName + '" WHERE "' + jobposting.getSearchVector() + '" @@ plainto_tsquery(\'english\', \'' + query + '\');');
+
+          // Old version : return sequelize.query(`SELECT * FROM "${jobposting.tableName}" WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}');`);
+          // https://www.ibm.com/docs/en/i/7.4?topic=join-inner-using-where-clause
+          return sequelize.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
+          (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as tuition_assistance,
+          (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
+           FROM "${jobposting.tableName}", (SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
+           FROM benefit group by benefit.company_name) as benefit_agg
+            WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}')
+            order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC;`);
       }
       catch(e)
       {
