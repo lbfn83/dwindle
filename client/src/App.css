@@ -192,6 +192,7 @@ button:active{
   height: 48px;
   margin: 0;
   font-size: medium;
+  margin-left: 10px;
 }
 
 /*job page form component ends*/
@@ -621,7 +622,7 @@ button:active{
     width: auto;
   }
 }
-/* bebenfit page styling ends */
+/* benefit page styling ends */
 
 /*job benefit options styling begins*/
 
@@ -630,7 +631,8 @@ button:active{
   width: 100%;
   align-items: center;
   justify-content: space-evenly;
-  margin-top: 50px;;
+  margin-top: 50px;
+  margin-bottom: 40px;
 }
 
 .benefit-option{

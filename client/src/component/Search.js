@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import JobPostings from "./JobPostings";
 import axios from 'axios'
 import { BACKEND_SVR_URL } from "../util/constants";
+import { JobBenefitFilter } from './JobBenefitFilter';
 
 function Search({keyword : keywordField,
                 loc : locationField,
@@ -50,12 +51,12 @@ function Search({keyword : keywordField,
             queryParams += '&'
         queryParams += `page=${pageNum}`
 
-        const apiReqString = `${BACKEND_SVR_URL}/database/jobposting` + queryParams
+        const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings` + queryParams
 
         // const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
     //    console.log(apiReqString)
        setLoading(true)
-        axios.get(apiReqString).then(res => {
+        axios.post(apiReqString).then(res => {
                 setLoading(false)
                 console.log("Fetched data : ",res.data)
                 setArryJobPosting(res.data)
@@ -73,10 +74,9 @@ function Search({keyword : keywordField,
  
 */   
 
-    if (loading) return (
+    if (loading) {return (
         <div> Loading... </div>
-    )
-
+    )} else
 
     //arryJobPosting is an array and when you sending this state to a child component as a prop
     // it is wrapped with curly braces and paired with key { argument_name_defined_in_return : array} 
@@ -84,10 +84,14 @@ function Search({keyword : keywordField,
     
     return (
         <>
-         {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
-         { (arryJobPosting.length > 0)?<JobPostings jobList={arryJobPosting}/>: <div> No result </div> }
+            {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
+            <JobBenefitFilter />
+            
+            { (arryJobPosting.length > 0)?<JobPostings jobList={arryJobPosting}/>: <div> No result </div> }
         </>
-      );
+    );   
+
+
 }
 export default Search;
 

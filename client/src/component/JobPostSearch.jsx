@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Search from './Search';
 import axios from 'axios'
 import { BACKEND_SVR_URL } from "../util/constants";
-import { JobBenefitFilter } from './JobBenefitFilter';
+// import { JobBenefitFilter } from './JobBenefitFilter';
 // import AsyncSelect from 'react-select/async' 
 // import Select from 'react-select'
 
@@ -17,11 +17,7 @@ export const JobPostSearch = () => {
   const [ loading, setLoading ] = useState(false)
   const [arryCompany, setArryCompany] = useState([])
 
-  const handleClick = (event) => {
-    event.preventDefault()
-    
-    setClickCounter( clickCounter+1 )
-  }
+
 
   // const getJobData = async() => {
   //   const response = await fetch(`${BACKEND_SVR_URL}/database/companies`, {
@@ -61,6 +57,13 @@ export const JobPostSearch = () => {
   //   { value: 'silver', label: 'Silver', color: '#666666' },
   // ];
   
+  const handleClick = (event) => {
+    event.preventDefault()
+    
+    setClickCounter( clickCounter+1 )
+
+
+  }
 
   const handleChange = (event) => {
     // console.log(event)
@@ -127,7 +130,7 @@ export const JobPostSearch = () => {
             <button onClick={handleClick} >Find Jobs</button> 
             {/* disabled = {!(keywordField&&locationField)} */}
         </form>
-        <JobBenefitFilter />
+
         <div className = 'search-result'>
             <Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter}/>
             
