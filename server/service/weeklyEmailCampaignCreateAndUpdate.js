@@ -236,7 +236,7 @@ const weeklyCampaignUpdate = async() => {
             return Promise.resolve("[weeklyCampaignUpdate]  :success");
         }else
         {
-            return Promise.reject(`[weeklyCampaignUpdate]  :campaign status is already "${status}" and it is uneditable`);
+            return Promise.reject(`[weeklyCampaignUpdate]  :campaign status is "${status}" and it is uneditable`);
         }       
 }
 

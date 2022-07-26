@@ -16,7 +16,7 @@ const jobpostingRouter = require('./routers/jobPostingRouter')
 const googleOAuth2Router = require('./routers/googleOAuth2Router')
 const bp = require('body-parser')
 
-const { sequelize,Sequelize } = require('./models');
+const { sequelize, jobposting } = require('./models');
 
 const {logger} = require('./config/logger')
 
@@ -42,8 +42,10 @@ app.use(bp.json());
 
 
 (async() => {
-  await sequelize.authenticate().then(() => {
+  await sequelize.authenticate().then(async() => {
     logger.log('info', `[Server] DB Connection established successfully.`);
+    await jobposting.addFullTextIndex(logger);
+    logger.log('info', `[Server] Full Text Search setting done.`);
   }).catch(err => {
     logger.log('error', `[Server] Unable to connect to the database : ${err}`);
 })})();
@@ -63,7 +65,6 @@ fs.readdirSync(routes_directory).forEach(route_file => {
 });
 */
 /* ********* Schedulers *********** */
-
 const {registerJPProcess} = require('./util/taskScheduler/jobpostingFetchScheduler');
 const {registerDBDumpScheduler} = require('./util/taskScheduler/dbDumpScheduler');
 const {registerGoogleTKpurgeScheduler}= require('./util/taskScheduler/googleTKpurgeScheduler');
@@ -77,6 +78,7 @@ const {initGoogleDrive} = require('./config/googleDrive');
 global.googleToken = null;
 global.googleDrive = null;
 initGoogleDrive()
+
 app.use('/googleAuth', googleOAuth2Router)
 
 /* ***************************************** */
