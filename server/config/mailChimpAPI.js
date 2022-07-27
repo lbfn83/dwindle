@@ -10,6 +10,8 @@ mailchimp.setConfig({
 });
 
 /******API used in updateListIDandTemplateID() ******* */
+
+
 async function connectionChecker() {
     return mailchimp.ping.get().then((rtn) => {
 
@@ -180,6 +182,45 @@ const sendCampaign = async (campaignId) => {
 }
 
 
+/**  This function is handling both of adding (subscribed status) and updating (pending status) members to the audience group, 
+ * whose name is predefined with AUD_GRP_NAME variable in weeklyEmailCampaignCreateAndUpdate. 
+ *  
+ * Exception ) In case of having a certain member permanently deleted, the reactivation of 
+ * that account should be done by using a MailChimp signup form as opposed to using an API method provided.
+ *
+ *  @param {string} listID
+ *  @param {string} email_address
+ *  @returns {Promise<JSON>} A Promise of setListMember's response
+ *  @customfunction
+ * 
+ * Reference Website ) 
+ * https://mailchimp.com/developer/marketing/api/list-members/add-or-update-list-member/
+ * https://mailchimp.com/help/resubscribe-a-contact/
+ * https://stackoverflow.com/questions/52198510/mailchimp-resubscribe-a-deleted-member-causes-the-api-to-return-a-400-bad-reques
+*/
+const setAudienceMember = async (listId, email) => {
+    try {
+        const response = await  mailchimp.lists.setListMember(listId, email,  {
+            email_address: email,
+            // possible values : "subscribed", "unsubscribed", "cleaned", "pending", or "transactional"
+            status: 'pending',
+            status_if_new: 'subscribed',
+            email_type: 'html',
+            // merge_fields: {
+            //     FNAME: firstname,
+            //     LNAME: lastname
+            // },
+            // tags: [tag]
+        })
+        // console.log(response)
+        logger.info(`[MCAPI][setAudienceMember] : member subscribed  `);
+        return Promise.resolve(response)
+    }
+    catch (err) {
+        logger.error(`[MCAPI][setAudienceMember] : ${JSON.parse(err.response.text)}`)
+        return Promise.reject('[MCAPI][setAudienceMember] : member subscription failed')
+    }
+}
 
 
 /***** MISC ****** */
@@ -207,7 +248,5 @@ const getSingleTemplateinfoMrkt = async (template_id) => {
 };
 
 
- 
 
-
-module.exports = {updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup,getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus, getAllAudienceGroup}
+module.exports = {setAudienceMember, updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup,getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus, getAllAudienceGroup}

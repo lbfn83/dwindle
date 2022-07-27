@@ -148,7 +148,8 @@ const dyanmicConentBuilder = async() => {
         // console.log(await companyInfo);
         
         const comInfoWithJPs =await fetchJobPostingInformation(companyInfo);
-        console.log(comInfoWithJPs[0].jobpostings)
+        console.log(JSON.stringify(comInfoWithJPs))
+        // console.log(JSON.stringify(comInfoWithJPs[0].jobpostings))
         // comInfoWithJPs.map((elem) => {
         //     console.log(elem.jobpostings);
         //     console.log("--------------------");

@@ -78,12 +78,15 @@ async function updateListIDandTemplateID()  {
                         }                
                     }
                 );
-                logger.info(`[updateListIDandTemplateID] : Success`)
-                return Promise.resolve(`[updateListIDandTemplateID] : Success`);         
             }else{
                 return Promise.reject(`[updateListIDandTemplateID] : mailchimp server connection failed`);
             }
         });   
+        logger.info(`[updateListIDandTemplateID] : Success`)
+        return Promise.resolve({
+            listID : listID,
+            templateID : dwindleTemplateID
+        });         
     }catch(err)
     {
         // logger.error(`[MailChimpEmailHandling] updateListIDandTemplateID: error : ${JSON.stringify(err)}`);                  
@@ -240,7 +243,7 @@ const weeklyCampaignUpdate = async() => {
         }       
 }
 
-module.exports = {  weeklyCampaignCreate, weeklyCampaignUpdate  };
+module.exports = { updateListIDandTemplateID,  weeklyCampaignCreate, weeklyCampaignUpdate  };
 
  /* Below two Functions are redundant in our work flow */
         // Response from getCampaignInfo
