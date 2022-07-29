@@ -2,13 +2,14 @@ const {logger} = require('../config/logger')
 const {sequelize} = require('../models')
 
 const MAX_JOBPOSTING_PER_COMPANY = 10;
-
-// Pick top three companies that have most jobpostings this week
-// and calculate their respective counts of jobpostings in each location
+/**
+ * Pick top three companies that have most jobpostings this week
+ * and calculate their respective counts of jobpostings in each location
+ */
 const fetchCompanyInformation = async() => {
     try{
         // Pick top three companies that have most jobposting this week
-        // columns : mode, count, company_summary
+        // result columns ( refre to first element of the result ) : mode, count, company_summary
         const threeCompanies = await sequelize.query(`SELECT stat.*, company.company_summary from 
             (
                 SELECT mode() WITHIN GROUP (ORDER BY jobposting.company_name), count(*)
@@ -21,12 +22,11 @@ const fetchCompanyInformation = async() => {
         // console.log(await threeCompanies[0])
         // console.log(`${JSON.stringify(await threeCompanies[0])}`);
 
-        // return threeCompanies[0];
-
         // https://stackoverflow.com/questions/33438158/best-way-to-call-an-asynchronous-function-within-map
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
         // The Promise.all() method takes an iterable of promises as an input, and returns a single Promise that resolves to an array of the results of the input promises.
         //  This returned promise will fulfill when all of the input's promises have fulfilled, or if the input iterable contains no promises.
+        
         const countingPerLoc = await Promise.all(threeCompanies[0].map(async(company, index)=> {
                 const eachJobcounting = await sequelize.query(`SELECT mode() WITHIN GROUP(ORDER BY jobposting.normalized_job_location), COUNT(*) from jobposting 
                     WHERE jobposting.company_name = '${company.mode}' group by jobposting.normalized_job_location`);

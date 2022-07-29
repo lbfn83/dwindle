@@ -11,7 +11,8 @@ const cronOpt = (() => {
         return { cron : '*/5 * * * *'};
     }
     else{
-        return { cron : '20 03 * * 1'};
+        // At 03:30 a.m on Monday.
+        return { cron : '30 03 * * 1'};
     }
 })();
 

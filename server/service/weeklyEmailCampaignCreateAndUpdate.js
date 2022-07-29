@@ -14,7 +14,10 @@ var dwindleTemplateID = undefined;
 var campaignID  = [];
 var campaignTitle = undefined;
 
-// /https://www.epochconverter.com/weeknumbers
+/**
+ * Reference ) 
+ * https://www.epochconverter.com/weeknumbers
+ */
 Date.prototype.getWeek = function () {
     var target  = new Date(this.valueOf());
     // getDay => {Monday... Sunday}
@@ -30,14 +33,29 @@ Date.prototype.getWeek = function () {
     // 7*24*60*60*1000
     return 1 + Math.ceil((firstThursday - target) / 604800000);
 }
-// If sleep is too long, it doen't contineue the execution, 
-// so Campaign create and update should be separate
+
+/**
+ * If sleep is too long, it doen't contineue the execution, 
+ * so Campaign create and update should be separate
+ * 
+ * @deprecated
+ * @param {number} ms 
+ * @returns {Promise}
+ */
 async function sleep(ms) {
     logger.info("sleep for 3 mins until the server creates the campaign...")
     return new Promise(resolve => setTimeout(() => resolve, ms));
 }
-
-// updateListIDandTemplateID updates Audience Group list ID and Template ID which are required to create a new campaign
+/**
+ * This is a wrapper function that updates Audience Group list ID and Template ID with MailChimp API
+ * which are required to create a new campaign
+ * 
+ * @returns {Promise<JSON>}{
+            listID : string,
+            templateID : number
+        }
+ * 
+ */
 async function updateListIDandTemplateID()  {
     try{
         await MCAPI.connectionChecker().then(async(connected)=>{
@@ -71,8 +89,8 @@ async function updateListIDandTemplateID()  {
                             throw Error(`[updateListIDandTemplateID] : getTemplateListMrkt failed`);
                         }else
                         {
-                            logger.info(`[updateListIDandTemplateID] : MailChimpo selected template group name : ${JSON.stringify(templateList[0].name)} `);
-                            logger.debug(`[updateListIDandTemplateID] : MailChimpo template group information : ${JSON.stringify(templateList)} `);
+                            logger.info(`[updateListIDandTemplateID] : MailChimpo selected template name : ${JSON.stringify(templateList[0].name)} `);
+                            logger.debug(`[updateListIDandTemplateID] : MailChimpo template information : ${JSON.stringify(templateList)} `);
                             dwindleTemplateID = templateList[0].id;
                             logger.info(`[updateListIDandTemplateID] : templateID updated : ${JSON.stringify(templateList[0].id)}`);  
                         }                
@@ -96,7 +114,11 @@ async function updateListIDandTemplateID()  {
 
 
 
-// this function 
+/**
+ * This is a wrapper function that creates a new campaign by using 
+ * global varibles ( listID and campaignID ) 
+ * @returns 
+ */
 const weeklyCampaignCreate = async() => {
     try{
         await updateListIDandTemplateID().catch((error) => {
@@ -177,7 +199,10 @@ const weeklyCampaignCreate = async() => {
     }
 }
 
-
+/**
+ * 
+ * @returns 
+ */
 const weeklyCampaignUpdate = async() => {
         // Update TemplateID 
         await updateListIDandTemplateID().catch((error) => {
