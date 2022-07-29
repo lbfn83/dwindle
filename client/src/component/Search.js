@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from "react";
-import JobPostings from "./JobPostings";
+// import JobPostings from "./JobPostings";
 import axios from 'axios'
 import { BACKEND_SVR_URL } from "../util/constants";
+import { JobBenefitFilter } from './JobBenefitFilter';
 
 function Search({keyword : keywordField,
                 loc : locationField,
-                btnClicked : btnCounter})
+                btnClicked : btnCounter,
+                parentCallBack})
 {
     /*Debugging part*/ 
     /*
@@ -16,50 +18,41 @@ function Search({keyword : keywordField,
     */
    const search_terms = keywordField
    const location = locationField 
-   const pageNum = 1
+   const pageNum = 0
 
 
    const [loading, setLoading] = useState(false)
    const [arryJobPosting, setArryJobPosting] = useState([])
+   const [tuitionBenefit, setTutitionBenefit ] = useState([])
 
 //    console.log("evtTriggered : ", btnCounter)
    
+    const callbackBenefitFilter = (tuitionBenefit) => {
+        setTutitionBenefit(tuitionBenefit)
+    }
+
    useEffect( () => {
     // build up query Parameter string
-        let isPrevParamExist = false // identifier to see whether inserting "&" in the string or not
         setArryJobPosting([])
-        let queryParams = "?"
-        if(search_terms === "")
-        {
-            // queryParams += ""        
-        }else{
-            queryParams += `company=${search_terms}`
-            isPrevParamExist = true 
-        }
-        if(location === "")
-        {
-            // queryParams += ""        
-        }else{
-            if(isPrevParamExist)
-                queryParams += '&'
-            queryParams += `country=${location}` 
-            isPrevParamExist = true
-        }
 
-        if(isPrevParamExist)
-            queryParams += '&'
-        queryParams += `page=${pageNum}`
 
-        const apiReqString = `${BACKEND_SVR_URL}/database/jobposting` + queryParams
+        const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings` 
 
         // const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
     //    console.log(apiReqString)
+        const postOptions = { 
+            company: `${search_terms}`,
+            location: `${location}`,
+            pagenum: pageNum ,
+            keyword: "",
+            benefits: tuitionBenefit              
+        };
        setLoading(true)
-        axios.get(apiReqString).then(res => {
+        axios.post(apiReqString, postOptions).then(res => {
+                parentCallBack(res.data.companylist)
                 setLoading(false)
-                console.log("Fetched data : ",res.data)
-                setArryJobPosting(res.data)
-                // console.log("arryJobPosting content : ", arryJobPosting, typeof arryJobPosting)
+                setArryJobPosting(res.data.jobpostings)
+                console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
         })
     }, [btnCounter])
 // Flaw of Initial design
@@ -73,10 +66,9 @@ function Search({keyword : keywordField,
  
 */   
 
-    if (loading) return (
+    if (loading) {return (
         <div> Loading... </div>
-    )
-
+    )} else
 
     //arryJobPosting is an array and when you sending this state to a child component as a prop
     // it is wrapped with curly braces and paired with key { argument_name_defined_in_return : array} 
@@ -84,10 +76,13 @@ function Search({keyword : keywordField,
     
     return (
         <>
-         {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
-         { (arryJobPosting.length > 0)?<JobPostings jobList={arryJobPosting}/>: <div> No result </div> }
+            {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
+            <JobBenefitFilter jobList={arryJobPosting} callbackFunction={callbackBenefitFilter}/>
+            {/* { (arryJobPosting.length > 0)? <JobPostings jobList={arryJobPosting}/> : <div> No result </div> } */}
         </>
-      );
+    );   
+
+
 }
 export default Search;
 
