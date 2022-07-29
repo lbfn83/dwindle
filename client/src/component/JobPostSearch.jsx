@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState } from 'react'
 import Search from './Search';
-import axios from 'axios'
-import { BACKEND_SVR_URL } from "../util/constants";
+// import axios from 'axios'
+// import { BACKEND_SVR_URL } from "../util/constants";
 // import { JobBenefitFilter } from './JobBenefitFilter';
 // import AsyncSelect from 'react-select/async' 
 // import Select from 'react-select'
@@ -29,21 +29,28 @@ export const JobPostSearch = () => {
   // console.log(data[0])
   // }
 
+  //THIS NEEDS TO BE REMOVED!!
   useEffect( () => {
        
-    const apiReqString = `${BACKEND_SVR_URL}/database/companies`
- //    console.log(apiReqString)
+    // const apiReqString = `${BACKEND_SVR_URL}/database/companies`
+    // console.log(apiReqString)
     setLoading(true)
-    axios.get(apiReqString).then(res => {
-          setLoading(false)
-          console.log("company list response : ",res.data)
-          setArryCompany(res.data)
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // axios.get(apiReqString).then(res => {
+    //       setLoading(false)
+    //       console.log("company list response : ",res.data)
+    //       setArryCompany(res.data)
+    // })
+
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    
 
  }, [])
 
 
+    const callbackFunction = (childData) => {
+      setArryCompany(childData)
+      
+    }
   // const colourOptions = [
   //   { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
   //   { value: 'blue', label: 'Blue', color: '#0052CC', isDisabled: true },
@@ -105,19 +112,14 @@ export const JobPostSearch = () => {
             <select id='keywords'  onChange={handleChange}>
                 <option value="">--Please choose an option--</option>
                 {
-                  arryCompany.map( (p, index) =>
-                    <option key={index} value={p.company_name} >{p.company_name}</option>
+                  arryCompany.map( (company, index) =>
+                    <option key={index} value={company} >{company}</option>
                   )
+                  // <option>{arryCompany}</option>
                 }
   
             </select>
-           
-            {/* <Select
-              
-                defaultValue={colourOptions[0]}
-                options={colourOptions}
-                    
-            /> */}
+
            
             <select id="location"  onChange={handleChange}>
                 <option value="">--Please choose an option--</option>
@@ -132,7 +134,7 @@ export const JobPostSearch = () => {
         </form>
 
         <div className = 'search-result'>
-            <Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter}/>
+            <Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter} parentCallBack={callbackFunction}/>
             
             {/* {(clickCounter>0)?<Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter}/>: null} */}
         </div>
