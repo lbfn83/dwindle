@@ -270,4 +270,4 @@ const getSingleTemplateinfoMrkt = async (template_id) => {
 };
 
 
-module.exports = {setAudienceMember, updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup,getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus, getAllAudienceGroup}
+module.exports = {setAudienceMember, updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup,getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus}
