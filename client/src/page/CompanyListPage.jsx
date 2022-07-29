@@ -24,7 +24,6 @@ export const CompanyListPage = () => {
         })
         const data =  await response.json()
         setCompanyData(data[0])
-        console.log(data[0])
     } 
     
     useEffect(() => {
