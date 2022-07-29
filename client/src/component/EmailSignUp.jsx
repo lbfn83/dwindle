@@ -117,7 +117,7 @@ export const EmailSignUp = () => {
  depending on state hooks */}
 
  
-            {(emailAddrValidation === false )&&<form className='before-subscribe form-component' onSubmit={handleClick}>
+            {(emailAddrValidation === false )&&(!registrErr)&&<form className='before-subscribe form-component' onSubmit={handleClick}>
 
 
                 <input type="text" placeholder='Type Your Email' value={emailField} onChange={handleChange}/>
@@ -131,7 +131,7 @@ export const EmailSignUp = () => {
               
             </form>}
             {(clickCnt > 0 && registrErr)&&<form className='duplicate-input'>
-                <p> Already Registered email address </p>
+                <p> Something went wrong with your subscription. Please contact the website owner </p>
               
             </form>}
 
