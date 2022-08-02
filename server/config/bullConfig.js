@@ -46,7 +46,7 @@ if(NODE_ENV === 'test' || NODE_ENV === 'development')
 
 const jpProcessQueue = new Bull('jobpostingProcess', redisURI)
 
-const loggingQueue = new Bull('loggingQueue', redisURI)
+// const loggingQueue = new Bull('loggingQueue', redisURI)
 
 const emailCampaignCreateQueue = new Bull('emailCampaignCreateQueue', redisURI)
 
@@ -59,5 +59,5 @@ const dbDumpQueue = new Bull('dbDumpScheduler', redisURI)
 const googleTKTablePurgeQueue = new Bull('googleTKTablePurge', redisURI)
 
 module.exports = {
-    jpProcessQueue, loggingQueue, emailCampaignCreateQueue, emailCampaignSendQueue, dbDumpQueue, googleTKTablePurgeQueue, emailCampaignUpdateQueue
+    jpProcessQueue, emailCampaignCreateQueue, emailCampaignSendQueue, dbDumpQueue, googleTKTablePurgeQueue, emailCampaignUpdateQueue
 }

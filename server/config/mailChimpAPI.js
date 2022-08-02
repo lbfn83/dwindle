@@ -9,7 +9,11 @@ mailchimp.setConfig({
     server: process.env.MAIL_CHIMP_API_KEY.split('-')[1]
 });
 
-/******API used in updateListIDandTemplateID() ******* */
+/**
+ * Check if Mailchimp server is alive or not
+ * 
+ * @returns {boolean} ture or false 
+ */
 async function connectionChecker() {
     return mailchimp.ping.get().then((rtn) => {
 
@@ -25,6 +29,16 @@ async function connectionChecker() {
 };
 
 // Audience group : pick out audience group that has the same name as an argument /"dwindle"
+/**
+ * This function is searching for the audience group that matches the name passed over as an input arg
+ * and returns the corresponding group information
+ * 
+ * @param {String} targetGrpName / Audience Group name 
+ * @returns {JSON} audience group inforamtion  {lists : [{... , name : ''}]}
+ * 
+ * reference)
+ * https://mailchimp.com/developer/marketing/api/lists/get-lists-info/
+ */
 const getAudienceGroup = async (targetGrpName) => {
      
     // console.log(`Audience List : ${JSON.stringify(response)}`);
@@ -43,21 +57,25 @@ const getAudienceGroup = async (targetGrpName) => {
     });
 };
 
-const getAllAudienceGroup = async () => {
-     
-    // console.log(`Audience List : ${JSON.stringify(response)}`);
-    
-    return mailchimp.lists.getAllLists().then((audGrp)=> {
-        
-        logger.info(`[MCAPI][getAllAudienceGroup] : the total number of audience group ${JSON.stringify(audGrp.lists.length)} `);
-        return audGrp.lists
-    });
-  
-};
 
-//  get the template list from mailchimp marketing module :
-//  This will be used to locate the target template that has the same name as the first arg
-//  types : 'user', 'base', 'gallery' => only thing I need is 'user' type
+
+//  
+/**
+ * This function is searching for the template that matches the name passed over as an input arg
+ * and returns the corresponding template information
+ * 
+ * 
+ * @param {String} templateName 
+ * @param {JSON} option {type : 'user', since_date_created : ''}
+ * 
+ * available types : {'user', 'base', 'gallery'} 
+ * 
+ * @returns {JSON} template information { templates : {... , name : ''}}
+ * 
+ * 
+ * reference)
+ * https://mailchimp.com/developer/marketing/api/templates/
+*/
 const getTemplateListMrkt = async ( templateName ,option) => {
     return mailchimp.templates.list(option).then((templateLists) => {
         
@@ -73,10 +91,14 @@ const getTemplateListMrkt = async ( templateName ,option) => {
     });
 };
 
-/********API used in weeklyCampaignCreate() and weeklyCampaignSend *********** */
 
 // getCampaignList does yield the name of campaign / 
 // settings.title
+/**
+ * 
+ * @param {String} targetCampaignName 
+ * @returns 
+ */
 const getCampaignList = async (targetCampaignName) => {
     //  only fetch regular type of campaign
     return mailchimp.campaigns.list({type : 'regular'}).then((campaignLists) => {
@@ -180,9 +202,50 @@ const sendCampaign = async (campaignId) => {
 }
 
 
+/**  This function is handling both of adding (subscribed status) and updating (pending status) members to the audience group, 
+ * whose name is predefined with AUD_GRP_NAME variable in weeklyEmailCampaignCreateAndUpdate. 
+ *  
+ * Exception ) In case of having a certain member permanently deleted, the reactivation of 
+ * that account should be done by using a MailChimp signup form as opposed to using an API method provided.
+ *
+ *  @param {string} listID
+ *  @param {string} email_address
+ *  @returns {Promise<JSON>} A Promise of setListMember's response
+ *  @customfunction
+ * 
+ * Reference Website ) 
+ * https://mailchimp.com/developer/marketing/api/list-members/add-or-update-list-member/
+ * https://mailchimp.com/help/resubscribe-a-contact/
+ * https://stackoverflow.com/questions/52198510/mailchimp-resubscribe-a-deleted-member-causes-the-api-to-return-a-400-bad-reques
+*/
+const setAudienceMember = async (listId, email) => {
+    try {
+        const response = await  mailchimp.lists.setListMember(listId, email,  {
+            email_address: email,
+            // possible values : "subscribed", "unsubscribed", "cleaned", "pending", or "transactional"
+            status: 'pending',
+            status_if_new: 'subscribed',
+            email_type: 'html',
+            // merge_fields: {
+            //     FNAME: firstname,
+            //     LNAME: lastname
+            // },
+            // tags: [tag]
+        })
+        // console.log(response)
+        logger.info(`[MCAPI][setAudienceMember] : member subscribed  `);
+        return Promise.resolve(response)
+    }
+    catch (err) {
+        logger.error(`[MCAPI][setAudienceMember] : ${JSON.parse(err.response.text)}`)
+        return Promise.reject('[MCAPI][setAudienceMember] : member subscription failed')
+    }
+}
 
 
 /***** MISC ****** */
+
+
 const getCampaignContent = async (campaign_id) => {
     const response = await mailchimp.campaigns.getContent(campaign_id);
     console.log(response);
@@ -207,7 +270,4 @@ const getSingleTemplateinfoMrkt = async (template_id) => {
 };
 
 
- 
-
-
-module.exports = {updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup,getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus, getAllAudienceGroup}
+module.exports = {setAudienceMember, updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup,getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus}

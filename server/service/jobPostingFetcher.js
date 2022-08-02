@@ -78,7 +78,7 @@ function sliceIntoChunks(arr, chunkSize) {
                 'X-RapidAPI-Host': 'linkedin-jobs-search.p.rapidapi.com',
                 'X-RapidAPI-Key': `${process.env.RAPID_API_API_KEY}`
                 },  
-            
+                
                 data: `{"search_terms":"${item.company}","location":"${item.location}","page":"1","fetch_full_text": "yes"}`
             };  
             await processAPIRequestAndSQL( queryOption , item.company, item.location).then((rtn) => {
@@ -190,8 +190,7 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
         let result
         if(MaxPageToProbe === undefined || MaxPageToProbe >= pageNum)
         {
-            result = await axios.request(queryOption)
-            
+            result = await axios.request(queryOption)       
         }else{
             result = {
                 headers : { messege : `MaxPageToProbe (${MaxPageToProbe}) limit reached`},
@@ -268,6 +267,8 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
                     
                     }else{
                         logger.info(`[processRequest] insert : ${JSON.stringify(element.linkedin_job_url_cleaned)} `) 
+                        
+                        // TODO: here I need to implemnet location standardization function
                         await jobposting.create(element)   
                         // Logging.write("[insert]"+JSON.stringify(element.linkedin_job_url_cleaned)+"\n");    
                     }
@@ -317,7 +318,8 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
     }catch(error)
     {
         logger.error(`[processRequest] error : ${error}`)
-        // To see the full structure of the error : JSON structure => response.data.message
+        // To see the full structure of the error by invoking pullJobPostings() directly in worker.js
+        // : JSON structure => response.data.message
         // console.log(error)
      
         return {

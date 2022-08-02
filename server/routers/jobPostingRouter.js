@@ -52,11 +52,14 @@ router.post('/jobpostings', async (req, res) => {
 
     try {
         // defualt value applies only when there is no key specified in the request
-        let {company="", location="", pagenum = 0, keyword ="", benefits = []}= req.body
-        console.log(req.body)
-        console.log(benefits)
-        // old code
+        let {company="", location="", pagenum = 0, keyword ="", benefits = []}= req.body;
 
+        // To prevent the unexpected behavior with string data in pagenum variable
+        pagenum = parseInt(pagenum);
+        // old code
+        
+        // console.log(req.body)
+        // console.log(benefits)
         // const whereStatement = {
         //     // https://stackoverflow.com/questions/11704267/in-javascript-how-to-conditionally-add-a-member-to-an-object
         //     // spread is being used because it is wrapped with {} bracket
@@ -196,9 +199,10 @@ router.post('/jobpostings', async (req, res) => {
           companylist : companyFilteringList,
           locationlist : locationFilteringList
         }
-        console.log(response)
+        // console.log(response)
 
-        return res.json(paginationResult)
+        return res.json(response)
+        // return res.json(paginationResult)
         
     }catch (err) {
         console.log(err)
@@ -313,4 +317,4 @@ router.get('/fetchJOBpostingData', async(req, res)=> {
               await toHttp(pullJobPostings, req, res)})
   
 
-module.exports = router
+module.exports = router;

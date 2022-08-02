@@ -68,9 +68,16 @@ fs.readdirSync(routes_directory).forEach(route_file => {
 const {registerJPProcess} = require('./util/taskScheduler/jobpostingFetchScheduler');
 const {registerDBDumpScheduler} = require('./util/taskScheduler/dbDumpScheduler');
 const {registerGoogleTKpurgeScheduler}= require('./util/taskScheduler/googleTKpurgeScheduler');
+const {registerCampaignCreateService} = require('./util/taskScheduler/campaignCreateScheduler');
+const {registerCampaignSendService} = require('./util/taskScheduler/campaignSendScheduler');
+const {registerCampaignUpdateService} = require('./util/taskScheduler/campaignUpdateScheduler');
+
 registerGoogleTKpurgeScheduler();
 registerJPProcess();
 registerDBDumpScheduler();
+registerCampaignCreateService();
+registerCampaignSendService();
+registerCampaignUpdateService();
 
 /* **** google API OAuth2 ****** */
 const {initGoogleDrive} = require('./config/googleDrive');

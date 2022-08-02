@@ -13,8 +13,8 @@ const cronOpt = (() => {
         return { cron : '57 * * * *'};
     }
     else{
-        // At 3:30 a.m. on Wednesday.
-        return { cron : '00 04 * * 3'};
+        // At 3:00 a.m. on Wednesday.
+        return { cron : '00 03 * * 3'};
     }
 })();
 
