@@ -61,6 +61,7 @@ const getAudienceGroup = async (targetGrpName) => {
 
 //  
 /**
+ * Wrapper function for templates.list() API
  * This function is searching for the template that matches the name passed over as an input arg
  * and returns the corresponding template information
  * 
@@ -70,17 +71,45 @@ const getAudienceGroup = async (targetGrpName) => {
  * 
  * available types : {'user', 'base', 'gallery'} 
  * 
- * @returns {JSON} template information { templates : {... , name : ''}}
- * 
- * 
+ * @returns {Promise<JSON>} template information { templates : {... , name : ''}}
  * reference)
- * https://mailchimp.com/developer/marketing/api/templates/
+ * https://mailchimp.com/developer/marketing/api/templates/list-templates/
 */
-const getTemplateListMrkt = async ( templateName ,option) => {
-    return mailchimp.templates.list(option).then((templateLists) => {
+const getTemplateListMrkt = async (templateName) => {
+    try{
+        const numOfitemsPerPage = 100; // 1000 is max
+        let option = {
+            //  only fetch regular type of campaign
+            type : 'user',
+            // since_date_created : '',
+            count : numOfitemsPerPage,
+            offset : 0
+        };
+        let resultList = [];
+        logger.debug(`[MCAPI][getTemplateListMrkt] The expected number of templates included in this query : ${numOfitemsPerPage}`);
+        await mailchimp.templates.list(option).then(async(templateLists) => {
         
-        logger.info(`[MCAPI][getTemplateListMrkt] : the total number of template group ${JSON.stringify(templateLists.templates.length)} `);
-        return templateLists.templates.filter((item) => {
+            logger.info(`[MCAPI][getTemplateListMrkt] : the number of template groups delievered in a first query :  ${JSON.stringify(templateLists.templates.length)} `);
+            // Destructuring required to keep it a single dimension 
+            resultList.push(...templateLists.templates);
+            logger.info(`[MCAPI][getTemplateListMrkt] the total number of groups in the server : ${JSON.stringify(templateLists.total_items)} / Recursive call requried ? ${templateLists.total_items > numOfitemsPerPage}`);
+        
+            // Pagination : To receive the next page, change param and make another query with it
+            option.offset = Number(numOfitemsPerPage) + Number(option.offset);
+            if(templateLists.total_items > templateLists.templates.length)
+            {
+                do {
+                    await mailchimp.templates.list(option).then((templateLists) => {
+                        logger.info(`[MCAPI][getTemplateListMrkt][InnerLoop] the number of campaign groups delievered ${JSON.stringify(templateLists.templates.length)}`);
+                        resultList.push(...templateLists.templates);
+                    });
+                    option.offset = Number(numOfitemsPerPage) + Number(option.offset);
+    
+                } while(option.offset < templateLists.total_items )
+            }
+        
+        });
+        return resultList.filter((item) => {
             if(item.name === templateName )
             {
                 logger.info(`[MCAPI][getTemplateListMrkt] : found the matching template ${JSON.stringify(templateName)} `);
@@ -88,34 +117,81 @@ const getTemplateListMrkt = async ( templateName ,option) => {
             }
             return false;
         });
-    });
+    }catch(err)
+    {
+        logger.error(`[MCAPI][getTemplateListMrkt] : error ${JSON.stringify(err.response)}`)
+        return Promise.reject(`[MCAPI][getTemplateListMrkt] : failed due to ${err}`)
+
+    }
+  
+ 
+ 
 };
 
 
-// getCampaignList does yield the name of campaign / 
-// settings.title
+
+
 /**
+ * Wrapper function for campaigns.list() API
+ * Only sends out 10 campaign items per query as defualt.
+ * Therefore, change Query param 'count' as 1000(maximum)
+ * total_items key should be referenced to get the toal number of campaigns
+ * When there are multiple campaigns with the same name, the ID of the first campaign 
+ * comes up in a map iterator will return 
  * 
  * @param {String} targetCampaignName 
- * @returns 
+ * @returns {Promise<String>} ID of the target campaign 
+ * reference)
+ * https://mailchimp.com/developer/marketing/api/campaigns/list-campaigns/
  */
 const getCampaignList = async (targetCampaignName) => {
-    //  only fetch regular type of campaign
-    return mailchimp.campaigns.list({type : 'regular'}).then((campaignLists) => {
-        // console.log(campaignLists)
-        logger.debug(`[MCAPI][getCampaignList] campaign group detail ${JSON.stringify(campaignLists)}`);
-        logger.info(`[MCAPI][getCampaignList] the total number of campaign group ${JSON.stringify(campaignLists.campaigns.length)}`);
-        return campaignLists.campaigns.filter(campaign => campaign.settings.title === targetCampaignName)
-        .map((elem) => {
-            // console.log(elem.settings.title);
-            return elem.id 
-            // {
-            //     campaign_id : elem.id,
-            //     campaign_title : elem.settings.title
-            // };
-        })
+    try{
+        const numOfitemsPerPage = 100; // 1000 is max
+        let option = {
+            //  only fetch regular type of campaign
+            type : 'regular',
+            count : numOfitemsPerPage,
+            offset : 0
+        };
+        let resultList = [];
+        logger.debug(`[MCAPI][getCampaignList] The expected number of campaigns included in this query : ${numOfitemsPerPage}`);
+        await mailchimp.campaigns.list(option).then(async(campaignLists) => {
+            logger.debug(`[MCAPI][getCampaignList] campaign group detail ${JSON.stringify(campaignLists)}`);
+            logger.info(`[MCAPI][getCampaignList] the number of campaign groups delievered in a first query : ${JSON.stringify(campaignLists.campaigns.length)}`);
+            // Destructuring required to keep it a single dimension 
+            resultList.push(...campaignLists.campaigns);
+            
+            logger.info(`[MCAPI][getCampaignList] the total number of groups in the server : ${JSON.stringify(campaignLists.total_items)} / Recursive call requried ? ${campaignLists.total_items > numOfitemsPerPage}`);            if(campaignLists.total_items > numOfitemsPerPage)
+            
+            // Pagination : To receive the next page, change param and make another query with it
+            option.offset = Number(numOfitemsPerPage) + Number(option.offset);
+            if(campaignLists.total_items > campaignLists.campaigns.length)
+            {
+                do {
+                    await mailchimp.campaigns.list(option).then((campaignLists) => {
+                        logger.info(`[MCAPI][getCampaignList][InnerLoop] the number of campaign groups delievered ${JSON.stringify(campaignLists.campaigns.length)}`);
+                        resultList.push(...campaignLists.campaigns);
+                    });
+                    option.offset = Number(numOfitemsPerPage) + Number(option.offset);
+    
+                } while(option.offset < campaignLists.total_items )
+            }
+                       
+        });
 
-    });
+        // console.log(resultList.length)
+        return resultList.filter(campaign => campaign.settings.title === targetCampaignName)
+        .map((elem) => {
+            // console.log(elem.settings);
+            logger.info(`[MCAPI][getCampaignList] Campaign ID with name '${targetCampaignName}' => ${elem.id}`);
+            return elem.id; 
+        });
+       
+    }catch(err)
+    {
+        logger.error(`[MCAPI][getCampaignList] : error ${JSON.stringify(err.response)}`)
+        return Promise.reject(`[MCAPI][getCampaignList] : failed due to ${err}`)
+    }
 };
 
 // https://mailchimp.com/developer/marketing/api/campaigns/add-campaign/
@@ -202,9 +278,11 @@ const sendCampaign = async (campaignId) => {
 }
 
 
-/**  This function is handling both of adding (subscribed status) and updating (pending status) members to the audience group, 
+/**  
+ * Wrapper function for setListMember() API
+ * This function is handling both of adding (subscribed status) and updating (pending status) members to the audience group, 
  * whose name is predefined with AUD_GRP_NAME variable in weeklyEmailCampaignCreateAndUpdate. 
- *  
+ * . 
  * Exception ) In case of having a certain member permanently deleted, the reactivation of 
  * that account should be done by using a MailChimp signup form as opposed to using an API method provided.
  *
@@ -237,7 +315,7 @@ const setAudienceMember = async (listId, email) => {
         return Promise.resolve(response)
     }
     catch (err) {
-        logger.error(`[MCAPI][setAudienceMember] : ${JSON.parse(err.response.text)}`)
+        logger.error(`[MCAPI][setAudienceMember] : error ${JSON.stringify(err.response.text)}`)
         return Promise.reject('[MCAPI][setAudienceMember] : member subscription failed')
     }
 }
