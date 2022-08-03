@@ -158,7 +158,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull : false
     },
     posted_date: DataTypes.STRING,
-    full_text: DataTypes.TEXT
+    full_text: DataTypes.TEXT,
+    std_loc_str :{
+      type : DataTypes.TEXT,
+      allowNull: false
+    },
   }, {
     sequelize,
     modelName: 'jobposting',

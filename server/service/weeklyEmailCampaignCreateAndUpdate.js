@@ -77,12 +77,9 @@ async function updateListIDandTemplateID()  {
                     }
                 })
                                    
-                // Template ID update
-                const templateListOption = {
-                    type : 'user',
-                    // since_date_created : '',
-                }
-                await MCAPI.getTemplateListMrkt(TEMPLATE_NAME, templateListOption).then((templateList)=> 
+                // Fetch Template ID info
+
+                await MCAPI.getTemplateListMrkt(TEMPLATE_NAME).then((templateList)=> 
                     {
                         if(templateList.length === 0)
                         {   
@@ -115,8 +112,8 @@ async function updateListIDandTemplateID()  {
 
 
 /**
- * This is a wrapper function that creates a new campaign by using 
- * global varibles ( listID and campaignID ) 
+ * Creates a new campaign by using 
+ * global varibles ( Audience Group ID and campaignID ) 
  * @returns 
  */
 const weeklyCampaignCreate = async() => {
@@ -133,7 +130,7 @@ const weeklyCampaignCreate = async() => {
         {
             const date = new Date();
 
-            campaignTitle = `Dwindle Weekly News letter week ${weekNumber}_${date.getHours()}`
+            campaignTitle = `Dwindle Weekly News letter week ${weekNumber}_${date.getDate()}_${date.getHours()}`
             logger.info(`[weeklyEmailCampaignCreate] Test weeklyCampaignCreate : This week's campaign name : ${campaignTitle}`);                  
             // See if there is already a campaign created
             await MCAPI.getCampaignList(campaignTitle).then((campaignInfo)=>{
@@ -178,7 +175,7 @@ const weeklyCampaignCreate = async() => {
             
             // it can create duplicate campaigns with same title
             await MCAPI.createCampaign(listID, setting).then((createdCampaign)=> {
-                logger.info(`[weeklyEmailCampaignCreate] weeklyCampaignCreate: New campaign created : ${createdCampaign}`);  
+                logger.info(`[weeklyEmailCampaignCreate] weeklyCampaignCreate: New campaign created : ${campaignTitle}/${createdCampaign}`);  
                 campaignID.push(createdCampaign.id);
             });
             // // TODO : sleep 3 min since it takes time to mailchimp server to create campaign
@@ -200,8 +197,9 @@ const weeklyCampaignCreate = async() => {
 }
 
 /**
- * 
- * @returns 
+ * Locates the existing campaign whose name is ending with same weekly number
+ * and updates the campaign with Dynamically created contents from randomly picked fresh jobpostings 
+ * @returns {Promise} resolve or reject
  */
 const weeklyCampaignUpdate = async() => {
         // Update TemplateID 
@@ -209,62 +207,73 @@ const weeklyCampaignUpdate = async() => {
             return Promise.reject(error)
         })
         let weekNumber= new Date().getWeek();
-        // Generate Campaign Title
+        
+        // Generate different title depending on the env variable 
         if(NODE_ENV === 'test' || NODE_ENV === 'development')
         {
+            // Generate Campaign Title
             const date = new Date();
-
-            campaignTitle = `Dwindle Weekly News letter week ${weekNumber}_${date.getHours()}`
+            
+            campaignTitle = `Dwindle Weekly News letter week ${weekNumber}_${date.getDate()}_${date.getHours()}`
             logger.info(`[weeklyCampaignUpdate] Test weeklyCampaignUpdate : This week's campaign name : ${campaignTitle}`);                  
-            // See if there is already a campaign created
+            // See if there is any campaign with the generated name that was already created
             await MCAPI.getCampaignList(campaignTitle).then((campaignInfo)=>{
                 
                 logger.info(`[weeklyCampaignUpdate] Test weeklyCampaignUpdate:  Is there any campaign already created?  ${campaignInfo.length>0}`);  
-                    // console.log(campaignInfo);
+                // console.log('debug'); 
+                // console.log(campaignInfo);
                 campaignID = campaignInfo;
             });
         }
         else{
-            
+            // Generate Campaign Title
             campaignTitle = `Dwindle Weekly News letter week ${weekNumber}`
             logger.info(`[weeklyCampaignUpdate] weeklyCampaignUpdate : This week's campaign name : ${campaignTitle}`);                  
-            // See if there is already a campaign created
+            // See if there is any campaign with the generated name that was already created
             await MCAPI.getCampaignList(campaignTitle).then((campaignInfo)=>{
                 
                 logger.info(`[weeklyCampaignUpdate] weeklyCampaignUpdate:  Is there any campaign already created?  ${campaignInfo.length>0}`);  
-                    // console.log(campaignInfo);
+                // console.log('debug'); 
+                // console.log(campaignInfo);
                 campaignID = campaignInfo;
             });
         }
-
-        //  Check out the compaign's status and see if it is "save" status 
-        const status = await MCAPI.getCampaignStatus(campaignID[0]);
-        
-        // console.log(await status);
-        if( status === 'save')
+        // No hit with a campaign Name, then there is nothing to update
+        // otherwise create dynamic content and update the email template with it
+        if(campaignID !== undefined && campaignID.length > 0)
         {
-            // TODO : DB에서 JobData 뽑아오기
-            const dynamicContent = await dyanmicConentBuilder();
-
-            // const dynamicContent = `<style>  width: 300px; border: 15px solid green;
-            // padding: 50px;
-            // margin: 20px; </style>
-            // <div class="job-posting"><div class="posting-text-container"><h2>Best Buy</h2><h1> AGENT, AUTOTECH I </h1><div>Northridge, CA | 2022-07-06 </div></div><a href="https://www.linkedin.com/jobs/view/agent-autotech-i-at-best-buy-3151409640" target="_blanck">Apply</a></div>`
-            
-            const contentOpt = {
-                "template": {
-                    "id": dwindleTemplateID,
-                    "sections": {
-                        "mytext": dynamicContent
+            //  Check out the compaign's status and see if it is "save" status 
+            const status = await MCAPI.getCampaignStatus(campaignID[0]);
+                // console.log(await status);
+            if( status === 'save')
+            {
+                /* Prototype */
+                // const dynamicContent = `<style>  width: 300px; border: 15px solid green;
+                // padding: 50px;
+                // margin: 20px; </style>
+                // <div class="job-posting"><div class="posting-text-container"><h2>Best Buy</h2><h1> AGENT, AUTOTECH I </h1><div>Northridge, CA | 2022-07-06 </div></div><a href="https://www.linkedin.com/jobs/view/agent-autotech-i-at-best-buy-3151409640" target="_blanck">Apply</a></div>`
+                
+                const dynamicContent = await dyanmicConentBuilder();
+                console.log(await dynamicContent);
+                
+                // MC:EDIT "mytext" TAG in a template will be replaced with a dynamic content
+                const contentOpt = {
+                    "template": {
+                        "id": dwindleTemplateID,
+                        "sections": {
+                            "mytext": dynamicContent
+                        }
                     }
                 }
-            }
-            console.log(await campaignID[0]);
-            await MCAPI.updateCampaignContent(campaignID[0],contentOpt );
-            return Promise.resolve("[weeklyCampaignUpdate]  :success");
+                console.log(await campaignID[0]);
+                await MCAPI.updateCampaignContent(campaignID[0],contentOpt );
+                return Promise.resolve("[weeklyCampaignUpdate] : success");
+             }else{
+                return Promise.reject(`[weeklyCampaignUpdate] : campaign status is "${status}" and it is uneditable`);
+             }
         }else
         {
-            return Promise.reject(`[weeklyCampaignUpdate]  :campaign status is "${status}" and it is uneditable`);
+            return Promise.reject(`[weeklyCampaignUpdate] : There is no campaign with ${campaignTitle}`);
         }       
 }
 
