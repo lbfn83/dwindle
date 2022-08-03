@@ -10,7 +10,7 @@ const { NODE_ENV } = process.env;
 const cronOpt = (() => {
     if(NODE_ENV === 'test' || NODE_ENV === 'development')
     {
-        return { cron : '49 * * * *'};
+        return { cron : '*/12 * * * *'};
     }
     else{
         // At 03:00 a.m on Monday.

@@ -77,12 +77,9 @@ async function updateListIDandTemplateID()  {
                     }
                 })
                                    
-                // Template ID update
-                const templateListOption = {
-                    type : 'user',
-                    // since_date_created : '',
-                }
-                await MCAPI.getTemplateListMrkt(TEMPLATE_NAME, templateListOption).then((templateList)=> 
+                // Fetch Template ID info
+
+                await MCAPI.getTemplateListMrkt(TEMPLATE_NAME).then((templateList)=> 
                     {
                         if(templateList.length === 0)
                         {   
@@ -115,8 +112,8 @@ async function updateListIDandTemplateID()  {
 
 
 /**
- * This is a wrapper function that creates a new campaign by using 
- * global varibles ( listID and campaignID ) 
+ * Creates a new campaign by using 
+ * global varibles ( Audience Group ID and campaignID ) 
  * @returns 
  */
 const weeklyCampaignCreate = async() => {
@@ -133,7 +130,7 @@ const weeklyCampaignCreate = async() => {
         {
             const date = new Date();
 
-            campaignTitle = `Dwindle Weekly News letter week ${weekNumber}_${date.getHours()}`
+            campaignTitle = `Dwindle Weekly News letter week ${weekNumber}_${date.getDate()}_${date.getHours()}`
             logger.info(`[weeklyEmailCampaignCreate] Test weeklyCampaignCreate : This week's campaign name : ${campaignTitle}`);                  
             // See if there is already a campaign created
             await MCAPI.getCampaignList(campaignTitle).then((campaignInfo)=>{
@@ -178,7 +175,7 @@ const weeklyCampaignCreate = async() => {
             
             // it can create duplicate campaigns with same title
             await MCAPI.createCampaign(listID, setting).then((createdCampaign)=> {
-                logger.info(`[weeklyEmailCampaignCreate] weeklyCampaignCreate: New campaign created : ${createdCampaign}`);  
+                logger.info(`[weeklyEmailCampaignCreate] weeklyCampaignCreate: New campaign created : ${campaignTitle}/${createdCampaign}`);  
                 campaignID.push(createdCampaign.id);
             });
             // // TODO : sleep 3 min since it takes time to mailchimp server to create campaign
@@ -200,7 +197,8 @@ const weeklyCampaignCreate = async() => {
 }
 
 /**
- * 
+ * Locates the existing campaign whose name is ending with same weekly number
+ * and updates the campaign with Dynamically created contents from randomly picked fresh jobpostings 
  * @returns 
  */
 const weeklyCampaignUpdate = async() => {
@@ -214,7 +212,7 @@ const weeklyCampaignUpdate = async() => {
         {
             const date = new Date();
 
-            campaignTitle = `Dwindle Weekly News letter week ${weekNumber}_${date.getHours()}`
+            campaignTitle = `Dwindle Weekly News letter week ${weekNumber}_${date.getDate()}_${date.getHours()}`
             logger.info(`[weeklyCampaignUpdate] Test weeklyCampaignUpdate : This week's campaign name : ${campaignTitle}`);                  
             // See if there is already a campaign created
             await MCAPI.getCampaignList(campaignTitle).then((campaignInfo)=>{
