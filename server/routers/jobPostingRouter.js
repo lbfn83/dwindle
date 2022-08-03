@@ -2,10 +2,9 @@ const express = require('express');
 const router = express.Router();
 const {jobposting, sequelize} = require('../models');
 // const sequelize = require('sequelize')
-const {toHttp} = require('../util/toHttp')
-const {pullJobPostings} = require('../service/jobPostingFetcher')
-const util = require('util')
-const {logger} = require('../config/logger')
+const {toHttp} = require('../util/toHttp');
+const {pullJobPostings} = require('../service/jobPostingFetcher');
+const {logger} = require('../config/logger');
 
 const recordLimit = 250
 // promisify
@@ -311,8 +310,9 @@ router.put('/jobposting/:uuid', async (req, res) => {
 
     
 /****************************** */
-
-
+/**
+ * TODO : it should go through the middleware
+ */
 router.get('/fetchJOBpostingData', async(req, res)=> {
               await toHttp(pullJobPostings, req, res)})
   
