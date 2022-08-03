@@ -5,6 +5,22 @@ const MAX_JOBPOSTING_PER_COMPANY = 10;
 /**
  * Pick top three companies that have most jobpostings this week
  * and calculate their respective counts of jobpostings in each location
+ * @returns {Array} Array of the below Object => 
+ *      
+ *      {   
+ *          company_name : string,
+ *  
+ *          company_summary : string,
+ *  
+ *          total_count : number,
+ * 
+ *          count_per_loc: { 
+ *                              
+ *                              'USA' : number,
+ * 
+ *                              'CANADA' : number,
+ *                          }
+ *      }
  */
 const fetchCompanyInformation = async() => {
     try{
@@ -19,19 +35,18 @@ const fetchCompanyInformation = async() => {
         
         logger.info(`[weeklyEmailDynamicContent] fetchCompanyInformation : three companies picked : ${JSON.stringify(await threeCompanies[0])}`)
 
-        // console.log(await threeCompanies[0])
-        // console.log(`${JSON.stringify(await threeCompanies[0])}`);
-
         // https://stackoverflow.com/questions/33438158/best-way-to-call-an-asynchronous-function-within-map
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
         // The Promise.all() method takes an iterable of promises as an input, and returns a single Promise that resolves to an array of the results of the input promises.
         //  This returned promise will fulfill when all of the input's promises have fulfilled, or if the input iterable contains no promises.
         
+        // As of August, 2022, the United states is the only location for all the jobpostings
+        // Therefore, the below logic is redundant for now, but for the future I will leave them here 
         const countingPerLoc = await Promise.all(threeCompanies[0].map(async(company, index)=> {
-                const eachJobcounting = await sequelize.query(`SELECT mode() WITHIN GROUP(ORDER BY jobposting.normalized_job_location), COUNT(*) from jobposting 
-                    WHERE jobposting.company_name = '${company.mode}' group by jobposting.normalized_job_location`);
-                    // each elem of eachJobcounting : [ { mode: 'USA', count: '470' }, { mode: 'CANADA', count: '372' } ]
-                    // console.log(eachJobcounting[0]);
+            const eachJobcounting = await sequelize.query(`SELECT mode() WITHIN GROUP(ORDER BY jobposting.normalized_job_location), COUNT(*) from jobposting 
+            WHERE jobposting.company_name = '${company.mode}' group by jobposting.normalized_job_location`);
+            // each elem of eachJobcounting : [ { mode: 'USA', count: '470' }, { mode: 'CANADA', count: '372' } ]
+            // console.log(eachJobcounting[0]);
                 // reduce
                 // https://betterprogramming.pub/6-use-cases-for-reduce-in-javascript-49683842ebed
                 return eachJobcounting[0].reduce((prev, elem) => {
@@ -51,15 +66,22 @@ const fetchCompanyInformation = async() => {
                     //     `{"${elem.mode}" : "${elem['count']}"}`));
                 
                     // prev[elem.mode] = elem.count;
-
+                    
                     return prev;
                 }, {});
                 
             })   
         );
-     
+            
+        // the object structure example
+        // {
+        //     company_name: 'Deloitte',
+        //     company_summary: 'Deloitte drives progress. Our firms around the world help clients become leaders wherever they choose to compete.',
+        //     total_count: '806',
+        //     count_per_loc: { USA: '450', CANADA: '356' }        
+        //   }
         logger.info(`[weeklyEmailDynamicContent] fetchCompanyInformation :jobposting counts per location : ${JSON.stringify(await countingPerLoc)} `)
-        
+            
         return countingPerLoc;
         
     }catch(error)
@@ -68,21 +90,30 @@ const fetchCompanyInformation = async() => {
     }
 }
 
-// input param : the array of objects with the below structure
-// {
-//     company_name: 'Deloitte',
-//     company_summary: 'Deloitte drives progress. Our firms around the world help clients become leaders wherever they choose to compete.',
-//     total_count: '806',
-//     count_per_loc: { USA: '450', CANADA: '356' }
-//        
-//   }
-// jobpostins key will be added... 
+ 
 
 function getRandomInt(min = 0, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+/**
+ * Generate 10 random numbers for each company, 
+ * which would be used as indices to pick and choose its jobpostings
+ * 
+ * @param {Array} companyInfo three companys' Information
+ * 
+ *          { company_name : string,
+ *          company_summary : string,
+ *          total_count : number,
+ *          count_per_loc: {    'USA' : number,
+ *                              'CANADA' : number,}}
+ * 
+ *  
+ * @returns {Array} {...companyInfo, jobposting : [{},{}...]}
+ * 
+ */
 const fetchJobPostingInformation = async(companyInfo) => {
     try{
         logger.info(`[weeklyEmailDynamicContent] fetchJobPostingInformation :jobposting counts per location :  `);
@@ -127,9 +158,11 @@ const fetchJobPostingInformation = async(companyInfo) => {
                 }
             }
             logger.info(`[weeklyEmailDynamicContent] fetchJobPostingInformation actual job posting count by loc : ${singleCompanyInfo.company_name} =>  ${JSON.stringify(actualNumOfJPfromEachLoc)}`);
-            logger.info(`[weeklyEmailDynamicContent] fetchJobPostingInformation :  ${singleCompanyInfo.company_name} => ${Array.from(randNumSets[0])} // ${Array.from(randNumSets[1])}`);
+            randNumSets.forEach((eachSet, idx)=> {
+                // https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/from
+                logger.info(`[weeklyEmailDynamicContent] fetchJobPostingInformation :  ${singleCompanyInfo.company_name} => Set ${idx} ::: ${Array.from(eachSet)} `);
+            })
             return singleCompanyInfo; 
-
         })); 
 
     }catch(error)
@@ -138,32 +171,12 @@ const fetchJobPostingInformation = async(companyInfo) => {
     }
 }
 
-
-
-
-const dyanmicConentBuilder = async() => {
-    try{
-        
-        let companyInfo = await fetchCompanyInformation();
-        // console.log(await companyInfo);
-        
-        const comInfoWithJPs =await fetchJobPostingInformation(companyInfo);
-        console.log(JSON.stringify(comInfoWithJPs))
-        // console.log(JSON.stringify(comInfoWithJPs[0].jobpostings))
-        // comInfoWithJPs.map((elem) => {
-        //     console.log(elem.jobpostings);
-        //     console.log("--------------------");
-        // });
-    
-        return charEncodingInHTML(comInfoWithJPs);
-
-
-    }
-    catch(err){
-
-    }
-}
-const charEncodingInHTML = (comInfoWithJPs) => {
+/**
+ * char Encoding in HTML for weekly email
+ * @param comInfoWithJPs =>  {...companyInfo, jobposting : [{},{}...]}
+ * 
+ */
+ const charEncodingInHTML = (comInfoWithJPs) => {
     try{
         let body = `<style>
         table, th, td {
@@ -191,11 +204,38 @@ const charEncodingInHTML = (comInfoWithJPs) => {
         return body;
     }catch(error)
     {
-        // TODO  바꿔주고 나중에
-        return Promise.reject(`[weeklyEmailDynamicContent] charEncodingInHTML : Error "${error}"`); 
+        // return Promise.reject(`[weeklyEmailDynamicContent] charEncodingInHTML : Error "${error}"`); 
+        return `error : ${error}`;
     }
 }
 
+
+
+
+
+/**
+ * Organize the text containing three companys' infomation and their jobpostings 
+ * and encode it to its HTML equivalent to embed it to the weekly email 
+ * 
+ * @returns {String} String with HTML TAGs 
+ */
+const dyanmicConentBuilder = async() => {
+    try{     
+        logger.info(`[weeklyEmailDynamicContent] dyanmicConentBuilder started!`);
+        let companyInfo = await fetchCompanyInformation();
+    
+        const comInfoWithJPs =await fetchJobPostingInformation(companyInfo);
+        
+        // console.log(JSON.stringify(comInfoWithJPs))
+        // console.log(JSON.stringify(comInfoWithJPs[0].jobpostings))
+            
+        return charEncodingInHTML(comInfoWithJPs);
+    }
+    catch(err){
+        logger.error(`[weeklyEmailDynamicContent] dyanmicConentBuilder : Error /  ${err}`);
+
+    }
+}
 
 module.exports = {
     dyanmicConentBuilder

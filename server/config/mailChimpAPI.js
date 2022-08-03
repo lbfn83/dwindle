@@ -298,9 +298,10 @@ const createCampaign = async (audienceID, optSetting) => {
  */
 const updateCampaignContent = async (campaign_id, contentOpt) => {
     try {
+        logger.info(`[MCAPI][updateCampaignContent] : content option : ${JSON.stringify(contentOpt)}`);
         return mailchimp.campaigns.setContent(campaign_id, contentOpt).then((response) => {
             logger.info(`[MCAPI][updateCampaignContent] : Content updated `)
-            logger.debug(`[MCAPI][updateCampaignContent] : content updated with following detial : ${JSON.stringify(response)}`);
+            logger.debug(`[MCAPI][updateCampaignContent] : content updated with following detail : ${JSON.stringify(response)}`);
 
         });
     } catch (error) {
@@ -326,9 +327,9 @@ const updateCampaignContent = async (campaign_id, contentOpt) => {
 
 const getCampaignStatus = async (campaignId) => {
     try {
-        return mailchimp.campaigns.get(campaignId).then((campaignStatus) => {
+        return mailchimp.campaigns.get(campaignId).then(async(campaignStatus) => {
             logger.info(`[MCAPI][getCampaignStatus] ${campaignId} / ${JSON.stringify(campaignStatus.status)}`);
-            return campaignStatus.status;
+            return await campaignStatus.status;
             // it returns null when it is successfully processed
         });
 
