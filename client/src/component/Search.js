@@ -23,14 +23,27 @@ function Search({keyword : keywordField,
 
    const [loading, setLoading] = useState(false)
    const [arryJobPosting, setArryJobPosting] = useState([])
-   const [tuitionBenefit, setTutitionBenefit ] = useState([])
+   const [tuitionBenefit, setTuitionBenefit ] = useState([])
 
 //    console.log("evtTriggered : ", btnCounter)
    
-    const callbackBenefitFilter = (tuitionBenefit) => {
-        setTutitionBenefit(tuitionBenefit)
+    const callbackBenefitFilter = (Benefit) => {
+        
+        // this will check if the benefit type is already in the array, if it is it will remove the benefit other wise it will add it to the array
+        if(tuitionBenefit.includes(Benefit)){
+            setTuitionBenefit(index => index.filter(benefit => {
+                return benefit !== Benefit 
+            }))
+        } else {
+            setTuitionBenefit(oldArray => [...oldArray, Benefit])
+        }
+       
+        
+        
+
     }
 
+    console.log(tuitionBenefit)
    useEffect( () => {
     // build up query Parameter string
         setArryJobPosting([])
