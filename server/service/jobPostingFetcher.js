@@ -42,8 +42,11 @@ function sliceIntoChunks(arr, chunkSize) {
                 job_scraper : true
             }})//.then((entries ) => {console.log("[Company DB entri]",entries)})
         const companyList = companyDBentries.map((element) => element.company_name )
-        const location = ['USA', 'CANADA']
         
+        // Due to the different benefit policies, CANADA should be reconsidered
+        // const country = ['USA', 'CANADA']
+        const country = ['USA']
+
         logger.info(`JobPosting Fetcher invoked : ${dateStr}`)    
         // Logging.write("<<<<<<<<"+ dateStr +">>>>>>>>>>")
         
@@ -56,7 +59,7 @@ function sliceIntoChunks(arr, chunkSize) {
         
         let combinedList = []
         
-        location.forEach( (loc) =>{
+        country.forEach( (loc) =>{
             let result = companyList.map((comName) => {
                     return {
                         "company" : comName,
