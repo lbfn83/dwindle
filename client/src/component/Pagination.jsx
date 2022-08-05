@@ -6,11 +6,11 @@ const Pagination = ({next, previous}) => {
   return (
     <div className="pagination">
         <div onClick={()=>previous()}>
-            <p>Previous</p>
+            <p>&#8592; Previous</p>
         </div>
         
         <div onClick={()=>next()}>
-            <p>Next</p>
+            <p>&#8594; Next</p>
         </div>
         
 
