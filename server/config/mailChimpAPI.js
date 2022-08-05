@@ -298,7 +298,8 @@ const createCampaign = async (audienceID, optSetting) => {
  */
 const updateCampaignContent = async (campaign_id, contentOpt) => {
     try {
-        logger.info(`[MCAPI][updateCampaignContent] : content option : ${JSON.stringify(contentOpt)}`);
+        logger.info(`[MCAPI][updateCampaignContent] : work on campaign '${campaign_id}' `)
+        logger.debug(`[MCAPI][updateCampaignContent] : content option : ${JSON.stringify(contentOpt)}`);
         return mailchimp.campaigns.setContent(campaign_id, contentOpt).then((response) => {
             logger.info(`[MCAPI][updateCampaignContent] : Content updated `)
             logger.debug(`[MCAPI][updateCampaignContent] : content updated with following detail : ${JSON.stringify(response)}`);
@@ -355,6 +356,27 @@ const sendCampaign = async (campaignId) => {
     }
 }
 
+/**
+ * Create Template. Return the exact same response message delivered from Mailchimp server. 
+ * @param {String} the name of tempalte in string
+ * @param {String} xxxxx.html
+ */
+const createTemplateMrkt = async (templateName, htmlTemplate) => {
+
+    try {
+        const response = await mailchimp.templates.create({
+            name: templateName,
+            html: htmlTemplate
+        })
+        logger.info(`[MCAPI][createTemplateMrkt] : Teamlate "${templateName} created ! `);
+        // console.log(await response);
+        
+        return await response;
+    }
+    catch (err) {
+        logger.info(`[MCAPI][createTemplateMrkt] Error : ${err} `);
+    }
+}
 
 
 
@@ -385,4 +407,4 @@ const getSingleTemplateinfoMrkt = async (template_id) => {
 };
 
 
-module.exports = { setAudienceMember, updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup, getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus }
+module.exports = { createTemplateMrkt, setAudienceMember, updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup, getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus }

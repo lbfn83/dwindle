@@ -11,7 +11,9 @@ const MAX_JOBPOSTING_PER_COMPANY = 10;
  *          company_name : string,
  *  
  *          company_summary : string,
- *  
+ *          
+ *          company_imagelink : URL TEXT
+ * 
  *          total_count : number,
  * 
  *          count_per_loc: { 
@@ -26,7 +28,7 @@ const fetchCompanyInformation = async() => {
     try{
         // Pick top three companies that have most jobposting this week
         // result columns ( refre to first element of the result ) : mode, count, company_summary
-        const threeCompanies = await sequelize.query(`SELECT stat.*, company.company_summary from 
+        const threeCompanies = await sequelize.query(`SELECT stat.*, company.company_summary, company.imagelink from 
             (
                 SELECT mode() WITHIN GROUP (ORDER BY jobposting.company_name), count(*)
                 from jobposting group by jobposting.company_name order by count desc limit 3
@@ -52,6 +54,7 @@ const fetchCompanyInformation = async() => {
                 return eachJobcounting[0].reduce((prev, elem) => {
                     prev['company_name'] = company.mode;
                     prev['company_summary'] = company.company_summary;
+                    prev['company_imagelink'] = company.imagelink;
                     prev['total_count'] = company.count;
                     if( prev['count_per_loc'] === undefined )
                     {
@@ -178,25 +181,65 @@ const fetchJobPostingInformation = async(companyInfo) => {
  */
  const charEncodingInHTML = (comInfoWithJPs) => {
     try{
-        let body = `<style>
-        table, th, td {
-          border:1px solid black;
-        }
-        </style>
-        <table style="width:100%">
+        let body = `
+        <table cellspacing="0" cellpadding="0" style="border:0px;width:100%;">
         `
 
         comInfoWithJPs.map((eachCompanyInfoWithJP) => {
             body += `<tr>
-                        <th> ${eachCompanyInfoWithJP.company_name} </th> 
+                        <td>
+                            <br>
+                            <br>
+                        </td>
+                    </tr>        
+                    <tr class="companies-container">
+                        <td colspan="2">
+                            <div class="company-header"> 
+                                <div class="company-image-container">
+                                    <img src="${eachCompanyInfoWithJP.company_imagelink}"> 
+                                    </div>
+                                <div class = "company-title" >
+                                    <h2>${eachCompanyInfoWithJP.company_name}</h2>
+                                </div>
+                            </div>
+                            <h4>${eachCompanyInfoWithJP.company_summary}</h4>
+                        </td> 
                     </tr>
-                    <tr>
-                     <th> ${eachCompanyInfoWithJP.company_summary} </th>
-                    </tr>`
+                    <tr >
+                        <td >
+                            <br>
+                        </td>
+                    </tr>   
+                    `
             for( eachJP of eachCompanyInfoWithJP.jobpostings)
             {
-                body += `<tr> <td> ${eachJP.company_name}  ${eachJP.job_title}   ::   ${eachJP.job_location} </td> </tr>`
-            }   
+                // mailchimp can't take p tag wrapped in a tag. what a weird platform..
+                //            <sup style = "font-size: 13px;font-weight: 400;color: #777770;>${eachJP.company_name}</sup>  
+                // <span style="padding-left:20px;">${eachJP.job_title}</p>
+
+                body += `<tr class="jobposting-container" >
+                            <td class="jobposting-container-left" >            
+                                <a class="jobposting-link-left" href="${eachJP.linkedin_job_url_cleaned}" target="_blank">
+                                    <sup style = "font-size: 10px;font-weight: 400;color: #777770;">${eachJP.company_name}</sup>
+                                    <div style="padding-left:20px;background: none;padding-bottom: 10px;padding-top: 3px;">${eachJP.job_title}</div>    
+                                </a>
+                            </td>
+                            <td class="jobposting-container-right" >
+                                <a class="jobposting-link-right" href="${eachJP.linkedin_job_url_cleaned}"  target="_blank">
+                                    <span class="jobposting-span-text">${eachJP.job_location}</span>
+                                </a>
+                            </td>
+                        </tr>
+                       `
+            }
+            body +=`<tr>
+                        <td>
+                            <br>
+                            <br>
+                            <br>       
+                        </td>
+                    </tr>
+                    `   
 
         })
 
