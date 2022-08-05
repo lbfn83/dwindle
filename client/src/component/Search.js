@@ -111,7 +111,7 @@ function Search({keyword : keywordField,
             {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
             <JobBenefitFilter jobList={arryJobPosting} callbackFunction={callbackBenefitFilter}/>
             {/* { (arryJobPosting.length > 0)? <JobPostings jobList={arryJobPosting}/> : <div> No result </div> } */}
-            <Pagination next={next} previous={previous} />
+            <Pagination next={next} previous={previous} pageNum={pageNum}/>
         </div>
     );   
 
