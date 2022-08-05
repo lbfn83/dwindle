@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-const Pagination = () => {
-    const [pageNumber, setPageNumber] = useState(0)
-
-    const next = () => {
-        
-    }
+const Pagination = ({next, previous}) => {
+    
 
   return (
     <div className="pagination">
-        <p>Previous</p>
-
-        <p>Next</p>
+        <div onClick={()=>previous()}>
+            <p>Previous</p>
+        </div>
+        
+        <div onClick={()=>next()}>
+            <p>Next</p>
+        </div>
+        
 
     </div>
   )

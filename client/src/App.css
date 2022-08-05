@@ -659,6 +659,13 @@ button:active{
   background-color: #84c7ca;
 }
 
+.pagination{
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
 @media screen and (max-width: 940px){
 
   .header-text-container{

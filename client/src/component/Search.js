@@ -3,6 +3,7 @@ import React, {useState, useEffect} from "react";
 import axios from 'axios'
 import { BACKEND_SVR_URL } from "../util/constants";
 import { JobBenefitFilter } from './JobBenefitFilter';
+import Pagination from "./Pagination";
 
 function Search({keyword : keywordField,
                 loc : locationField,
@@ -18,13 +19,14 @@ function Search({keyword : keywordField,
     */
    const search_terms = keywordField
    const location = locationField 
-   const pageNum = 0
+//    let pageNum = 0
 
 
-   const [loading, setLoading] = useState(false)
-   const [arryJobPosting, setArryJobPosting] = useState([])
-   const [tuitionBenefit, setTuitionBenefit ] = useState([])
-
+    const [loading, setLoading] = useState(false)
+    const [arryJobPosting, setArryJobPosting] = useState([])
+    const [tuitionBenefit, setTuitionBenefit ] = useState([])
+    const [pageNum, setPageNum] = useState(0)
+    const [refreshData, setRefreshData ] = useState(false)
 //    console.log("evtTriggered : ", btnCounter)
    
     const callbackBenefitFilter = (Benefit) => {
@@ -36,23 +38,32 @@ function Search({keyword : keywordField,
             }))
         } else {
             setTuitionBenefit(oldArray => [...oldArray, Benefit])
-        }
-       
-        
-        
-
+        }  
     }
 
-    console.log(tuitionBenefit)
-   useEffect( () => {
-    // build up query Parameter string
-        setArryJobPosting([])
+    const next = () => {
+        // pageNum++;
+        setPageNum(num => num + 1)
+        console.log(pageNum)
+        setRefreshData(!refreshData)
+    }
 
+    const previous = () => {
+        // pageNum--;
+        setPageNum(num => num - 1)
+        if(pageNum < 0){
+            setPageNum(0)
+        }
+        
+        console.log(pageNum)
+        setRefreshData(!refreshData)
+    }
 
+    const getData = () => {
         const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings` 
 
         // const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
-    //    console.log(apiReqString)
+        //    console.log(apiReqString)
         const postOptions = { 
             company: `${search_terms}`,
             location: `${location}`,
@@ -65,9 +76,17 @@ function Search({keyword : keywordField,
                 parentCallBack(res.data.companylist)
                 setLoading(false)
                 setArryJobPosting(res.data.jobpostings)
-                console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
+                // console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
         })
-    }, [btnCounter])
+    }
+
+   useEffect( () => {
+    // build up query Parameter string
+        setArryJobPosting([])
+
+
+        getData()
+    }, [refreshData, btnCounter])
 // Flaw of Initial design
 /*
     useEffect's second argument wasn't working so it was executed in every non relevant event like change input field 
@@ -88,11 +107,12 @@ function Search({keyword : keywordField,
     // so in JobPostings component definition, argument is stated as {jobList} to destructure this newly created object to array. 
     
     return (
-        <>
+        <div>
             {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
             <JobBenefitFilter jobList={arryJobPosting} callbackFunction={callbackBenefitFilter}/>
             {/* { (arryJobPosting.length > 0)? <JobPostings jobList={arryJobPosting}/> : <div> No result </div> } */}
-        </>
+            <Pagination next={next} previous={previous} />
+        </div>
     );   
 
 
