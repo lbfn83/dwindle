@@ -28,10 +28,11 @@ const fetchCompanyInformation = async () => {
     try {
         // Pick top three companies that have most jobposting this week
         // result columns ( refre to first element of the result ) : mode, count, company_summary
+        // exclude soft-deleted entries
         const threeCompanies = await sequelize.query(`SELECT stat.*, company.company_summary, company.imagelink from 
             (
                 SELECT mode() WITHIN GROUP (ORDER BY jobposting.company_name), count(*)
-                from jobposting group by jobposting.company_name order by count desc limit 3
+                from jobposting where jobposting."deletedAt" is null group by jobposting.company_name order by count desc limit 3
             ) 
         as stat INNER JOIN company on company.company_name = stat.mode`);
 
@@ -44,9 +45,10 @@ const fetchCompanyInformation = async () => {
 
         // As of August, 2022, the United states is the only location for all the jobpostings
         // Therefore, the below logic is redundant for now, but for the future I will leave them here 
+        // exclude soft-deleted entries
         const countingPerLoc = await Promise.all(threeCompanies[0].map(async (company, index) => {
             const eachJobcounting = await sequelize.query(`SELECT mode() WITHIN GROUP(ORDER BY jobposting.normalized_job_location), COUNT(*) from jobposting 
-            WHERE jobposting.company_name = '${company.mode}' group by jobposting.normalized_job_location`);
+            WHERE jobposting.company_name = '${company.mode}' and "deletedAt" is null group by jobposting.normalized_job_location`);
             // each elem of eachJobcounting : [ { mode: 'USA', count: '470' }, { mode: 'CANADA', count: '372' } ]
             // console.log(eachJobcounting[0]);
             // reduce
@@ -147,8 +149,9 @@ const fetchJobPostingInformation = async (companyInfo) => {
                 }
 
                 randNumSets.push(randNumSet);
+                // exclude soft-deleted entries
                 const result = await sequelize.query(`select * from jobposting where jobposting.company_name='${singleCompanyInfo.company_name}' 
-                and jobposting.normalized_job_location= '${singleLoc}'`);
+                and jobposting.normalized_job_location= '${singleLoc}' and "deletedAt" is null `);
 
                 // Insert jobpostings' info fetched from the generated index into return value
                 for (index of randNumSet) {
