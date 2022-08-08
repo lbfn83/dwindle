@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const fs = require("fs");
+const {logger} = require('../config/logger');
 const {jobposting, company, sequelize} = require('../models');
 
 const {toHttp} = require('../util/toHttp')
@@ -14,7 +15,7 @@ router.get('/companies', async (req, res) => {
   
       return res.json(companyList)
     } catch (err) {
-      console.log(err)
+      logger.error(`[comapnies router:get] Error : ${err}`);
       return res.status(500).json({ error: `Something went wrong: ${err}` })
 
     }
@@ -24,21 +25,24 @@ router.get('/companies', async (req, res) => {
 // the response will include the benefit information as well
 router.get('/companies/benefit/:benefit_type', async (req, res) => {
   try {
-    const benefit_type = req.params.benefit_type
-    const total_benefit_type = ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']
+    const benefit_type = req.params.benefit_type;
+    const total_benefit_type = ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage'];
     // https://stackoverflow.com/questions/6116474/how-to-find-if-an-array-contains-a-specific-string-in-javascript-jquery
     // Javascript's IN Operator Does Not Work With Strings
+    // exclude soft-deleted entries/ paranoid option on in a raw query
     if(total_benefit_type.indexOf(benefit_type) > -1 ){
       const queryResult = await sequelize.query(`SELECT company.*, benefit.benefit_type, benefit.benefit_details, benefit.link_to_benefit_details 
                             FROM company INNER JOIN benefit on company.company_name = benefit.company_name 
-                            where benefit.benefit_type = '${benefit_type}' order by company.company_name asc`)
-  
-      return res.json(queryResult[0])
+                            where benefit.benefit_type = '${benefit_type}' and "company"."deletedAt" is null
+                             order by company.company_name asc`);
+      logger.debug(`[comapnies/benefit router:get] benefit type "${benefit_type}" // number of companies sent : [${queryResult[0].length}]`);
+      return res.json(queryResult[0]);
     }else{
-      return res.status(500).json({ error: `benefit type "${benefit_type}" is not defined  in [${total_benefit_type}]` })
+      logger.error(`[comapnies/benefit router:get] Error :  benefit type "${benefit_type}" is not defined  in [${total_benefit_type}]`);
+      return res.status(500).json({ error: `benefit type "${benefit_type}" is not defined  in [${total_benefit_type}]` });
     }
   } catch (err) {
-    console.log(err)
+    logger.error(`[comapnies/benefit router:get] Error : ${err}`);
     return res.status(500).json({ error: `Something went wrong: ${err}` })
 
   }
