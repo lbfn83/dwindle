@@ -33,7 +33,7 @@ router.get('/companies/benefit/:benefit_type', async (req, res) => {
     if(total_benefit_type.indexOf(benefit_type) > -1 ){
       const queryResult = await sequelize.query(`SELECT company.*, benefit.benefit_type, benefit.benefit_details, benefit.link_to_benefit_details 
                             FROM company INNER JOIN benefit on company.company_name = benefit.company_name 
-                            where benefit.benefit_type = '${benefit_type}' and "company"."deletedAt" is null
+                            where benefit.benefit_type = '${benefit_type}' and "company"."deletedAt" is null and "benefit"."deletedAt" is null
                              order by company.company_name asc`);
       logger.debug(`[comapnies/benefit router:get] benefit type "${benefit_type}" // number of companies sent : [${queryResult[0].length}]`);
       return res.json(queryResult[0]);

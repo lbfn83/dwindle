@@ -93,7 +93,7 @@ router.post('/jobpostings', async (req, res) => {
             (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
             FROM jobposting left join 
               (  SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
-                FROM benefit group by benefit.company_name) 
+                FROM benefit where "deletedAt" is null group by benefit.company_name ) 
               as benefit_agg on benefit_agg.company_name = jobposting.company_name where "deletedAt" is null 
               order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC `) 
               // limit ${recordLimit} offset ${recordLimit*pagenum}
