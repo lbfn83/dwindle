@@ -2,12 +2,13 @@
 const fs = require("fs");
 const axios = require('axios');
 const db = require('../models')
-const company = db.company
-const jobposting = db.jobposting
-const {logger} = require('../config/logger')
-require('dotenv').config()
+const company = db.company;
+const jobposting = db.jobposting;
+const loc_lookup = db.loc_lookup;
+const {logger} = require('../config/logger');
+require('dotenv').config();
 
-const MaxPageToProbe = 15 // In case of not using page limit, please put undefined or comment this line out
+const MaxPageToProbe = 15; // In case of not using page limit, please put undefined or comment this line out
 
 
 function sliceIntoChunks(arr, chunkSize) {
@@ -17,15 +18,15 @@ function sliceIntoChunks(arr, chunkSize) {
         res.push(chunk);
     }
     return res;
-}
+};
 
 // TODO: this should be a function without returning response object
 // jobPostingQueryOptionBuilder
  async function pullJobPostings() 
 {
     try{
-        const dateLib  = new Date()
-        const dateStr = (dateLib.toDateString(Date.now())+" "+dateLib.getHours()).replace(/\s/g, '_')
+        const dateLib  = new Date();
+        const dateStr = (dateLib.toDateString(Date.now())+" "+dateLib.getHours()).replace(/\s/g, '_');
         
         /* Manual logging file creation is replaced by winston logger */
 
@@ -41,13 +42,13 @@ function sliceIntoChunks(arr, chunkSize) {
             where: {
                 job_scraper : true
             }})//.then((entries ) => {console.log("[Company DB entri]",entries)})
-        const companyList = companyDBentries.map((element) => element.company_name )
+        const companyList = companyDBentries.map((element) => element.company_name );
         
         // Due to the different benefit policies, CANADA should be reconsidered
         // const country = ['USA', 'CANADA']
-        const country = ['USA']
+        const country = ['USA'];
 
-        logger.info(`JobPosting Fetcher invoked : ${dateStr}`)    
+        logger.info(`JobPosting Fetcher invoked : ${dateStr}`); 
         // Logging.write("<<<<<<<<"+ dateStr +">>>>>>>>>>")
         
         // Logging.write("\n------Company List---------\n")
@@ -57,7 +58,7 @@ function sliceIntoChunks(arr, chunkSize) {
         // }) 
         // Logging.write("\n------------------------\n")
         
-        let combinedList = []
+        let combinedList = [];
         
         country.forEach( (loc) =>{
             let result = companyList.map((comName) => {
@@ -67,10 +68,11 @@ function sliceIntoChunks(arr, chunkSize) {
                     }
             })
             combinedList = [...combinedList, ...result]
+            logger.debug(`[JobPosting Fetcher] the generated list for query: ${combinedList}`); 
             
-        })
+        });
 
-        let results = []
+        let results = [];
 
         async function setupQueryOption(item, cb) {
             var queryOption = {
@@ -88,7 +90,7 @@ function sliceIntoChunks(arr, chunkSize) {
                 // res.write(JSON.stringify(rtn)+"/n")
                 results.push(rtn)
                 cb(rtn);
-            })
+            });
         }
         
         /*Asynchornous way : 429 error returned*/ 
@@ -159,16 +161,16 @@ function sliceIntoChunks(arr, chunkSize) {
                 }
                 
             })
-        }
+        };
 
-        return results//rtnResult
+        return results;//rtnResult
     }
     catch(err)
     {
-        console.log("[jobpostingfetcher error] : "+ err)
-        logger.error(`[jobpostingfetcher error] : ${err}`)
+        // console.log("[jobpostingfetcher error] : "+ err);
+        logger.error(`[jobpostingfetcher error] : ${JSON.stringify(err)}`);
         // Logging.write("[jobpostingfetcher error] : "+ err + "\n")
-        return { "error" : err}
+        return { "error" : err};
     }
 
 }
@@ -271,7 +273,10 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
                     }else{
                         logger.info(`[processRequest] insert : ${JSON.stringify(element.linkedin_job_url_cleaned)} `) 
                         
-                        // TODO: here I need to implemnet location standardization function
+                        // TODO: here location standardization function should be placed
+                        // 1st test : element.std_loc_str = "dummy"
+                        element.std_loc_str = await loc_lookup.convertToStdAddr( element.job_location, logger);
+                        
                         await jobposting.create(element)   
                         // Logging.write("[insert]"+JSON.stringify(element.linkedin_job_url_cleaned)+"\n");    
                     }
