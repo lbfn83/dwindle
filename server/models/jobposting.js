@@ -159,6 +159,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     posted_date: DataTypes.STRING,
     full_text: DataTypes.TEXT,
+    // "jobpostingToken" is not really required to be specified
+    // ,as it would be only handled with raw query and classmethod
+    // Also for the reason that server instance will always create this column at the very start
+    // and the column should be configured with "GENERATED ALWAYS AS ... "
+    
+    // jobpostingToken:{
+    //   type : DataTypes.TSVECTOR,
+    // },
     std_loc_str :{
       type : DataTypes.TEXT,
       allowNull: false
