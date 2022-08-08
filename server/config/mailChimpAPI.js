@@ -368,7 +368,7 @@ const createTemplateMrkt = async (templateName, htmlTemplate) => {
             name: templateName,
             html: htmlTemplate
         })
-        logger.info(`[MCAPI][createTemplateMrkt] : Teamlate "${templateName} created ! `);
+        logger.info(`[MCAPI][createTemplateMrkt] : Template "${templateName} created ! `);
         // console.log(await response);
         
         return await response;

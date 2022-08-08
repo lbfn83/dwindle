@@ -1,7 +1,9 @@
+//Disabled as the workflow of email campaign has been changed to 
+//update the template with dynamic content 
+
 const {logger} =  require('../../config/logger')
 const {emailCampaignCreateQueue} = require('../../config/bullConfig')
 
-const {subscriber} = require('../../models')
 const { weeklyCampaignCreate} = require('../../service/weeklyEmailCampaignCreateAndUpdate')
 require('dotenv').config();
 
@@ -10,7 +12,7 @@ const { NODE_ENV } = process.env;
 const cronOpt = (() => {
     if(NODE_ENV === 'test' || NODE_ENV === 'development')
     {
-        return { cron : '*/12 * * * *'};
+        return { cron : '49 * * * *'};
     }
     else{
         // At 03:00 a.m on Monday.
@@ -27,6 +29,7 @@ async function registerCampaignCreateService()
     // “At 10:00 on Saturday and Sunday.”
     emailCampaignCreateQueue.add({ message : 'campaignCreateScheduler processing' } , {repeat: cronOpt })
 }
+
 
 emailCampaignCreateQueue.process(async(job) => {
     

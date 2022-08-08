@@ -1,3 +1,6 @@
+//Disabled as the workflow of email campaign has been changed to 
+//update the template with dynamic content 
+
 const {logger} =  require('../../config/logger')
 const {emailCampaignSendQueue} = require('../../config/bullConfig')
 const {weeklyCampaignSend} = require('../../service/weeklyEmailCampaignSend')
@@ -27,6 +30,7 @@ async function registerCampaignSendService()
     // “At 10:00 on Saturday and Sunday.”
     emailCampaignSendQueue.add({ message : 'emailCampaignSendQueue processing' } , {repeat: cronOpt });
 }
+
 
 emailCampaignSendQueue.process(async(job) => {
     

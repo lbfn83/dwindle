@@ -40,11 +40,10 @@ async function createTemplateinMailChimp()
         
         const generatedJPContent = await dyanmicConentBuilder();
         const aggregatedContent = eamilTemplate(await generatedJPContent);
-        console.log(await aggregatedContent);
-        // await MCAPI.createTemplateMrkt(templateName, eamilTemplate(await generatedContent)).then((response) => {
-        //     logger.debug(`[createTemplateinMailChimp] response ${JSON.stringify(response)}`);
-        //     return Promise.resolve(`[createTemplateinMailChimp] Template Created!`);
-        // });
+        await MCAPI.createTemplateMrkt(templateName, eamilTemplate(await generatedJPContent)).then((response) => {
+            logger.debug(`[createTemplateinMailChimp] response ${JSON.stringify(response)}`);
+            return Promise.resolve(`[createTemplateinMailChimp] Template Created!`);
+        });
     }catch(err)
     {
         return Promise.reject(`[createTemplateinMailChimp] Err : ${err}`);
