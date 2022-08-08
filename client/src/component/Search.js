@@ -4,11 +4,13 @@ import axios from 'axios'
 import { BACKEND_SVR_URL } from "../util/constants";
 import { JobBenefitFilter } from './JobBenefitFilter';
 import Pagination from "./Pagination";
+import BenefitButtonGroup from './BenefitButtonGroup';
 
 function Search({keyword : keywordField,
                 loc : locationField,
                 btnClicked : btnCounter,
-                parentCallBack})
+                parentCallBack,
+                resetPageNum})
 {
     /*Debugging part*/ 
     /*
@@ -25,7 +27,7 @@ function Search({keyword : keywordField,
     const [loading, setLoading] = useState(false)
     const [arryJobPosting, setArryJobPosting] = useState([])
     const [tuitionBenefit, setTuitionBenefit ] = useState([])
-    const [pageNum, setPageNum] = useState(0)
+    const [pageNum, setPageNum] = useState(resetPageNum)
     const [refreshData, setRefreshData ] = useState(false)
 //    console.log("evtTriggered : ", btnCounter)
    
@@ -39,12 +41,14 @@ function Search({keyword : keywordField,
         } else {
             setTuitionBenefit(oldArray => [...oldArray, Benefit])
         }  
+        setRefreshData(!refreshData)
     }
-
+    console.log(tuitionBenefit)
     const next = () => {
         // pageNum++;
+        //first check if the next page 
         setPageNum(num => num + 1)
-        console.log(pageNum)
+    
         setRefreshData(!refreshData)
     }
 
@@ -55,10 +59,10 @@ function Search({keyword : keywordField,
             setPageNum(0)
         }
         
-        console.log(pageNum)
         setRefreshData(!refreshData)
     }
 
+    // console.log(pageNum)
     const getData = () => {
         const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings` 
 
@@ -98,8 +102,18 @@ function Search({keyword : keywordField,
  
 */   
 
+
+
     if (loading) {return (
-        <div> Loading... </div>
+
+        <div>
+            <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
+
+            <div> Loading... </div>  
+
+        </div>
+
+        
     )} else
 
     //arryJobPosting is an array and when you sending this state to a child component as a prop
@@ -108,10 +122,12 @@ function Search({keyword : keywordField,
     
     return (
         <div>
+            <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
+
             {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
-            <JobBenefitFilter jobList={arryJobPosting} callbackFunction={callbackBenefitFilter}/>
+            <JobBenefitFilter jobList={arryJobPosting} />
             {/* { (arryJobPosting.length > 0)? <JobPostings jobList={arryJobPosting}/> : <div> No result </div> } */}
-            <Pagination next={next} previous={previous} pageNum={pageNum}/>
+            <Pagination next={next} previous={previous} pageNum={pageNum} arryJobPosting={arryJobPosting}/>
         </div>
     );   
 
