@@ -295,7 +295,7 @@ const dyanmicConentBuilder = async () => {
         logger.info(`[weeklyEmailDynamicContent] dyanmicConentBuilder : started!`);
         let companyInfo = await fetchCompanyInformation();
 
-        console.log(companyInfo);
+        // console.log(companyInfo);
         const comInfoWithJPs = await fetchJobPostingInformation(companyInfo);
 
         logger.debug(`[weeklyEmailDynamicContent] dyanmicConentBuilder : Aggregated Content right before char encoding : 

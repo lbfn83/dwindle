@@ -177,7 +177,7 @@ module.exports = (sequelize, DataTypes) => {
         // when there is no hit
         if(lookupResult.rowCount < 1)
         {
-            if(GEOCODING_API_KEY !== undefined)
+            if(GEOCODING_API_KEY !== undefined && GEOCODING_API_KEY !== '')
             {
               await loc_lookup.geocodingQuery(regexAddr, logger)
               .then((addrResult) => {
@@ -258,7 +258,7 @@ module.exports = (sequelize, DataTypes) => {
           logger.info(`[loc_lookup classmethod] buildStdAddrColumn : addr update to std_loc_str col : 
           stdaddr string => '${standardizedAddr}' / original str =>'${element.job_location}'`);
           // logger.info(`[loc_lookup classmethod] jobpostingsArry with std location : ${JSON.stringify(await jobpostingsArryWithStdAddr)}`);
-          return { std_loc_str : standardizedAddr};
+          return standardizedAddr;
 
           /* cf) sequelize SQL update */  
           // https://sebhastian.com/sequelize-bulk-update/                    
@@ -266,7 +266,7 @@ module.exports = (sequelize, DataTypes) => {
           // await element.save();
         }));
 
-        logger.info(`[loc_lookup classmethod] buildStdAddrColumn : jobpostingsArry with std location : ${JSON.stringify(await jobpostingsArryWithStdAddr)}`);
+        logger.debug(`[loc_lookup classmethod] buildStdAddrColumn : jobpostingsArry with std location : ${JSON.stringify(await jobpostingsArryWithStdAddr)}`);
 
 /*
         const jobpostingsArry = [];
