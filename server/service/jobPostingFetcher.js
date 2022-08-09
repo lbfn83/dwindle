@@ -276,11 +276,18 @@ async function processAPIRequestAndSQL( queryOption, companyName, loc)
                         // TODO: here location standardization function should be placed
                         // 1st test : element.std_loc_str = "dummy"
                         // Should add a logic to handle "reject"
-                        element.std_loc_str = await loc_lookup.convertToStdAddr( element.job_location, logger)||'review_required';
-                        if(element.std_loc_str === 'review_required' )
+                        let stdStr = undefined;
+                        await loc_lookup.convertToStdAddr(element.job_location_str, logger)
+                        .then(result => stdStr = result).catch(err => stdStr = err); 
+                        
+                        element.std_loc_str = stdStr;
+                        // if the jobposting is marked with a deletion flag, execute the soft-deletion to it.
+                        if(stdStr === 'deletion flag' )
                         {
-                            element.deletedAt = Date.now();
+                            let today = new Date();
+                            element.deletedAt = today.toLocaleString();
                         }
+                        
                         await jobposting.create(element)   
                         // Logging.write("[insert]"+JSON.stringify(element.linkedin_job_url_cleaned)+"\n");    
                     }
