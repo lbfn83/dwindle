@@ -15,7 +15,6 @@ export const CompanyCard = ( {companyData} ) => {
 
     useEffect(() => {    
         const getCompanyData = async () => {
-            console.log(company_name)
             const response = await fetch(`${BACKEND_SVR_URL}/database/company/${company_name}`, {
                 method: 'GET', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors',

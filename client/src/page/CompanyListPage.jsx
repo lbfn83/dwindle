@@ -23,7 +23,7 @@ export const CompanyListPage = () => {
             mode: 'cors',
         })
         const data =  await response.json()
-        setCompanyData(data[0])
+        setCompanyData(data)
     } 
     
     useEffect(() => {
