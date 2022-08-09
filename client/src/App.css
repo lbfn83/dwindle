@@ -628,6 +628,7 @@ button:active{
 
 .job-benefit-options{
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
   align-items: center;
   justify-content: space-evenly;
@@ -638,6 +639,7 @@ button:active{
 .benefit-option{
   background-color: #96DFE3;
   padding: 5px 25px;
+  margin: 10px;
   border-radius: 20px;
   transition: 0.3s;
 }
@@ -652,8 +654,21 @@ button:active{
 .benefit-option-focus{
   border-radius: 0;
   padding: 5px 25px;
+  margin: 10px;
   cursor: pointer;
   background-color: #84c7ca;
+}
+
+.pagination{
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.pagination div{
+  display: flex;
+  flex-direction: column;
 }
 
 @media screen and (max-width: 940px){

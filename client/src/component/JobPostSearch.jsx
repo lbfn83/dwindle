@@ -16,6 +16,7 @@ export const JobPostSearch = () => {
   
   const [ loading, setLoading ] = useState(false)
   const [arryCompany, setArryCompany] = useState([])
+  const [pageNum, setPageNum ] = useState(0)
 
 
 
@@ -68,7 +69,7 @@ export const JobPostSearch = () => {
     event.preventDefault()
     
     setClickCounter( clickCounter+1 )
-
+    setPageNum(0)
 
   }
 
@@ -134,7 +135,7 @@ export const JobPostSearch = () => {
         </form>
 
         <div className = 'search-result'>
-            <Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter} parentCallBack={callbackFunction}/>
+            <Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter} parentCallBack={callbackFunction} resetPageNum={pageNum}/>
             
             {/* {(clickCounter>0)?<Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter}/>: null} */}
         </div>

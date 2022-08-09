@@ -4,7 +4,7 @@ import React from 'react'
 export default function JobPostings({jobList}) {
   try{
     //   if use props as an argument, props.pokemon is the right way to refer to
-      console.log("jobitems from JobPostings function: ", jobList)
+      // console.log("jobitems from JobPostings function: ", jobList)
       let temp = jobList.map(p => (<div> {p} </div>) )
       // console.log("mapped array in JobItems", temp) 
       // const temp = Object.keys(joblist)
