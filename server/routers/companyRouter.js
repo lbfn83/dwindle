@@ -3,8 +3,8 @@ const router = express.Router();
 const fs = require("fs");
 const {logger} = require('../config/logger');
 const {jobposting, company, sequelize} = require('../models');
-
-const {toHttp} = require('../util/toHttp')
+const BENEFIT_TYPES = require('../static/benefit_type');
+const {toHttp} = require('../util/toHttp');
 
 
 //give full list of companies. it doesn't yield any benefit information but only columns in company table
@@ -26,11 +26,13 @@ router.get('/companies', async (req, res) => {
 router.get('/companies/benefit/:benefit_type', async (req, res) => {
   try {
     const benefit_type = req.params.benefit_type;
-    const total_benefit_type = ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage'];
+   
+    // const total_benefit_type = ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage'];
+    
     // https://stackoverflow.com/questions/6116474/how-to-find-if-an-array-contains-a-specific-string-in-javascript-jquery
     // Javascript's IN Operator Does Not Work With Strings
     // exclude soft-deleted entries/ paranoid option on in a raw query
-    if(total_benefit_type.indexOf(benefit_type) > -1 ){
+    if(BENEFIT_TYPES.indexOf(benefit_type) > -1 ){
       const queryResult = await sequelize.query(`SELECT company.*, benefit.benefit_type, benefit.benefit_details, benefit.link_to_benefit_details 
                             FROM company INNER JOIN benefit on company.company_name = benefit.company_name 
                             where benefit.benefit_type = '${benefit_type}' and "company"."deletedAt" is null and "benefit"."deletedAt" is null

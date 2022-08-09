@@ -1,7 +1,10 @@
-const { logger } = require('../config/logger')
-const { sequelize } = require('../models')
-
+const { logger } = require('../config/logger');
+const { sequelize } = require('../models');
+require('dotenv').config();
+const { MAIL_CHIMP_BENEFIT_TYPE } = process.env;
+const BENEFIT_TYPES = require('../static/benefit_type');
 const MAX_JOBPOSTING_PER_COMPANY = 10;
+const NUMBER_OF_COMPANIES_TO_PICK = 3;
 /**
  * Pick top three companies that have most jobpostings this week
  * and calculate their respective counts of jobpostings in each location
@@ -26,15 +29,41 @@ const MAX_JOBPOSTING_PER_COMPANY = 10;
  */
 const fetchCompanyInformation = async () => {
     try {
+        
+        // If MAIL_CHIMP_BENEFIT_TYPE is defined with one of ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']
+        // companies that offer that benefit type will be picked
+        let SQLBenefitCond = '';
+        if(MAIL_CHIMP_BENEFIT_TYPE !== undefined && MAIL_CHIMP_BENEFIT_TYPE !== '')
+        {
+            if(BENEFIT_TYPES.indexOf(MAIL_CHIMP_BENEFIT_TYPE) > -1 ){
+                SQLBenefitCond = `and benefitInfo.benefit_type_array @>'{${MAIL_CHIMP_BENEFIT_TYPE}}'`;
+            }
+        }
+        logger.info(`[weeklyEmailDynamicContent]  MAIL_CHIMP_BENEFIT_TYPE env var : ${MAIL_CHIMP_BENEFIT_TYPE}`);
+
+        
         // Pick top three companies that have most jobposting this week
         // result columns ( refre to first element of the result ) : mode, count, company_summary
         // exclude soft-deleted entries
-        const threeCompanies = await sequelize.query(`SELECT stat.*, company.company_summary, company.imagelink from 
+
+        // Previous Version
+        // const threeCompanies = await sequelize.query(`SELECT stat.*, company.company_summary, company.imagelink from 
+        //     (
+        //         SELECT mode() WITHIN GROUP (ORDER BY jobposting.company_name), count(*)
+        //         from jobposting where jobposting."deletedAt" is null group by jobposting.company_name order by count desc limit 3
+        //     ) 
+        // as stat INNER JOIN company on company.company_name = stat.mode`);
+ 
+        const threeCompanies = await sequelize.query(`select JPcount.*, company.imagelink, company.company_summary from
+        (
+            select jobposting.company_name , count(*), benefitInfo.benefit_type_array from 
             (
-                SELECT mode() WITHIN GROUP (ORDER BY jobposting.company_name), count(*)
-                from jobposting where jobposting."deletedAt" is null group by jobposting.company_name order by count desc limit 3
-            ) 
-        as stat INNER JOIN company on company.company_name = stat.mode`);
+                       SELECT benefit.company_name , array_agg(benefit.benefit_type) as benefit_type_array
+                       FROM benefit where benefit."deletedAt" is null group by benefit.company_name
+            ) as benefitInfo join jobposting on benefitInfo.company_name = jobposting.company_name
+            where jobposting."deletedAt" is null ${SQLBenefitCond}
+            group by jobposting.company_name, benefitInfo.benefit_type_array order by count desc limit ${NUMBER_OF_COMPANIES_TO_PICK}
+        ) as JPcount LEFT JOIN company on company.company_name = JPcount.company_name`);
 
         logger.info(`[weeklyEmailDynamicContent] fetchCompanyInformation : three companies picked : ${JSON.stringify(await threeCompanies[0])}`)
 
@@ -48,15 +77,16 @@ const fetchCompanyInformation = async () => {
         // exclude soft-deleted entries
         const countingPerLoc = await Promise.all(threeCompanies[0].map(async (company, index) => {
             const eachJobcounting = await sequelize.query(`SELECT mode() WITHIN GROUP(ORDER BY jobposting.normalized_job_location), COUNT(*) from jobposting 
-            WHERE jobposting.company_name = '${company.mode}' and "deletedAt" is null group by jobposting.normalized_job_location`);
+            WHERE jobposting.company_name = '${company.company_name}' and "deletedAt" is null group by jobposting.normalized_job_location`);
             // each elem of eachJobcounting : [ { mode: 'USA', count: '470' }, { mode: 'CANADA', count: '372' } ]
             // console.log(eachJobcounting[0]);
             // reduce
             // https://betterprogramming.pub/6-use-cases-for-reduce-in-javascript-49683842ebed
             return eachJobcounting[0].reduce((prev, elem) => {
-                prev['company_name'] = company.mode;
+                prev['company_name'] = company.company_name;
                 prev['company_summary'] = company.company_summary;
                 prev['company_imagelink'] = company.imagelink;
+                prev['company_benefit'] = company.benefit_type_array;
                 prev['total_count'] = company.count;
                 if (prev['count_per_loc'] === undefined) {
                     prev['count_per_loc'] = {};
@@ -265,6 +295,7 @@ const dyanmicConentBuilder = async () => {
         logger.info(`[weeklyEmailDynamicContent] dyanmicConentBuilder : started!`);
         let companyInfo = await fetchCompanyInformation();
 
+        console.log(companyInfo);
         const comInfoWithJPs = await fetchJobPostingInformation(companyInfo);
 
         logger.debug(`[weeklyEmailDynamicContent] dyanmicConentBuilder : Aggregated Content right before char encoding : 
