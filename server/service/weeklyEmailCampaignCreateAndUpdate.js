@@ -123,12 +123,12 @@ const weeklyCampaignCreate = async() => {
             return Promise.reject(error)
         })
     
-        let weekNumber= new Date().getWeek();
-
+        const date = new Date();
+        let weekNumber= date.getWeek();
+        
         // every 10 mins create and update tempalte
         if(NODE_ENV === 'test' || NODE_ENV === 'development')
         {
-            const date = new Date();
 
             campaignTitle = `Dwindle Weekly News letter week ${weekNumber}_${date.getDate()}_${date.getHours()}`
             logger.info(`[weeklyEmailCampaignCreate] Test weeklyCampaignCreate : This week's campaign name : ${campaignTitle}`);                  

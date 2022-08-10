@@ -16,7 +16,7 @@ const jobpostingRouter = require('./routers/jobPostingRouter')
 const googleOAuth2Router = require('./routers/googleOAuth2Router')
 const bp = require('body-parser')
 
-const { sequelize, jobposting } = require('./models');
+const { sequelize, jobposting} = require('./models');
 
 const {logger} = require('./config/logger')
 
@@ -65,19 +65,17 @@ fs.readdirSync(routes_directory).forEach(route_file => {
 });
 */
 /* ********* Schedulers *********** */
+// const {registerCampaignCreateService} = require('./util/taskScheduler/campaignCreateScheduler');
+// const {registerCampaignSendService} = require('./util/taskScheduler/campaignSendScheduler');
+// const {registerCampaignUpdateService} = require('./util/taskScheduler/campaignUpdateScheduler');
 const {registerJPProcess} = require('./util/taskScheduler/jobpostingFetchScheduler');
 const {registerDBDumpScheduler} = require('./util/taskScheduler/dbDumpScheduler');
 const {registerGoogleTKpurgeScheduler}= require('./util/taskScheduler/googleTKpurgeScheduler');
-const {registerCampaignCreateService} = require('./util/taskScheduler/campaignCreateScheduler');
-const {registerCampaignSendService} = require('./util/taskScheduler/campaignSendScheduler');
-const {registerCampaignUpdateService} = require('./util/taskScheduler/campaignUpdateScheduler');
 
 registerGoogleTKpurgeScheduler();
 registerJPProcess();
 registerDBDumpScheduler();
-registerCampaignCreateService();
-registerCampaignSendService();
-registerCampaignUpdateService();
+
 
 /* **** google API OAuth2 ****** */
 const {initGoogleDrive} = require('./config/googleDrive');

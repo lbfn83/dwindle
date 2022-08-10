@@ -121,13 +121,24 @@ module.exports = (sequelize, DataTypes) => {
 
           // Old version : return sequelize.query(`SELECT * FROM "${jobposting.tableName}" WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}');`);
           // https://www.ibm.com/docs/en/i/7.4?topic=join-inner-using-where-clause
+          // Should exculde soft-deleted entries
           return sequelize.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
           (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as tuition_assistance,
           (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
-           FROM "${jobposting.tableName}", (SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
-           FROM benefit group by benefit.company_name) as benefit_agg
-            WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}')
+           FROM "${jobposting.tableName}" LEFT JOIN (SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
+           FROM benefit where "deletedAt" is null group by benefit.company_name) as benefit_agg on benefit_agg.company_name = jobposting.company_name
+            WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}') and "deletedAt" is null
             order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC;`);
+          // For debug
+          // // SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment,
+          // (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as 
+          // tuition_assistance,
+          //           (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
+          //            FROM "jobposting" left join
+          //        (SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
+          //            FROM benefit group by benefit.company_name) as benefit_agg on benefit_agg.company_name = jobposting.company_name
+          //             WHERE "jobpostingToken" @@ plainto_tsquery('english', 'product manager') and "deletedAt" is NOT null and benefit_agg.benefit_type_array @> '{tuition_assistance}'
+          //              order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC    
       }
       catch(e)
       {
@@ -159,6 +170,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     posted_date: DataTypes.STRING,
     full_text: DataTypes.TEXT,
+    // "jobpostingToken" is not really required to be specified
+    // ,as it would be only handled with raw query and classmethod
+    // Also for the reason that server instance will always create this column at the very start
+    // and the column should be configured with "GENERATED ALWAYS AS ... "
+    
+    // jobpostingToken:{
+    //   type : DataTypes.TSVECTOR,
+    // },
     std_loc_str :{
       type : DataTypes.TEXT,
       allowNull: false

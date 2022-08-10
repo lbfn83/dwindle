@@ -1,4 +1,5 @@
 const express = require('express');
+const { logger } = require('../config/logger.js');
 const router = express.Router();
 const pool = require('../config/pgLibDBconfig.js');
 const {subscriber} = require('../models');
@@ -7,10 +8,10 @@ const {addEmailSubscriber} = require('../service/addEmailSubscriber')
 
 // firstname and lastname are redundant but just leave them here for future 
 router.post('/subscribe', async (req, res) => {
-    console.log("[subscribeRouter] req : " , req.body);
+    // it would be too much info if it is 'info' level
+    logger.debug(`[subscribeRouter] req : ${req.body}`)
     try{
         const {firstname = "", lastname="", email } = req.body;
-        
         
         
         await addEmailSubscriber(email);
@@ -36,7 +37,7 @@ router.post('/subscribe', async (req, res) => {
         // }else{    
 
         const errMsg = 'Error while registering new subscriber: ' + error;
-        
+        logger.error(`[subscribeRouter] err : ${errMsg} / request body param : ${req.body}`)
         //  'ERR_HTTP_INVALID_STATUS_CODE'  Invalid status code . put wrong argument at send function
         res.status(400).send(errMsg);
         

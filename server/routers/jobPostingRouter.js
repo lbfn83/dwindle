@@ -6,6 +6,7 @@ const {toHttp} = require('../util/toHttp');
 const {pullJobPostings} = require('../service/jobPostingFetcher');
 const {logger} = require('../config/logger');
 
+
 const recordLimit = 250
 // promisify
 
@@ -86,13 +87,14 @@ router.post('/jobpostings', async (req, res) => {
 
             //  https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-order-by/
             // order by uuid is essential as ... without it every query's result will be sorted in a different way and pagination won't work as intended
+            // soft-deleted entries are ignored
             queryResult= await sequelize.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
             (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as tuition_assistance,
             (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
             FROM jobposting left join 
               (  SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
-                FROM benefit group by benefit.company_name) 
-              as benefit_agg on benefit_agg.company_name = jobposting.company_name 
+                FROM benefit where "deletedAt" is null group by benefit.company_name ) 
+              as benefit_agg on benefit_agg.company_name = jobposting.company_name where "deletedAt" is null 
               order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC `) 
               // limit ${recordLimit} offset ${recordLimit*pagenum}
         
@@ -132,8 +134,8 @@ router.post('/jobpostings', async (req, res) => {
         "_types":{"_types":{},"text":{},"binary":{}},"RowCtor":null,"rowAsArray":false}
         */
 
-        console.log(`[jobpostings router:post] search keyword : ${keyword}/ number of data in total:  ${queryResult[0].length}`);
-        // console.log(`[jobpostings router:post] search keyword : ${keyword}/ number of data in total:  ${JSON.stringify(queryResult)}`);
+        logger.debug(`[jobpostings router:post] search keyword : ${keyword}/ number of data in total:  ${queryResult[0].length}`);
+        // console.log(`[jobpostings router:post] search keyword : ${keyword}/ number of data in total:  ${JSON.stringify(queryResult[0].map(elem => elem.uuid))}`);
         
         // Execute filtering of data according to the parameters in the request body
         let filteredResult = queryResult[0];
@@ -150,19 +152,18 @@ router.post('/jobpostings', async (req, res) => {
               if(jobposting.company_name.toUpperCase() === company.toUpperCase())
                   return jobposting;
           });
-          console.log(`[jobpostings router:post] filtering with company name : ${company}/ number of data after filtering:  ${filteredResult.length}`)
+          logger.debug(`[jobpostings router:post] filtering with company name : ${company}/ number of data after filtering:  ${filteredResult.length}`)
          
         }
         if(location !== "")
         {
           filteredResult = filteredResult.filter((jobposting) => {
             // console.log(jobposting.company_name);
-            // for now, it is utilizing normalized_job_location
-            // gotta see... the libarary
-            if(jobposting.normalized_job_location === location)
+            // utilize standardized address string
+            if(jobposting.std_loc_str === location)
                 return jobposting;
               });
-          console.log(`[jobpostings router:post] filtering with location : ${location}/ number of data after filtering:  ${filteredResult.length}`)
+          logger.debug(`[jobpostings router:post] filtering with location : ${location}/ number of data after filtering:  ${filteredResult.length}`)
         }
         if(benefits.length > 0)
         { 
@@ -171,26 +172,28 @@ router.post('/jobpostings', async (req, res) => {
               // console.log(benefit)
               filteredResult = filteredResult.filter((jobposting) => (jobposting[benefit] === true));
           })
-          console.log(`[jobpostings router:post] filtering with benefit types : ${JSON.stringify(benefits)}/ number of data after filtering:  ${filteredResult.length}`)
+          logger.debug(`[jobpostings router:post] filtering with benefit types : ${JSON.stringify(benefits)}/ number of data after filtering:  ${filteredResult.length}`)
       
         }
      
 
         /* 'TODO:filter list generation */
         // https://www.codegrepper.com/code-examples/javascript/how+to+get+unique+values+in+array+of+objects+in+react+js
-        const companyFilteringList = [...new Set(filteredResult.map(jobposting => jobposting.company_name))]
-        console.log(companyFilteringList)
+        const companyFilteringList = [...new Set(filteredResult.map(jobposting => jobposting.company_name))];
+        logger.debug(`[jobpostings router:post] distinct(company) :  ${companyFilteringList}`);
         
-        const locationFilteringList = [...new Set(filteredResult.map(jobposting => jobposting.normalized_job_location))]
-        console.log(locationFilteringList)
+        const locationFilteringList = [...new Set(filteredResult.map(jobposting => jobposting.std_loc_str))];
+        logger.debug(`[jobpostings router:post] distinct(location) :  ${locationFilteringList}`);
+       
 
         /************ */
 
 
         // As a last step, Pagination is applied
         const paginationResult = filteredResult.filter((elem, idx) => (idx >= recordLimit*pagenum) && (idx < recordLimit*(pagenum+1)))
-        console.log(`[jobpostings router:post] pagination record # : ${paginationResult.length} / lower limit : ${recordLimit*pagenum} / upper limit : ${recordLimit*(pagenum+1)-1}`)
-        // console.log(paginationResult)
+        logger.debug(`[jobpostings router:post] pagination record # : ${paginationResult.length} / lower limit : ${recordLimit*pagenum} / upper limit : ${recordLimit*(pagenum+1)-1}`)
+        // logger.debug(`[jobpostings router:post] paginationResult :  ${JSON.stringify(paginationResult)}`);
+        
         
         /*TODO : generate whole response array*/
         const response = {
@@ -201,14 +204,14 @@ router.post('/jobpostings', async (req, res) => {
         // console.log(response)
 
         return res.json(response)
-        // return res.json(paginationResult)
         
     }catch (err) {
-        console.log(err)
-        return res.status(500).json({ error: `Something went wrong: ${err}` })
+        logger.error(`[jobpostings router:post] Error : ${err}`);
+        return res.status(500).json({ error: `Something went wrong: ${err}` });
     }
 })
 
+/** Refinement required from the below */
 
 // post might be needed for future when any company wants to register a job posting
 // to be able to register jobposting.. 

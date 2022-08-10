@@ -48,16 +48,17 @@ const jpProcessQueue = new Bull('jobpostingProcess', redisURI)
 
 // const loggingQueue = new Bull('loggingQueue', redisURI)
 
-const emailCampaignCreateQueue = new Bull('emailCampaignCreateQueue', redisURI)
+// const emailCampaignCreateQueue = new Bull('emailCampaignCreateQueue', redisURI)
 
-const emailCampaignUpdateQueue = new Bull('emailCampaignUpdateQueue', redisURI)
+// const emailCampaignUpdateQueue = new Bull('emailCampaignUpdateQueue', redisURI)
 
-const emailCampaignSendQueue = new Bull('emailCampaignSendQueue', redisURI)
+// const emailCampaignSendQueue = new Bull('emailCampaignSendQueue', redisURI)
 
 const dbDumpQueue = new Bull('dbDumpScheduler', redisURI)
 
 const googleTKTablePurgeQueue = new Bull('googleTKTablePurge', redisURI)
 
 module.exports = {
-    jpProcessQueue, emailCampaignCreateQueue, emailCampaignSendQueue, dbDumpQueue, googleTKTablePurgeQueue, emailCampaignUpdateQueue
+    jpProcessQueue, dbDumpQueue, googleTKTablePurgeQueue, 
 }
+// emailCampaignCreateQueue, emailCampaignSendQueue, emailCampaignUpdateQueue

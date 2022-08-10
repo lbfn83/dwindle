@@ -8,6 +8,8 @@ require('dotenv').config();
 
 const { NODE_ENV } = process.env;
 
+const LEVEL = 'info'; //'info', 'debug'
+
 const logFormat = winston.format.combine(
 
     winston.format.timestamp({format: "MMM-DD-YYYY HH:mm:ss"}),
@@ -84,7 +86,7 @@ const transport = (() => {
                 maxSize: '20m',
                 maxFiles: '14d',
                 prepend: true,
-                level: 'info',
+                level: LEVEL,
             
             });
         }
@@ -104,7 +106,7 @@ const transport = (() => {
                 maxSize: '20m',
                 maxFiles: '14d',
                 prepend: true,
-                level: 'info',
+                level: LEVEL,
             
             });
         }
@@ -212,7 +214,7 @@ const logger = winston.createLogger({
     transports: [
         transport,
         new winston.transports.Console({
-            level: 'info'}),
+            level: LEVEL}),
 ]});
 
 // Termination signal handling

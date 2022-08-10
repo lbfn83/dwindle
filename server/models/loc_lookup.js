@@ -4,6 +4,9 @@ const {
 } = require('sequelize');
 const {loc_lookupRecordsRestoreFromCSV} = require('../util/DBRecordsRestoreFromCSV/loc_lookup_RestoreFromCSV');
 
+const pgPool = require('../config/pgLibDBconfig')
+require('dotenv').config();
+const { GEOCODING_API_KEY } = process.env;
 
 module.exports = (sequelize, DataTypes) => {
   class loc_lookup extends Model {
@@ -12,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     };
 
+
     /**
      * loc_lookup model classmethod : Seed the loc_lookup table
      * 
@@ -19,13 +23,13 @@ module.exports = (sequelize, DataTypes) => {
      *  To prevent cir. dependency, pass itself as a second argument to loc_lookupRecordsRestoreFromCSV()
      *  
      */
-    static async seed()
+    static async seed(logger)
     {
       try{
-        await loc_lookupRecordsRestoreFromCSV('loc_lookup.csv', loc_lookup);
+        await loc_lookupRecordsRestoreFromCSV('loc_lookup_20220806.csv', loc_lookup, logger);
       }catch(e)
       {
-        console.log(`[loc_lookup classmethod]seed database error : ${e}`);
+        logger.error(`[loc_lookup classmethod]seed database error : ${e}`);
       }
     }
 
@@ -100,6 +104,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       try{
 
+
         /**  SQL Commands below doens't work as expected!!
          * 
          * Input address regex filtering : only extract meaningful substring
@@ -155,36 +160,56 @@ module.exports = (sequelize, DataTypes) => {
    
         logger.info(`[loc_lookup classmethod]convertToStdAddr regex filtering : reg "${regexPassedId}" / ${address} => ${regexAddr}`)
         
+        // const lookupResult = await sequelize.query(`SELECT * from loc_lookup where job_location_str = $$${regexAddr}$$;`);
+        
         // Look up the table 
-        const lookupResult = await sequelize.query(`SELECT * from loc_lookup where job_location_str = $$${regexAddr}$$;`);
-        logger.info(`[loc_lookup classmethod]convertToStdAddr Look up result with ${regexAddr} : ${JSON.stringify(lookupResult[0][0])}`)
+        // To prevent randomly occuring "SequelizeConnectionAcquireTimeoutError" pg lib is deployed, 
+        // I personally find pg lib is more stable in case of connection pool managemen
+        const lookupResult = await pgPool.query(`SELECT * from loc_lookup where job_location_str = $$${regexAddr}$$;`);
+        logger.info(`[loc_lookup classmethod]convertToStdAddr Look up result with ${regexAddr} : ${JSON.stringify(lookupResult.rows)}`)
 
         // No hit in look up, then ask geocoding API and Insert the pair (regexAddr, APIresult)
         // If geocoding doens't give the correct answer, simply Insert (regexAddr, regexAddr) with 
         // "need_to_be_reviewed" column set true ( Should be corrected/updated manually )
        
         let stdAddr = undefined;
-        if(lookupResult[0][0] === undefined)
+        let need_to_be_reviewed = undefined;
+        // when there is no hit
+        if(lookupResult.rowCount < 1)
         {
-            let need_to_be_reviewed = false;
+            if(GEOCODING_API_KEY !== undefined && GEOCODING_API_KEY !== '')
+            {
+              await loc_lookup.geocodingQuery(regexAddr, logger)
+              .then((addrResult) => {
+                stdAddr = addrResult;
+                need_to_be_reviewed = false;
+              })
+              .catch((error) => {
+                // In case of GEOCODING unable to provide the answer
+                // just copy raw input to the processed output with "need to be reviewed flag on"
+                stdAddr = regexAddr;
+                need_to_be_reviewed = true;
+                logger.error(`[loc_lookup classmethod]geocodingQuery error : ${error}`);
+  
+              });
+            }else{
+                // In case of API key not provided
+                // just copy raw input to the processed output with "need to be reviewed flag on"
+                stdAddr = regexAddr;
+                need_to_be_reviewed = true;
+            }
 
-            await loc_lookup.geocodingQuery(regexAddr, logger)
-            .then((addrResult) => {
-              stdAddr = addrResult;
-            })
-            .catch((error) => {
-              stdAddr = regexAddr;
-              need_to_be_reviewed = true;
-            });
-            
             await sequelize.query(`INSERT into loc_lookup(job_location_str, std_loc_str, need_to_be_reviewed, "createdAt", "updatedAt") 
                           VALUES ($$${regexAddr}$$, $$${stdAddr}$$, ${need_to_be_reviewed}, NOW(), NOW()) 
                           ON CONFLICT DO NOTHING;`);
+        }else if(lookupResult.rowCount  === 1)
+        {
+          // A hit!
+            stdAddr = lookupResult.rows[0].std_loc_str;
         }else{
-            // A hit!
-            stdAddr = lookupResult[0][0].std_loc_str;
+          // More than Two rows coming from queries. 
+          throw Error("Duplicate rows in a loc_lookup table")
         }
-    
         return Promise.resolve(await stdAddr);
       }
       catch(e){
@@ -197,8 +222,7 @@ module.exports = (sequelize, DataTypes) => {
    /**
     * Initialize "std_loc_str" column in the jobposting table.
     * 
-    * This function is for one time use when first set up Address standardization feature
-    * or after being done any change in loc_lookup table.
+    * This function is to update std_loc_str column in jobposting table after reflecting any changes in loc_lookup table.
     * 
     */
     static async buildStdAddrColumn(logger)
@@ -216,20 +240,57 @@ module.exports = (sequelize, DataTypes) => {
         
         // In postgres, regex op. $ is not working with 'similar to'. 'similar to' only accepts partial regex syntax. should use \M instead
 
-        logger.info(`[loc_lookup classmethod] total jobpostings USA : ${allRowsfromJobposting[0].length}`);
+        logger.info(`[loc_lookup classmethod] buildStdAddrColumn : total jobpostings USA : ${allRowsfromJobposting[0].length}`);
 
-        allRowsfromJobposting[0].forEach(async(element) => {
-          const standardizedAddr = await loc_lookup.convertToStdAddr(element.job_location, logger);
-          await sequelize.query(`UPDATE jobposting SET std_loc_str = $$${standardizedAddr}$$ 
-                                where jobposting.uuid = $$${element.uuid}$$;`);
+        // When there are lots of rows? it doesn't work?
+        let jobpostingsArryWithStdAddr = await Promise.all(allRowsfromJobposting[0].map(async(element, index) => {
+          const standardizedAddr = await loc_lookup.convertToStdAddr(element.job_location, logger).catch((error)=> {
+              logger.error(`[loc_lookup classmethod] : buildStdAddrColumn error during convertToStdAddr() : ${error}`);
+          });
+          // @Deprecated: This should be changed into Bulk update
+          // The below gives out an error "Operation timeout\n    at ConnectionManager.getConnection"
+          // when the table is big
+          // await sequelize.query(`UPDATE jobposting SET std_loc_str = $$${standardizedAddr}$$ 
+          //                       where jobposting.uuid = $$${element.uuid}$$;`);
+      
+          const result  = await pgPool.query(`UPDATE jobposting SET std_loc_str = $$${standardizedAddr}$$ where jobposting.uuid = $$${element.uuid}$$;`)
           
-          logger.info(`[loc_lookup classmethod] addr update to std_loc_str col : 
+          logger.info(`[loc_lookup classmethod] buildStdAddrColumn : addr update to std_loc_str col : 
           stdaddr string => '${standardizedAddr}' / original str =>'${element.job_location}'`);
+          // logger.info(`[loc_lookup classmethod] jobpostingsArry with std location : ${JSON.stringify(await jobpostingsArryWithStdAddr)}`);
+          return standardizedAddr;
 
-          /* cf) sequelize SQL update */                      
+          /* cf) sequelize SQL update */  
+          // https://sebhastian.com/sequelize-bulk-update/                    
           // await element.update({ std_loc_str : await loc_lookup.convertToStdAddr(element.job_location, logger);})
           // await element.save();
+        }));
+
+        logger.debug(`[loc_lookup classmethod] buildStdAddrColumn : jobpostingsArry with std location : ${JSON.stringify(await jobpostingsArryWithStdAddr)}`);
+
+/*
+        const jobpostingsArry = [];
+
+        await allRowsfromJobposting[0].map(async(element) => {
+            const standardizedAddr = await loc_lookup.convertToStdAddr(element.job_location, logger);
+            // @Deprecated: This should be changed into Bulk update
+            // The below gives out an error "Operation timeout\n    at ConnectionManager.getConnection"
+            // when the table is big
+            // await sequelize.query(`UPDATE jobposting SET std_loc_str = $$${standardizedAddr}$$ 
+            //                       where jobposting.uuid = $$${element.uuid}$$;`);
+            jobpostingsArry.push({
+              ...element,
+              std_loc_str : standardizedAddr});
+            logger.info(`[loc_lookup classmethod] addr update to std_loc_str col : 
+            stdaddr string => '${standardizedAddr}' / original str =>'${element.job_location}'`);
+            // cf) sequelize SQL update   
+            // https://sebhastian.com/sequelize-bulk-update/                    
+            // await element.update({ std_loc_str : await loc_lookup.convertToStdAddr(element.job_location, logger);})
+            // await element.save();
         });
+        */
+        //TODO: Implement bulk update
+
 
       }catch(e)
       {
