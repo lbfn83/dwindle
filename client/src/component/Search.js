@@ -1,11 +1,16 @@
 import React, {useState, useEffect} from "react";
-import JobPostings from "./JobPostings";
+// import JobPostings from "./JobPostings";
 import axios from 'axios'
 import { BACKEND_SVR_URL } from "../util/constants";
+import { JobBenefitFilter } from './JobBenefitFilter';
+import Pagination from "./Pagination";
+import BenefitButtonGroup from './BenefitButtonGroup';
 
 function Search({keyword : keywordField,
                 loc : locationField,
-                btnClicked : btnCounter})
+                btnClicked : btnCounter,
+                parentCallBack,
+                resetPageNum})
 {
     /*Debugging part*/ 
     /*
@@ -16,52 +21,76 @@ function Search({keyword : keywordField,
     */
    const search_terms = keywordField
    const location = locationField 
-   const pageNum = 1
+//    let pageNum = 0
 
 
-   const [loading, setLoading] = useState(false)
-   const [arryJobPosting, setArryJobPosting] = useState([])
-
+    const [loading, setLoading] = useState(false)
+    const [arryJobPosting, setArryJobPosting] = useState([])
+    const [tuitionBenefit, setTuitionBenefit ] = useState([])
+    const [pageNum, setPageNum] = useState(resetPageNum)
+    const [refreshData, setRefreshData ] = useState(false)
 //    console.log("evtTriggered : ", btnCounter)
    
-   useEffect( () => {
-    // build up query Parameter string
-        let isPrevParamExist = false // identifier to see whether inserting "&" in the string or not
-        setArryJobPosting([])
-        let queryParams = "?"
-        if(search_terms === "")
-        {
-            // queryParams += ""        
-        }else{
-            queryParams += `company=${search_terms}`
-            isPrevParamExist = true 
-        }
-        if(location === "")
-        {
-            // queryParams += ""        
-        }else{
-            if(isPrevParamExist)
-                queryParams += '&'
-            queryParams += `country=${location}` 
-            isPrevParamExist = true
-        }
+    const callbackBenefitFilter = (Benefit) => {
+        
+        // this will check if the benefit type is already in the array, if it is it will remove the benefit other wise it will add it to the array
+        if(tuitionBenefit.includes(Benefit)){
+            setTuitionBenefit(index => index.filter(benefit => {
+                return benefit !== Benefit 
+            }))
+        } else {
+            setTuitionBenefit(oldArray => [...oldArray, Benefit])
+        }  
+        setRefreshData(!refreshData)
+    }
+    console.log(tuitionBenefit)
+    const next = () => {
+        // pageNum++;
+        //first check if the next page 
+        setPageNum(num => num + 1)
+    
+        setRefreshData(!refreshData)
+    }
 
-        if(isPrevParamExist)
-            queryParams += '&'
-        queryParams += `page=${pageNum}`
+    const previous = () => {
+        // pageNum--;
+        setPageNum(num => num - 1)
+        if(pageNum < 0){
+            setPageNum(0)
+        }
+        
+        setRefreshData(!refreshData)
+    }
 
-        const apiReqString = `${BACKEND_SVR_URL}/database/jobposting` + queryParams
+    // console.log(pageNum)
+    const getData = () => {
+        const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings` 
 
         // const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
-    //    console.log(apiReqString)
+        //    console.log(apiReqString)
+        const postOptions = { 
+            company: `${search_terms}`,
+            location: `${location}`,
+            pagenum: pageNum ,
+            keyword: "",
+            benefits: tuitionBenefit              
+        };
        setLoading(true)
-        axios.get(apiReqString).then(res => {
+        axios.post(apiReqString, postOptions).then(res => {
+                parentCallBack(res.data.companylist)
                 setLoading(false)
-                console.log("Fetched data : ",res.data)
-                setArryJobPosting(res.data)
-                // console.log("arryJobPosting content : ", arryJobPosting, typeof arryJobPosting)
+                setArryJobPosting(res.data.jobpostings)
+                // console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
         })
-    }, [btnCounter])
+    }
+
+   useEffect( () => {
+    // build up query Parameter string
+        setArryJobPosting([])
+
+
+        getData()
+    }, [refreshData, btnCounter])
 // Flaw of Initial design
 /*
     useEffect's second argument wasn't working so it was executed in every non relevant event like change input field 
@@ -73,21 +102,36 @@ function Search({keyword : keywordField,
  
 */   
 
-    if (loading) return (
-        <div> Loading... </div>
-    )
 
+
+    if (loading) {return (
+
+        <div>
+            <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
+
+            <div> Loading... </div>  
+
+        </div>
+
+        
+    )} else
 
     //arryJobPosting is an array and when you sending this state to a child component as a prop
     // it is wrapped with curly braces and paired with key { argument_name_defined_in_return : array} 
     // so in JobPostings component definition, argument is stated as {jobList} to destructure this newly created object to array. 
     
     return (
-        <>
-         {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
-         { (arryJobPosting.length > 0)?<JobPostings jobList={arryJobPosting}/>: <div> No result </div> }
-        </>
-      );
+        <div>
+            <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
+
+            {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
+            <JobBenefitFilter jobList={arryJobPosting} />
+            {/* { (arryJobPosting.length > 0)? <JobPostings jobList={arryJobPosting}/> : <div> No result </div> } */}
+            <Pagination next={next} previous={previous} pageNum={pageNum} arryJobPosting={arryJobPosting}/>
+        </div>
+    );   
+
+
 }
 export default Search;
 

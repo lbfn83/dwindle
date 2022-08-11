@@ -41,4 +41,8 @@ googleTKTablePurgeQueue.on('completed', function (job) {
     logger.info(`[Bull googleTKpurgeScheduler] Event listner: completed : ${JSON.stringify(job.data.message)}`)
 })
 
+googleTKTablePurgeQueue.on('error', function (error) {
+    logger.error(`Error connecting to googleTKTablePurgeQueue: "${error}"`);
+})
+
 module.exports = {registerGoogleTKpurgeScheduler}

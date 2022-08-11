@@ -1,0 +1,170 @@
+job_location_str,std_loc_str,need_to_be_reviewed
+AK,"Alaska, United States",FALSE
+AL,"Alabama, United States",FALSE
+Alabama,"Alabama, United States",FALSE
+Alaska,"Alaska, United States",FALSE
+Albuquerque-Santa Fe Metropolitan Area,"New Mexico, United States",FALSE
+American Samoa,"American Samoa, United States",FALSE
+AR,"Arkansas, United States",FALSE
+Arizona,"Arizona, United States",FALSE
+Arkansas,"Arkansas, United States",FALSE
+AS,"American Samoa, United States",FALSE
+Atlanta Metropolitan Area,"Georgia, United States",FALSE
+"Austin, Texas Metropolitan Area","Texas, United States",FALSE
+AZ,"Arizona, United States",FALSE
+Buffalo-Niagara Falls Area,"New York, United States",FALSE
+CA,"California, United States",FALSE
+California,"California, United States",FALSE
+Charlotte Metro,Charlotte Metro,TRUE
+Cincinnati Metropolitan Area,Cincinnati Metropolitan Area,TRUE
+CM,"Northern Mariana Islands, United States",FALSE
+CO,"Colorado, United States",FALSE
+Colorado,"Colorado, United States",FALSE
+"Columbus, Ohio Metropolitan Area","Ohio, United States",FALSE
+Connecticut,"Connecticut, United States",FALSE
+Crestview-Fort Walton Beach-Destin Area,"Florida, United States",FALSE
+CT,"Connecticut, United States",FALSE
+Dallas-Fort Worth Metroplex,"Texas, United States",FALSE
+DC,"District of Columbia, United States",FALSE
+DE,"Delaware, United States",FALSE
+Delaware,"Delaware, United States",FALSE
+Denver Metropolitan Area,"Colorado, United States",FALSE
+Detroit Metropolitan Area,"Michigan, United States",FALSE
+District of Columbia,"District of Columbia, United States",FALSE
+FL,"Florida, United States",FALSE
+Florida,"Florida, United States",FALSE
+GA,"Georgia, United States",FALSE
+Georgia,"Georgia, United States",FALSE
+Greater Anchorage Area,"Alaska, United States",FALSE
+Greater Bloomington Area,"Indiana, United States",FALSE
+Greater Boston,Greater Boston,TRUE
+Greater Burlington Area,"Vermont, United States",FALSE
+Greater Chicago Area,Greater Chicago Area,TRUE
+"Greater Fayetteville, AR Area","Arkansas, United States",FALSE
+Greater Hartford,Greater Hartford,TRUE
+Greater Houston,Greater Houston,TRUE
+Greater Idaho Falls,"Idaho, United States",FALSE
+Greater Indianapolis,"Indiana, United States",FALSE
+"Greater Jackson, MI Area","Michigan, United States",FALSE
+Greater Jefferson City Area,"Missouri, United States",FALSE
+Greater Macon,"Georgia, United States",FALSE
+Greater Madison Area,"Wisconsin, United States",FALSE
+Greater Morgantown Area,"West Virginia, United States",FALSE
+Greater New Orleans Region,"Louisiana, United States",FALSE
+Greater Orlando,"Florida, United States",FALSE
+Greater Philadelphia,Greater Philadelphia,TRUE
+Greater Reno Area,"Nevada, United States",FALSE
+Greater Richmond Region,"Virginia, United States",FALSE
+Greater Sacramento,"California, United States",FALSE
+Greater Seattle Area,"Washington, United States",FALSE
+Greater Tampa Bay Area,"Florida, United States",FALSE
+GU,"Guam, United States",FALSE
+Guam,"Guam, United States",FALSE
+"Hampton Roads, Virginia Metropolitan Area","Hampton Roads, Virginia Metropolitan Area",TRUE
+Hawaii,"Hawaii, United States",FALSE
+HI,"Hawaii, United States",FALSE
+IA,"Iowa, United States",FALSE
+ID,"Idaho, United States",FALSE
+Idaho,"Idaho, United States",FALSE
+IL,"Illinois, United States",FALSE
+Illinois,"Illinois, United States",FALSE
+IN,"Indiana, United States",FALSE
+Indiana,"Indiana, United States",FALSE
+Iowa,"Iowa, United States",FALSE
+Iowa City-Cedar Rapids Area,"Iowa, United States",FALSE
+Kansas,"Kansas, United States",FALSE
+Kansas City Metropolitan Area,Kansas City Metropolitan Area,TRUE
+Kentucky,"Kentucky, United States",FALSE
+KS,"Kansas, United States",FALSE
+KY,"Kentucky, United States",FALSE
+LA,"Louisiana, United States",FALSE
+"Lafayette, Indiana Metropolitan Area","Indiana, United States",FALSE
+Longview-Marshall Area,Longview-Marshall Area,TRUE
+Los Angeles Metropolitan Area,"California, United States",FALSE
+Louisiana,"Louisiana, United States",FALSE
+MA,"Massachusetts, United States",FALSE
+Maine,"Maine, United States",FALSE
+Maryland,"Maryland, United States",FALSE
+Massachusetts,"Massachusetts, United States",FALSE
+MD,"Maryland, United States",FALSE
+ME,"Maine, United States",FALSE
+Memphis Metropolitan Area,Memphis Metropolitan Area,TRUE
+MI,"Michigan, United States",FALSE
+Michigan,"Michigan, United States",FALSE
+Minnesota,"Minnesota, United States",FALSE
+Mississippi,"Mississippi, United States",FALSE
+Missouri,"Missouri, United States",FALSE
+MN,"Minnesota, United States",FALSE
+MO,"Missouri, United States",FALSE
+Montana,"Montana, United States",FALSE
+MS,"Mississippi, United States",FALSE
+MT,"Montana, United States",FALSE
+NC,"North Carolina, United States",FALSE
+ND,"North Dakota, United States",FALSE
+NE,"Nebraska, United States",FALSE
+Nebraska,"Nebraska, United States",FALSE
+Nevada,"Nevada, United States",FALSE
+New Hampshire,"New Hampshire, United States",FALSE
+New Jersey,"New Jersey, United States",FALSE
+New Mexico,"New Mexico, United States",FALSE
+New York,"New York, United States",FALSE
+New York City Metropolitan Area,New York City Metropolitan Area,TRUE
+NH,"New Hampshire, United States",FALSE
+NJ,"New Jersey, United States",FALSE
+NM,"New Mexico, United States",FALSE
+North Carolina,"North Carolina, United States",FALSE
+North Dakota,"North Dakota, United States",FALSE
+North Port-Sarasota Area,"Florida, United States",FALSE
+Northern Mariana Islands,"Northern Mariana Islands, United States",FALSE
+NV,"Nevada, United States",FALSE
+NY,"New York, United States",FALSE
+OH,"Ohio, United States",FALSE
+Ohio,"Ohio, United States",FALSE
+OK,"Oklahoma, United States",FALSE
+Oklahoma,"Oklahoma, United States",FALSE
+OR,"Oregon, United States",FALSE
+Oregon,"Oregon, United States",FALSE
+PA,"Pennsylvania, United States",FALSE
+Pennsylvania,"Pennsylvania, United States",FALSE
+"Portland, Oregon Metropolitan Area","Portland, Oregon Metropolitan Area",TRUE
+PR,"Puerto Rico, United States",FALSE
+Puerto Rico,"Puerto Rico, United States",FALSE
+Raleigh-Durham-Chapel Hill Area,"North Carolina, United States",FALSE
+Rhode Island,"Rhode Island, United States",FALSE
+RI,"Rhode Island, United States",FALSE
+"San Antonio, Texas Metropolitan Area","Texas, United States",FALSE
+San Diego Metropolitan Area,"California, United States",FALSE
+San Francisco Bay Area,"California, United States",FALSE
+SC,"South Carolina, United States",FALSE
+SD,"South Dakota, United States",FALSE
+South Carolina,"South Carolina, United States",FALSE
+South Dakota,"South Dakota, United States",FALSE
+Spokane-Coeur d'Alene Area,Spokane-Coeur d'Alene Area,TRUE
+"Springfield, Illinois Metropolitan Area","Illinois, United States",FALSE
+Tallahassee Metropolitan Area,"Florida, United States",FALSE
+Tennessee,"Tennessee, United States",FALSE
+Texas,"Texas, United States",FALSE
+TN,"Tennessee, United States",FALSE
+Trust Territories,"Trust Territories, United States",FALSE
+TT,"Trust Territories, United States",FALSE
+TX,"Texas, United States",FALSE
+United States,United States,FALSE
+UT,"Utah, United States",FALSE
+Utah,"Utah, United States",FALSE
+Utica-Rome Area,Utica-Rome Area,TRUE
+VA,"Virginia, United States",FALSE
+Vermont,"Vermont, United States",FALSE
+VI,"Virgin Islands, United States",FALSE
+Virgin Islands,"Virgin Islands, United States",FALSE
+Virginia,"Virginia, United States",FALSE
+VT,"Vermont, United States",FALSE
+WA,"Washington, United States",FALSE
+Washington,"Washington, United States",FALSE
+Washington DC-Baltimore Area,"District of Columbia, United States",FALSE
+West Virginia,"West Virginia, United States",FALSE
+WI,"Wisconsin, United States",FALSE
+"Wichita, Kansas Metropolitan Area","Kansas, United States",FALSE
+Wisconsin,"Wisconsin, United States",FALSE
+WV,"West Virginia, United States",FALSE
+WY,"Wyoming, United States",FALSE
+Wyoming,"Wyoming, United States",FALSE

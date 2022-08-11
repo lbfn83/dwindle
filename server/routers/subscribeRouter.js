@@ -1,19 +1,27 @@
 const express = require('express');
+const { logger } = require('../config/logger.js');
 const router = express.Router();
 const pool = require('../config/pgLibDBconfig.js');
-const {subscriber} = require('../models')
+const {subscriber} = require('../models');
+const {addEmailSubscriber} = require('../service/addEmailSubscriber')
 
-//  Insert DB module to populate data in an empty DB 
-//  I also can use Sequelize libarary ORM tool!
+
+// firstname and lastname are redundant but just leave them here for future 
 router.post('/subscribe', async (req, res) => {
-    console.log("[subscribeRouter] req : " , req.body);
-    // when request contains duplicate key value, server dies
+    // it would be too much info if it is 'info' level
+    logger.debug(`[subscribeRouter] req : ${req.body}`)
     try{
-        const {firstname = "", lastname="", email } = req.body
-        await subscriber.create({firstname, lastname, email })
+        const {firstname = "", lastname="", email } = req.body;
+        
+        
+        await addEmailSubscriber(email);
+
+        /* Obsolete codes */
+        // when request contains duplicate key value, server dies
+        // await subscriber.create({firstname, lastname, email });
         // await pool.query("INSERT INTO subscriber(firstname, lastname, email) values($1, $2, $3);", 
         //  [req.body.firstname, req.body.lastname, req.body.email])
-        res.status(200).send("new subscriber sucessfully registered. ")
+        res.status(200).send("new subscriber sucessfully registered. ");
     } 
     catch(error)
     {   
@@ -28,14 +36,19 @@ router.post('/subscribe', async (req, res) => {
         //     res.status(200).send("duplicate email but I guess it is okay");    
         // }else{    
 
-        const errMsg = 'Error while registering new subscriber: ' + error
-        
+        const errMsg = 'Error while registering new subscriber: ' + error;
+        logger.error(`[subscribeRouter] err : ${errMsg} / request body param : ${req.body}`)
         //  'ERR_HTTP_INVALID_STATUS_CODE'  Invalid status code . put wrong argument at send function
         res.status(400).send(errMsg);
         
         
     }
 });
+
+
+
+/* Obsolete as MailChimp account has its own database of subscribers.
+Being managed by the owner of the account seems like a best idea
 
 //No need to change it to sequelize since it is behaving as expected 
 router.get('/subscribe', async (req, res) => {
@@ -54,6 +67,6 @@ router.delete('/subscribe', async(req, res) => {
         res.status(400).send(`Subscriber Deletion failed : ${error}`);
     }
 })
+*/
 
-
-module.exports = router
+module.exports = router;

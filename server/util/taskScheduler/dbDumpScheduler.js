@@ -56,6 +56,10 @@ dbDumpQueue.on('completed', function (job) {
     logger.info(`[Bull dbDumpQueue] Event listner: completed : ${JSON.stringify(job.data.message)}`)
 })
 
+dbDumpQueue.on('error', function (error) {
+    logger.error(`Error connecting to dbDumpQueue: "${error}"`);
+})
+
 async function psqlDump() {
     
     const date = new Date();
