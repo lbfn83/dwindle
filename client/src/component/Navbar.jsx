@@ -17,8 +17,8 @@ export const Navbar = () => {
             <li className="nav-option"><Link to="/companies">Companies</Link></li>
             <li className="nav-option"><Link to="/benefit">Benefit</Link></li>
             {/* <li className="nav-option"><a href='/'>Community</a></li> */}
-            <li className="nav-option"><Link to='/blog'>Blog</Link></li>
-            <li className="nav-option"><a href='/partners'>Partners</a></li>
+            <li className="nav-option"><a href='https://dwindlestudentdebt.com/blog/'>Blog</a></li>
+            <li className="nav-option"><a href='https://dwindlestudentdebt.com/partners/'>Partners</a></li>
         </ul>
                 
         <ul className='nav-mobile' style={{display: open ? 'block' : 'none'}}>
@@ -27,8 +27,8 @@ export const Navbar = () => {
             <li className="nav-option"><Link to="/companies">Companies</Link></li>
             <li className="nav-option"><Link to="/benefit">Benefit</Link></li>
             {/* <li className="nav-option"><a href='/'>Community</a></li> */}
-            <li className="nav-option"><Link to='/blog'>Blog</Link></li>
-            <li className="nav-option"><Link to='/partners'>Partners</Link></li>
+            <li className="nav-option"><a href='https://dwindlestudentdebt.com/blog/'>Blog</a></li>
+            <li className="nav-option"><Link to='https://dwindlestudentdebt.com/partners/'>Partners</Link></li>
         </ul>
       
 
