@@ -5,12 +5,9 @@ import { BACKEND_SVR_URL } from "../util/constants";
 import { JobBenefitFilter } from './JobBenefitFilter';
 import Pagination from "./Pagination";
 import BenefitButtonGroup from './BenefitButtonGroup';
+import { JobPostSearch } from "./JobPostSearch";
 
-function Search({keyword : keywordField,
-                loc : locationField,
-                btnClicked : btnCounter,
-                parentCallBack,
-                resetPageNum})
+function Search()
 {
     /*Debugging part*/ 
     /*
@@ -19,15 +16,18 @@ function Search({keyword : keywordField,
     console.log(locationField)
     console.log("***************")
     */
-   const search_terms = keywordField
-   const location = locationField 
 //    let pageNum = 0
 
+    const [keywordField, setkeywordField] = useState("");
+    const [locationField, setlocationField] = useState("")
+    // const [clickCounter, setClickCounter] = useState(0)
+
+    const [arryCompany, setArryCompany] = useState([])
 
     const [loading, setLoading] = useState(false)
     const [arryJobPosting, setArryJobPosting] = useState([])
     const [tuitionBenefit, setTuitionBenefit ] = useState([])
-    const [pageNum, setPageNum] = useState(resetPageNum)
+    const [pageNum, setPageNum] = useState(0)
     const [refreshData, setRefreshData ] = useState(false)
 //    console.log("evtTriggered : ", btnCounter)
    
@@ -62,6 +62,14 @@ function Search({keyword : keywordField,
         setRefreshData(!refreshData)
     }
 
+    const locationSet = (location) => {
+        setlocationField(location)
+    }
+
+    const keywordSet = (wordKey) => {
+        setkeywordField(wordKey)
+    }
+
     // console.log(pageNum)
     const getData = () => {
         const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings` 
@@ -69,28 +77,28 @@ function Search({keyword : keywordField,
         // const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
         //    console.log(apiReqString)
         const postOptions = { 
-            company: `${search_terms}`,
-            location: `${location}`,
+            company: `${keywordField}`,
+            location: `${locationField}`,
             pagenum: pageNum ,
             keyword: "",
             benefits: tuitionBenefit              
         };
        setLoading(true)
         axios.post(apiReqString, postOptions).then(res => {
-                parentCallBack(res.data.companylist)
+                setArryCompany(res.data.companylist)
                 setLoading(false)
                 setArryJobPosting(res.data.jobpostings)
-                // console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
+                console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
         })
     }
 
    useEffect( () => {
     // build up query Parameter string
         setArryJobPosting([])
-
+        setArryCompany([])
 
         getData()
-    }, [refreshData, btnCounter])
+    }, [refreshData])
 // Flaw of Initial design
 /*
     useEffect's second argument wasn't working so it was executed in every non relevant event like change input field 
@@ -102,17 +110,20 @@ function Search({keyword : keywordField,
  
 */   
 
-
+    
 
     if (loading) {return (
 
         <div>
+
+            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companyArray={arryCompany}/>
+            
             <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
 
             <div> Loading... </div>  
 
         </div>
-
+        
         
     )} else
 
@@ -122,6 +133,9 @@ function Search({keyword : keywordField,
     
     return (
         <div>
+
+            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companyArray={arryCompany} />
+
             <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
 
             {/* <div>{arryJobPosting&&arryJobPosting.map(jobItem => <div> {JSON.stringify(jobItem)} </div>)}</div> */}
