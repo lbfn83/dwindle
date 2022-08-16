@@ -7,15 +7,7 @@ import React from 'react'
 // import Select from 'react-select'
 
 // https://medium.com/geekculture/create-a-simple-search-component-in-react-js-using-react-hooks-710c1dfe8b58
-export const JobPostSearch = (keywordSet, locationSet, companyArray ) => {
-  
-  // const [keywordField, setkeywordField] = useState("");
-  // const [locationField, setlocationField] = useState("")
-  // const [clickCounter, setClickCounter] = useState(0)
-  
-  // const [arryCompany, setArryCompany] = useState([])
-  // const [pageNum, setPageNum ] = useState(0)
-
+export const JobPostSearch = ({ keywordSet, locationSet, companyArray, locations } ) => {
 
   // const colourOptions = [
   //   { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
@@ -41,9 +33,10 @@ export const JobPostSearch = (keywordSet, locationSet, companyArray ) => {
   const handleChange = (event) => {
     // console.log(event)
     // console.log(event.target.placeholder)
+
     switch(event.target.id){
       case "location" :
-        locationSet(event.target.value)
+        // locationSet(event.target.value)
         console.log(event.target.value)
         break;
       
@@ -62,7 +55,7 @@ export const JobPostSearch = (keywordSet, locationSet, companyArray ) => {
 
   // }
 
-  console.log(companyArray)
+  // console.log(companyArray)
   return (
     <div>
         
@@ -77,23 +70,25 @@ export const JobPostSearch = (keywordSet, locationSet, companyArray ) => {
  
             {/* <input type="input" placeholder='keywords' onChange={handleChange}/>
             <input type="input" placeholder='location' onChange={handleChange}/> */}
-            {/* <select id='keywords'  onChange={handleChange}>
-                <option value="">--Please choose an option--</option>
+            <select id='keywords' onChange={handleChange}>
+                <option value="" >--Company--</option>
                 {
-                  companyArray.map( (company, index) =>
+                  companyArray.map((company, index) =>
                     <option key={index} value={company} >{company}</option>
                   )
                 }
-  
-            </select> */}
+            </select>
             
 
            
-            <select id="location"  >
-                <option value="">--Please choose an option--</option>
-                <option value="USA" onClick={handleChange}>USA</option>
-                <option value="CANADA" onClick={handleChange}>CANADA</option>
-            </select>
+            {/* <select id="location" onChange={handleChange} >
+                <option value="">--Location--</option>
+                {
+                  locations.map((location, index) => 
+                    <option key={index} value={location}>{location}</option>
+                  )
+                }
+            </select> */}
 
 
 

@@ -19,18 +19,22 @@ function Search()
 //    let pageNum = 0
 
     const [keywordField, setkeywordField] = useState("");
-    const [locationField, setlocationField] = useState("")
+    const [locationField, setlocationField] = useState([])
+    const [ arryCompany, setArryCompany ] = useState([])
     // const [clickCounter, setClickCounter] = useState(0)
 
-    const [arryCompany, setArryCompany] = useState([])
-
+    const [ companies, setCompanies ] = useState([])
+    const [ locationList, setLocationList ] = useState([])
     const [loading, setLoading] = useState(false)
     const [arryJobPosting, setArryJobPosting] = useState([])
     const [tuitionBenefit, setTuitionBenefit ] = useState([])
     const [pageNum, setPageNum] = useState(0)
     const [refreshData, setRefreshData ] = useState(false)
 //    console.log("evtTriggered : ", btnCounter)
-   
+    
+    // const companyCopy = [...arryCompany]
+    // console.log(companyCopy)
+
     const callbackBenefitFilter = (Benefit) => {
         
         // this will check if the benefit type is already in the array, if it is it will remove the benefit other wise it will add it to the array
@@ -43,7 +47,8 @@ function Search()
         }  
         setRefreshData(!refreshData)
     }
-    console.log(tuitionBenefit)
+    
+    // console.log(tuitionBenefit)
     const next = () => {
         // pageNum++;
         //first check if the next page 
@@ -64,39 +69,70 @@ function Search()
 
     const locationSet = (location) => {
         setlocationField(location)
+        // setRefreshData(!refreshData)
+        console.log(location)
     }
 
     const keywordSet = (wordKey) => {
         setkeywordField(wordKey)
+        setRefreshData(!refreshData)
+        
     }
-
+    console.log(keywordField)
     // console.log(pageNum)
-    const getData = () => {
-        const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings` 
 
-        // const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
-        //    console.log(apiReqString)
-        const postOptions = { 
-            company: `${keywordField}`,
-            location: `${locationField}`,
-            pagenum: pageNum ,
-            keyword: "",
-            benefits: tuitionBenefit              
-        };
-       setLoading(true)
-        axios.post(apiReqString, postOptions).then(res => {
-                setArryCompany(res.data.companylist)
-                setLoading(false)
-                setArryJobPosting(res.data.jobpostings)
-                console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
-        })
-    }
+    useEffect(() => {
+        const getCompanyList = () => {
+            const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings`
+
+            const postOptions = { 
+                company: '',
+                location: '',
+                pagenum: 0 ,
+                keyword: "",
+                benefits: []              
+            };
+
+            axios.post(apiReqString, postOptions).then(res => {
+                setCompanies(res.data.companylist)
+                // setLocationList(res.data.locationList)
+            })
+        }
+
+        getCompanyList()
+
+    },[])
 
    useEffect( () => {
     // build up query Parameter string
+        const getData = () => {
+            const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings` 
+
+            // const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
+            //    console.log(apiReqString)
+            const postOptions = { 
+                company: `${keywordField}`,
+                location: `${locationField}`,
+                pagenum: pageNum ,
+                keyword: "",
+                benefits: tuitionBenefit              
+            };
+        setLoading(true)
+            axios.post(apiReqString, postOptions).then(res => {
+                    setArryCompany(res.data.companylist)
+                    setLoading(false)
+                    // setlocationField(res.data.locationlist)
+                    setArryJobPosting(res.data.jobpostings)
+                    
+                    console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
+            })
+        }
+
+
+
         setArryJobPosting([])
         setArryCompany([])
-
+        // setlocationField([])
         getData()
     }, [refreshData])
 // Flaw of Initial design
@@ -116,7 +152,7 @@ function Search()
 
         <div>
 
-            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companyArray={arryCompany}/>
+            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companyArray={companies} locations={locationList}/>
             
             <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
 
@@ -134,7 +170,7 @@ function Search()
     return (
         <div>
 
-            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companyArray={arryCompany} />
+            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companyArray={companies} locations={locationList}/>
 
             <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
 
