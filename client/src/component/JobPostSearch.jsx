@@ -36,8 +36,8 @@ export const JobPostSearch = ({ keywordSet, locationSet, companyArray, locations
 
     switch(event.target.id){
       case "location" :
-        // locationSet(event.target.value)
-        console.log(event.target.value)
+        locationSet(event.target.value)
+        // console.log(event.target.value)
         break;
       
       case "keywords" :
@@ -81,14 +81,14 @@ export const JobPostSearch = ({ keywordSet, locationSet, companyArray, locations
             
 
            
-            {/* <select id="location" onChange={handleChange} >
+            <select id="location" onChange={handleChange} >
                 <option value="">--Location--</option>
                 {
                   locations.map((location, index) => 
                     <option key={index} value={location}>{location}</option>
                   )
                 }
-            </select> */}
+            </select>
 
 
 

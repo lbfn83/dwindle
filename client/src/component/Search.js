@@ -69,8 +69,8 @@ function Search()
 
     const locationSet = (location) => {
         setlocationField(location)
-        // setRefreshData(!refreshData)
-        console.log(location)
+        setRefreshData(!refreshData)
+        
     }
 
     const keywordSet = (wordKey) => {
@@ -95,14 +95,15 @@ function Search()
 
             axios.post(apiReqString, postOptions).then(res => {
                 setCompanies(res.data.companylist)
-                // setLocationList(res.data.locationList)
+                setLocationList(res.data.locationlist)
+                // console.log(res.data.locationlist)
             })
         }
 
         getCompanyList()
 
     },[])
-
+    
    useEffect( () => {
     // build up query Parameter string
         const getData = () => {
@@ -121,7 +122,7 @@ function Search()
             axios.post(apiReqString, postOptions).then(res => {
                     setArryCompany(res.data.companylist)
                     setLoading(false)
-                    // setlocationField(res.data.locationlist)
+                    setlocationField(res.data.locationlist)
                     setArryJobPosting(res.data.jobpostings)
                     
                     console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
@@ -132,7 +133,7 @@ function Search()
 
         setArryJobPosting([])
         setArryCompany([])
-        // setlocationField([])
+        setlocationField([])
         getData()
     }, [refreshData])
 // Flaw of Initial design
