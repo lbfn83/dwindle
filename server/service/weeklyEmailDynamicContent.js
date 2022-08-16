@@ -1,13 +1,14 @@
 const { logger } = require('../config/logger');
 const { sequelize } = require('../models');
 require('dotenv').config();
-const { MAIL_CHIMP_BENEFIT_TYPE } = process.env;
+// const { MAIL_CHIMP_BENEFIT_TYPE } = process.env;
 const BENEFIT_TYPES = require('../static/benefit_type');
 const MAX_JOBPOSTING_PER_COMPANY = 10;
 const NUMBER_OF_COMPANIES_TO_PICK = 3;
 /**
  * Pick top three companies that have most jobpostings this week
  * and calculate their respective counts of jobpostings in each location
+ * @param {String} benefitType any of ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage'] or if empty string is passed, most active hiring companies will be picked
  * @returns {Array} Array of the below Object => 
  *      
  *      {   
@@ -27,22 +28,26 @@ const NUMBER_OF_COMPANIES_TO_PICK = 3;
  *                          }
  *      }
  */
-const fetchCompanyInformation = async () => {
+const fetchCompanyInformation = async (benefitType) => {
     try {
         
         // If MAIL_CHIMP_BENEFIT_TYPE is defined with one of ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']
-        // companies that offer that benefit type will be picked
+        // companies that offer that benefit type and have most jobpostings this week will be picked
         let SQLBenefitCond = '';
-        if(MAIL_CHIMP_BENEFIT_TYPE !== undefined && MAIL_CHIMP_BENEFIT_TYPE !== '')
+
+        // argument check
+        if(benefitType !== undefined && benefitType !== '')
         {
-            if(BENEFIT_TYPES.indexOf(MAIL_CHIMP_BENEFIT_TYPE) > -1 ){
-                SQLBenefitCond = `and benefitInfo.benefit_type_array @>'{${MAIL_CHIMP_BENEFIT_TYPE}}'`;
+            if(BENEFIT_TYPES.indexOf(benefitType) > -1 ){
+                SQLBenefitCond = `and benefitInfo.benefit_type_array @>'{${benefitType}}'`;
+            }else{
+                throw Error(`benefit type can be one of ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']`)
             }
         }
-        logger.info(`[weeklyEmailDynamicContent]  MAIL_CHIMP_BENEFIT_TYPE env var : ${MAIL_CHIMP_BENEFIT_TYPE}`);
+        logger.info(`[weeklyEmailDynamicContent]  MAIL_CHIMP_BENEFIT_TYPE env var : ${benefitType}`);
 
         
-        // Pick top three companies that have most jobposting this week
+        // Pick top three companies that have most jobpostings this week
         // result columns ( refre to first element of the result ) : mode, count, company_summary
         // exclude soft-deleted entries
 
@@ -287,13 +292,14 @@ const charEncodingInHTML = (comInfoWithJPs) => {
 /**
  * Organize the text containing three companys' infomation and their jobpostings 
  * and encode it to its HTML equivalent to embed it to the weekly email 
- * 
- * @returns {String} String with HTML TAGs 
+ * @param {String} benefit_type : one of the benfit types => ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']
+ *                   If arg is empty string, it will pick
+ * @returns {String} : String with HTML TAGs 
  */
-const dyanmicConentBuilder = async () => {
+const dyanmicConentBuilder = async (benefit_type) => {
     try {
         logger.info(`[weeklyEmailDynamicContent] dyanmicConentBuilder : started!`);
-        let companyInfo = await fetchCompanyInformation();
+        let companyInfo = await fetchCompanyInformation(benefit_type);
 
         // console.log(companyInfo);
         const comInfoWithJPs = await fetchJobPostingInformation(companyInfo);
@@ -302,11 +308,11 @@ const dyanmicConentBuilder = async () => {
         ${JSON.stringify(comInfoWithJPs)}`);
 
 
-        return charEncodingInHTML(comInfoWithJPs);
+        return Promise.resolve(charEncodingInHTML(comInfoWithJPs));
     }
     catch (err) {
         logger.error(`[weeklyEmailDynamicContent] dyanmicConentBuilder : Error /  ${err}`);
-
+        return Promise.reject(`[weeklyEmailDynamicContent] dyanmicConentBuilder : Error "${err}"`);
     }
 }
 

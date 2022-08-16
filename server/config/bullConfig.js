@@ -9,7 +9,7 @@ let redisURI = null
 
 if(NODE_ENV === 'test' || NODE_ENV === 'development')
 {
-    redisURI = process.env.REDIS_URL_DEV
+    redisURI = process.env.REDIS_URL_DEV;
 }else{
     // old code : 
     // redisURI = process.env.HEROKU_REDIS_MAUVE_URL
@@ -38,15 +38,15 @@ if(NODE_ENV === 'test' || NODE_ENV === 'development')
                     agent: false
             }
         }
-    }
+    };
     
 }
 
 // third argument is for options
 
-const jpProcessQueue = new Bull('jobpostingProcess', redisURI)
+const jpProcessQueue = new Bull('jobpostingProcess', redisURI);
 
-// const loggingQueue = new Bull('loggingQueue', redisURI)
+const emailTemplateCreateQueue = new Bull('emailTemplateCreateQueue', redisURI);
 
 // const emailCampaignCreateQueue = new Bull('emailCampaignCreateQueue', redisURI)
 
@@ -54,11 +54,11 @@ const jpProcessQueue = new Bull('jobpostingProcess', redisURI)
 
 // const emailCampaignSendQueue = new Bull('emailCampaignSendQueue', redisURI)
 
-const dbDumpQueue = new Bull('dbDumpScheduler', redisURI)
+const dbDumpQueue = new Bull('dbDumpScheduler', redisURI);
 
-const googleTKTablePurgeQueue = new Bull('googleTKTablePurge', redisURI)
+const googleTKTablePurgeQueue = new Bull('googleTKTablePurge', redisURI);
 
 module.exports = {
-    jpProcessQueue, dbDumpQueue, googleTKTablePurgeQueue, 
+    jpProcessQueue, dbDumpQueue, googleTKTablePurgeQueue, emailTemplateCreateQueue
 }
 // emailCampaignCreateQueue, emailCampaignSendQueue, emailCampaignUpdateQueue
