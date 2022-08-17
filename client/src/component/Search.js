@@ -45,10 +45,13 @@ function Search()
         } else {
             setTuitionBenefit(oldArray => [...oldArray, Benefit])
         }  
+
         setRefreshData(!refreshData)
+        
+        
     }
     
-    // console.log(tuitionBenefit)
+    console.log(tuitionBenefit)
     const next = () => {
         // pageNum++;
         //first check if the next page 
@@ -120,6 +123,7 @@ function Search()
             };
         setLoading(true)
             axios.post(apiReqString, postOptions).then(res => {
+                    
                     setArryCompany(res.data.companylist)
                     setLoading(false)
                     setlocationField(res.data.locationlist)
@@ -127,6 +131,7 @@ function Search()
                     
                     console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
             })
+
         }
 
 
@@ -134,6 +139,9 @@ function Search()
         setArryJobPosting([])
         setArryCompany([])
         setlocationField([])
+        if(refreshData === true){
+            setRefreshData(!refreshData)
+        }
         getData()
     }, [refreshData])
 // Flaw of Initial design
