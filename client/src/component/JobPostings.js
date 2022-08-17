@@ -13,7 +13,6 @@ export default function JobPostings({jobList}) {
         // .joblist.map( p=>                     // you need to have a key for single element of array?
         //         <div key ={p}>{p}</div> )}
       
-
             return (
             <div>
               { jobList.map( (p,index) =>(
