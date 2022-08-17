@@ -3,6 +3,8 @@
 const {
   Model
 } = require('sequelize');
+const {jobpostingTable_RestoreFromCSV} = require('../util/DBRecordsRestoreFromCSV/jobpostingTable_RestoreFromCSV');
+
 // const company = require('./company');
 module.exports = (sequelize, DataTypes) => {
   // console.log("sequelize" ,sequelize)
@@ -23,6 +25,25 @@ module.exports = (sequelize, DataTypes) => {
       })
     }
     
+    /**
+     * jobposting model classmethod : Seed the jobposting table
+     * 
+     *  Warning: Accessing non-existent property 'splice' of module exports inside circular dependency
+     *  To prevent cir. dependency, pass itself as a second argument to jobpostingTable_RestoreFromCSV()
+     *  
+     */
+     static async seed(logger)
+     {
+       try{
+         await jobpostingTable_RestoreFromCSV('jobposting table_20220728.csv', jobposting, logger);
+       }catch(e)
+       {
+         logger.error(`[jobposting classmethod]seed database error : ${e}`);
+       }
+     }
+ 
+
+
     // https://sebhastian.com/sequelize-class-methods/
     static getSearchVector() {
       return 'jobpostingToken';  
@@ -178,6 +199,7 @@ module.exports = (sequelize, DataTypes) => {
     // jobpostingToken:{
     //   type : DataTypes.TSVECTOR,
     // },
+
     std_loc_str :{
       type : DataTypes.TEXT,
       allowNull: false
