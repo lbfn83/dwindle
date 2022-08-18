@@ -7,7 +7,7 @@ import React from 'react'
 // import Select from 'react-select'
 
 // https://medium.com/geekculture/create-a-simple-search-component-in-react-js-using-react-hooks-710c1dfe8b58
-export const JobPostSearch = ({ keywordSet, locationSet, companyArray, locations } ) => {
+export const JobPostSearch = ({ keywordSet, locationSet, companySet, companyArray, locations } ) => {
 
   // const colourOptions = [
   //   { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
@@ -33,6 +33,7 @@ export const JobPostSearch = ({ keywordSet, locationSet, companyArray, locations
   const handleChange = (event) => {
     // console.log(event)
     // console.log(event.target.placeholder)
+    event.preventDefault()
 
     switch(event.target.id){
       case "location" :
@@ -40,10 +41,14 @@ export const JobPostSearch = ({ keywordSet, locationSet, companyArray, locations
         // console.log(event.target.value)
         break;
       
-      case "keywords" :
-        keywordSet(event.target.value)
+      case "company" :
+        companySet(event.target.value)
         break;
       
+      case "keyword" :
+        keywordSet(event.target.value)
+        break;
+
       default :
         console.log("undefined event : ", event)
     }
@@ -66,11 +71,15 @@ export const JobPostSearch = ({ keywordSet, locationSet, companyArray, locations
         <p>We only list jobs that provide student loan repayment, tuition assistance, and tuition reimbursement benefits</p>
 
         <form className='form-component' >
+
+
+
+            <input type="text" id="keyword" name="text" placeholder="Enter Keyword" onChange={handleChange}/>
 {/* https://stackoverflow.com/questions/28868071/onchange-event-using-react-js-for-drop-down */}
  
             {/* <input type="input" placeholder='keywords' onChange={handleChange}/>
             <input type="input" placeholder='location' onChange={handleChange}/> */}
-            <select id='keywords' onChange={handleChange}>
+            <select id='company' onChange={handleChange}>
                 <option value="" >--Company--</option>
                 {
                   companyArray.map((company, index) =>

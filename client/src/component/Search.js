@@ -20,6 +20,7 @@ function Search()
 
     const [keywordField, setkeywordField] = useState("");
     const [locationField, setlocationField] = useState([])
+    const [companyField, setCompanyField ] = useState("")
     const [ arryCompany, setArryCompany ] = useState([])
     // const [clickCounter, setClickCounter] = useState(0)
 
@@ -76,12 +77,18 @@ function Search()
         
     }
 
+    const companySet = (company) => {
+        setCompanyField(company)
+        setRefreshData(!refreshData)
+        
+    }
+
     const keywordSet = (wordKey) => {
         setkeywordField(wordKey)
         setRefreshData(!refreshData)
         
     }
-    console.log(keywordField)
+    
     // console.log(pageNum)
 
     useEffect(() => {
@@ -115,7 +122,7 @@ function Search()
             // const apiReqString = `${BACKEND_SVR_URL}/database/jobposting?company=${search_terms}&country=${location}&page=${pageNum}`
             //    console.log(apiReqString)
             const postOptions = { 
-                company: `${keywordField}`,
+                company: `${companyField}`,
                 location: `${locationField}`,
                 pagenum: pageNum ,
                 keyword: "",
@@ -161,7 +168,7 @@ function Search()
 
         <div>
 
-            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companyArray={companies} locations={locationList}/>
+            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companySet={companySet} companyArray={companies} locations={locationList}/>
             
             <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
 
@@ -179,7 +186,7 @@ function Search()
     return (
         <div>
 
-            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companyArray={companies} locations={locationList}/>
+            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companySet={companySet} companyArray={companies} locations={locationList}/>
 
             <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
 
