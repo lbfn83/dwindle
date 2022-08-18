@@ -34,7 +34,7 @@ async function registerCampaignSendService()
 
 emailCampaignSendQueue.process(async(job) => {
     
-    logger.info(`[Bull emailCampaignSendQueue] Consumer: job info : ${JSON.stringify(job.data.message)}`)
+    logger.info(`[Bull emailCampaignSendQueue] Consumer: job info : ${JSON.stringify(job.data.message)}`);
     
     await weeklyCampaignSend().then((msg) =>
     {

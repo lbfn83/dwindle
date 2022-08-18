@@ -3,6 +3,10 @@ const {
   Model
 } = require('sequelize');
 // const company = require('./company');
+
+const {benefitRecordsRestoreFromCSV} = require('../util/DBRecordsRestoreFromCSV/benefitTable_RestoreFromCSV');
+
+
 module.exports = (sequelize, DataTypes) => {
   // console.log("sequelize" ,sequelize)
   // console.log("company", company)
@@ -20,6 +24,23 @@ module.exports = (sequelize, DataTypes) => {
          foreignKey : "company_name",
         //  as : 'Asjobposting'
       })
+    }
+
+    /**
+     * benefit model classmethod : Seed the benefit table
+     * 
+     *  Warning: Accessing non-existent property 'splice' of module exports inside circular dependency
+     *  To prevent cir. dependency, pass itself as a second argument to benefitRecordsRestoreFromCSV()
+     *  
+     */
+    static async seed(logger)
+    {
+      try{
+        await benefitRecordsRestoreFromCSV('benefit table_0629.csv', benefit, logger);
+      }catch(e)
+      {
+        logger.error(`[benefit classmethod]seed database error : ${e}`);
+      }
     }
     
   }

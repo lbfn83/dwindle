@@ -9,15 +9,29 @@ let connectionStr = undefined;
 
 if(NODE_ENV !== undefined)
 {
-    connectionStr = seqConfig[NODE_ENV];
-    const pool = new Pool({
-        user : connectionStr.username,
-        password : connectionStr.password,
-        database : connectionStr.database,
-        host : connectionStr.host,
-        port : connectionStr.port,
-        ssl : { rejectUnauthorized: false }
-    });
+    let pool = undefined;
+    if(NODE_ENV !== 'development')
+    {
+        connectionStr = seqConfig[NODE_ENV];
+        pool = new Pool({
+            user : connectionStr.username,
+            password : connectionStr.password,
+            database : connectionStr.database,
+            host : connectionStr.host,
+            port : connectionStr.port,
+            ssl : { rejectUnauthorized: false }
+        });
+    }else{
+        connectionStr = seqConfig[NODE_ENV];
+        pool = new Pool({
+            user : connectionStr.username,
+            password : connectionStr.password,
+            database : connectionStr.database,
+            host : connectionStr.host,
+            port : connectionStr.port,
+            // ssl : { rejectUnauthorized: false }
+        });
+    }
     
     module.exports = pool
 }else{

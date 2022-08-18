@@ -30,22 +30,22 @@ const cronOpt = (() => {
 async function registerJPProcess()
 {
     
-    logger.info(`[Bull jpProcessQueue] registered! `)
-    await jpProcessQueue.obliterate({force : true})
-    jpProcessQueue.add({ jobprocess : 'start' } , {repeat: cronOpt})
+    logger.info(`[Bull jpProcessQueue] registered! `);
+    await jpProcessQueue.obliterate({force : true});
+    jpProcessQueue.add({ jobprocess : 'start' } , {repeat: cronOpt});
 }
 
 // consumer
 jpProcessQueue.process( async(job) => {
-    logger.info(`[Bull jpProcessQueue] : ${JSON.stringify(job)}`)
+    logger.info(`[Bull jpProcessQueue] : ${JSON.stringify(job)}`);
     
     await pullJobPostings().then( async()=>{
-        await jobPostingDataPurge()
+        await jobPostingDataPurge();
     })
     .then((data)=> {
-        logger.info(`[Bull jpProcessQueue] Done! : ${data}`)
+        logger.info(`[Bull jpProcessQueue] Done! : ${data}`);
         
-    })
+    });
 
 })
 
@@ -53,7 +53,7 @@ jpProcessQueue.process( async(job) => {
 // as I have to break down each query one by one and feed into producer
 jpProcessQueue.on('completed', function (job, result) {
     // A job successfully completed with a `result`.
-    logger.info(`[Bull jpProcessQueue] complete event : ${JSON.stringify(job)}, ${result}`)
+    logger.info(`[Bull jpProcessQueue] complete event : ${JSON.stringify(job)}, ${result}`);
 })
 
 jpProcessQueue.on('error', function (error) {

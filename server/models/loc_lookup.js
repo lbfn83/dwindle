@@ -88,8 +88,43 @@ module.exports = (sequelize, DataTypes) => {
         return Promise.reject(`[loc_lookup classmethod]geocodingQuery error`);
       }
     }
+    /**
+     * This can be utilized in jobPostingFetcher logic
+     * @param {*} logger 
+     */    
+    static async examineLookupTable(logger)
+    {
+      try{
+        /** Part1 : This can be utilized in jobPostingFetcher logic */
+        // const lookupResult = await pgPool.query(`SELECT * from loc_lookup where need_to_be_reviewed = $$true$$;`);
+        // logger.info(`[loc_lookup classmethod]examineLookupTable rows with 'need_to_be_reviewed' true : ${JSON.stringify(lookupResult.rows)}`)
+        // /** covertTOStdAddr를 일부.. 코멘트 처리해놓으면.. 강제로 에러를 발생시킬 수는 있겠지?*/
+        // const stdAddrResults = await Promise.all(lookupResult.rows.map(async(element) => {
+        //   let stdStr = undefined;
+        //   await loc_lookup.convertToStdAddr(element.job_location_str, logger)
+        //   .then(result => stdStr = result).catch(err => stdStr = err); 
+        //   return stdStr;
+        // }));
 
+        // console.log(await stdAddrResults);
 
+        /** Part2 : element.deletedAt = Date.now(); will this work? */
+        let today = new Date();
+        console.log(today.toLocaleString());
+        const lookupResult = await pgPool.query(`select * from jobposting where std_loc_str = 'Ho Chi Minh City, Ho Chi Minh City, Vietnam'`);
+        console.log(lookupResult);
+        
+        await pgPool.query(`update jobposting set "deletedAt" = '${today.toLocaleString()}' where  std_loc_str = 'Ho Chi Minh City, Ho Chi Minh City, Vietnam'`);
+        // select * from jobposting where std_loc_str = 'Ho Chi Minh City, Ho Chi Minh City, Vietnam'
+        // update jobposting set "deletedAt" = null where  std_loc_str = 'Ho Chi Minh City, Ho Chi Minh City, Vietnam'
+        // Error msg : column "deletedAt" is of type timestamp with time zone but expression is of type bigint
+        // Database purge에서 사용한  technique 이 필요할듯 
+      }
+      catch(e){
+        logger.error(`[loc_lookup classmethod]examineLookupTable error : ${e}`);
+        return Promise.reject(`[loc_lookup classmethod]examineLookupTable error`);
+      }
+    }
     /**
      * loc_lookup model classmethod
      * 
@@ -202,11 +237,14 @@ module.exports = (sequelize, DataTypes) => {
             await sequelize.query(`INSERT into loc_lookup(job_location_str, std_loc_str, need_to_be_reviewed, "createdAt", "updatedAt") 
                           VALUES ($$${regexAddr}$$, $$${stdAddr}$$, ${need_to_be_reviewed}, NOW(), NOW()) 
                           ON CONFLICT DO NOTHING;`);
-        }else if(lookupResult.rowCount  === 1)
+        }
+        else if(lookupResult.rowCount  === 1)
         {
           // A hit!
             stdAddr = lookupResult.rows[0].std_loc_str;
-        }else{
+        }
+        else{
+          // TODO : I can prevent this by setting unique constraint in job_location_str column 
           // More than Two rows coming from queries. 
           throw Error("Duplicate rows in a loc_lookup table")
         }
@@ -214,7 +252,7 @@ module.exports = (sequelize, DataTypes) => {
       }
       catch(e){
         logger.error(`[loc_lookup classmethod]convertToStdAddr error : ${e}`);
-        return Promise.reject(`[loc_lookup classmethod]convertToStdAddr error`);
+        return Promise.reject(`deletion flag`);
       }
     }
 

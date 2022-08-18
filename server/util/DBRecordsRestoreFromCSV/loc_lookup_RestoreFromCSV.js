@@ -14,8 +14,8 @@ const path = require('path');
  * Seed the loc_lookup table with the records retrieved from the specified CSV file
  * 
  * @param {String} filename the name of CSV file containing records 
- * @param {Sequelize} loc_lookup sequelize model object 
- * @param {logger} winston logger object
+ * @param {Sequelize} loc_lookup sequelize model object /it is required to prevent circular dependency from classmethod in model
+ * @param {logger} logger winston logger object
  */
 async function loc_lookupRecordsRestoreFromCSV(filename, loc_lookup, logger)
 {   
@@ -82,6 +82,8 @@ async function loc_lookupRecordsRestoreFromCSV(filename, loc_lookup, logger)
             }).then(async(rtn) => {
                 logger.debug(`[loc_lookupRecordsRestoreFromCSV]loc_lookup Records Retore Done : ${JSON.stringify(await rtn)}`);
                 logger.info(`[loc_lookupRecordsRestoreFromCSV] finished!`);
+            }).catch(async(error)=> {
+                logger.error(`[loc_lookupRecordsRestoreFromCSV] error : ${error}`);
             });
             
         }).on("error", (err) => logger.error(`[loc_lookupRecordsRestoreFromCSV] error1 : ${err.message}`)); 
