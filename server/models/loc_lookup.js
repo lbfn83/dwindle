@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     static async seed(logger)
     {
       try{
-        await loc_lookupRecordsRestoreFromCSV('loc_lookup_20220806.csv', loc_lookup, logger);
+        await loc_lookupRecordsRestoreFromCSV('loc_lookup_20220816.csv', loc_lookup, logger);
       }catch(e)
       {
         logger.error(`[loc_lookup classmethod]seed database error : ${e}`);
@@ -45,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
      * @returns {Promise<String>} standardized address :  The concat of administrative_area_level_1 and country``
      *                                           ex) Maine, United States   
      */
+    // TODO : one more argument is requried for Country
     static async geocodingQuery(strAddr, logger)
     {
       try{
@@ -74,6 +75,8 @@ module.exports = (sequelize, DataTypes) => {
           logger.info(`[loc_lookup classmethod]geocodingQuery extracted result from '${strAddr}': country => '${country}' / state => '${state}'`);
 
         }
+        // TODO : if country is undefined or not the country asked for, 
+        // return 'deletion flag'
         if(country === undefined || state === undefined)
         {
           return Promise.reject(`[loc_lookup classmethod]geocodingQuery error`);
@@ -89,10 +92,35 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
     /**
-     * This can be utilized in jobPostingFetcher logic
-     * @param {*} logger 
+     * 
+     */
+    static async jobpostingSoftDeleteByFlag(logger)
+    {
+      try{
+        // update loc_lookup set std_loc_str = 'deletion flag' where job_location_str similar to '%India' 
+        // select * from loc_lookup where need_to_be_reviewed = true order by std_loc_str asc
+        let today = new Date();
+        
+        const softDeletionResult = await pgPool.query(`UPDATE jobposting SET "deletedAt" = '${today.toLocaleString()}' where  std_loc_str = 'deletion flag' and "deletedAt" is null`);
+        logger.debug(`[loc_lookup classmethod]jobpostingSoftDeleteByFlag : Update result '${JSON.stringify(softDeletionResult)}' `);
+        logger.info(`[loc_lookup classmethod]jobpostingSoftDeleteByFlag  '${softDeletionResult.rowCount}' Rows soft deleted`);
+        return Promise.resolve(softDeletionResult.rowCount); 
+      }catch(e)
+      {
+        logger.error(`[loc_lookup classmethod]jobpostingSoftDeleteByFlag error : ${e}`);
+        return Promise.reject(`[loc_lookup classmethod]jobpostingSoftDeleteByFlag error : ${e}`);
+      }
+        
+    }
+
+    /**
+     * This is preliminary function:
+     * flag "job_location_str" record in a table with "deletion flag"
+     * which later will soft-delete jobposting records with the exact job_location_str  
+     * @param {String} job_location_str  
+     * @param {logger} logger 
      */    
-    static async examineLookupTable(logger)
+    static async examineLookupTable( job_location_str ,logger)
     {
       try{
         /** Part1 : This can be utilized in jobPostingFetcher logic */
@@ -114,6 +142,7 @@ module.exports = (sequelize, DataTypes) => {
         const lookupResult = await pgPool.query(`select * from jobposting where std_loc_str = 'Ho Chi Minh City, Ho Chi Minh City, Vietnam'`);
         console.log(lookupResult);
         
+         
         await pgPool.query(`update jobposting set "deletedAt" = '${today.toLocaleString()}' where  std_loc_str = 'Ho Chi Minh City, Ho Chi Minh City, Vietnam'`);
         // select * from jobposting where std_loc_str = 'Ho Chi Minh City, Ho Chi Minh City, Vietnam'
         // update jobposting set "deletedAt" = null where  std_loc_str = 'Ho Chi Minh City, Ho Chi Minh City, Vietnam'
@@ -258,17 +287,15 @@ module.exports = (sequelize, DataTypes) => {
 
 
    /**
-    * Initialize "std_loc_str" column in the jobposting table.
-    * 
-    * This function is to update std_loc_str column in jobposting table after reflecting any changes in loc_lookup table.
-    * 
+    * Bulk update "std_loc_str" column in the jobposting table according to loc_lookup table.
+    * @param {logger} logger
     */
     static async buildStdAddrColumn(logger)
     {
       try{
 
         // As of July 2022, jobpostings in USA are only valid.
-        const allRowsfromJobposting = await sequelize.query(`SELECT * FROM jobposting where jobposting.normalized_job_location = 'USA' ;`);
+        const allRowsfromJobposting = await sequelize.query(`SELECT * FROM jobposting ;`); //where jobposting.normalized_job_location = 'USA' 
         
         /* For Debugging purpose */
         // const allRowsfromJobposting = await sequelize.query(`SELECT * FROM jobposting where jobposting.normalized_job_location = 'USA' and jobposting.job_location similar to '(\\S)+, [A-Z]{2}\\M';`);
@@ -327,12 +354,14 @@ module.exports = (sequelize, DataTypes) => {
             // await element.save();
         });
         */
-        //TODO: Implement bulk update
-
+        //TODO: Implement delete records flagged with deletion flag
+        await loc_lookup.jobpostingSoftDeleteByFlag(logger).then(async (rtn) => {
+          logger.info(`[loc_lookup classmethod]buildStdAddrColumn jobpostingSoftDeleteByFlag success: ${rtn} Rows processed`);
+        }).catch((error) => logger.error(`[loc_lookup classmethod]buildStdAddrColumn error : ${error}`));
 
       }catch(e)
       {
-        logger.error(`[loc_lookup classmethod]buildStdAddrColumn error : ${e}`);
+        logger.error(`[loc_lookup classmethod]buildStdAddrColumn error2 : ${e}`);
       }
             
     }
