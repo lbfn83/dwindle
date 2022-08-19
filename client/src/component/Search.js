@@ -125,7 +125,7 @@ function Search()
                 company: `${companyField}`,
                 location: `${locationField}`,
                 pagenum: pageNum ,
-                keyword: "",
+                keyword: `${keywordField}`,
                 benefits: tuitionBenefit              
             };
         setLoading(true)
@@ -168,7 +168,7 @@ function Search()
 
         <div>
 
-            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companySet={companySet} companyArray={companies} locations={locationList}/>
+            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companySet={companySet} companyArray={companies} locations={locationField}/>
             
             <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
 
@@ -186,7 +186,7 @@ function Search()
     return (
         <div>
 
-            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companySet={companySet} companyArray={companies} locations={locationList}/>
+            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companySet={companySet} companyArray={companies} locations={locationField}/>
 
             <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
 
