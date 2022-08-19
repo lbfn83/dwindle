@@ -22,6 +22,7 @@ function Search()
     const [locationField, setlocationField] = useState([])
     const [companyField, setCompanyField ] = useState("")
     const [ arryCompany, setArryCompany ] = useState([])
+    const [ arryLocation, setArryLocation ] = useState([])
     // const [clickCounter, setClickCounter] = useState(0)
 
     const [ companies, setCompanies ] = useState([])
@@ -88,31 +89,33 @@ function Search()
         setRefreshData(!refreshData)
         
     }
+
+    
     
     // console.log(pageNum)
 
-    useEffect(() => {
-        const getCompanyList = () => {
-            const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings`
+    // useEffect(() => {
+    //     const getCompanyList = () => {
+    //         const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings`
 
-            const postOptions = { 
-                company: '',
-                location: '',
-                pagenum: 0 ,
-                keyword: "",
-                benefits: []              
-            };
+    //         const postOptions = { 
+    //             company: '',
+    //             location: '',
+    //             pagenum: 0 ,
+    //             keyword: "",
+    //             benefits: []              
+    //         };
 
-            axios.post(apiReqString, postOptions).then(res => {
-                setCompanies(res.data.companylist)
-                setLocationList(res.data.locationlist)
-                // console.log(res.data.locationlist)
-            })
-        }
+    //         axios.post(apiReqString, postOptions).then(res => {
+    //             setCompanies(res.data.companylist)
+    //             setLocationList(res.data.locationlist)
+    //             // console.log(res.data.locationlist)
+    //         })
+    //     }
 
-        getCompanyList()
+    //     getCompanyList()
 
-    },[])
+    // },[])
     
    useEffect( () => {
     // build up query Parameter string
@@ -133,19 +136,25 @@ function Search()
                     
                     setArryCompany(res.data.companylist)
                     setLoading(false)
-                    setlocationField(res.data.locationlist)
+                    setArryLocation(res.data.locationlist)
                     setArryJobPosting(res.data.jobpostings)
                     
                     console.log("arryJobPosting content : ", res.data.jobpostings.length, typeof res.data.jobpostings)
             })
 
         }
-
+        // if(selectdCompany === 'cancel filter')
+        // {
+        //     setCompanyField('');
+        // }
+        // if(selectdLocation === 'cancel filter')
+        // {
+        //     setLocationField('');
+        // }
 
 
         setArryJobPosting([])
-        setArryCompany([])
-        setlocationField([])
+        setArryLocation([])
         if(refreshData === true){
             setRefreshData(!refreshData)
         }
@@ -168,7 +177,7 @@ function Search()
 
         <div>
 
-            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companySet={companySet} companyArray={companies} locations={locationField}/>
+            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companySet={companySet} companyArray={arryCompany} locations={arryLocation}/>
             
             <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
 
@@ -186,7 +195,7 @@ function Search()
     return (
         <div>
 
-            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companySet={companySet} companyArray={companies} locations={locationField}/>
+            <JobPostSearch keywordSet={keywordSet} locationSet={locationSet} companySet={companySet} companyArray={arryCompany} locations={arryLocation}/>
 
             <BenefitButtonGroup callbackFunction={callbackBenefitFilter} />
 
