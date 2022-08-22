@@ -45,12 +45,20 @@ export const JobPostSearch = ({ keywordSet, locationSet, companySet, companyArra
         companySet(event.target.value)
         break;
       
-      case "keyword" :
-        keywordSet(event.target.value)
-        break;
+      // case "keyword" :
+      //   keywordSet(event.target.value)
+      //   break;
 
       default :
         console.log("undefined event : ", event)
+    }
+  }
+
+  const handleKeyDown = (event) => {
+    event.preventDefault()
+
+    if(event.key === 'Enter'){
+      keywordSet(event.target.value);
     }
   }
 
@@ -62,7 +70,7 @@ export const JobPostSearch = ({ keywordSet, locationSet, companySet, companyArra
 
   // console.log(companyArray)
   return (
-    <div>
+    <div className='job-search'>
         
         <h1>
             Want to work for a company that helps you pay down your student debt?
@@ -74,7 +82,7 @@ export const JobPostSearch = ({ keywordSet, locationSet, companySet, companyArra
 
 
 
-            <input type="text" id="keyword" name="text" placeholder="Enter Keyword" onChange={handleChange}/>
+            <input type="text" id="keyword" name="text" placeholder="Enter Keyword" onKeyDown={handleKeyDown}/>
 {/* https://stackoverflow.com/questions/28868071/onchange-event-using-react-js-for-drop-down */}
  
             {/* <input type="input" placeholder='keywords' onChange={handleChange}/>
