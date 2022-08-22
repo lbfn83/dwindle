@@ -25,8 +25,6 @@ function Search()
     const [ arryLocation, setArryLocation ] = useState([])
     // const [clickCounter, setClickCounter] = useState(0)
 
-    const [ companies, setCompanies ] = useState([])
-    const [ locationList, setLocationList ] = useState([])
     const [loading, setLoading] = useState(false)
     const [arryJobPosting, setArryJobPosting] = useState([])
     const [tuitionBenefit, setTuitionBenefit ] = useState([])
@@ -73,13 +71,22 @@ function Search()
     }
 
     const locationSet = (location) => {
-        setlocationField(location)
+        if(location === 'clear filter'){
+            setlocationField('')
+        } else {
+            setlocationField(location)
+        }
         setRefreshData(!refreshData)
         
     }
 
     const companySet = (company) => {
-        setCompanyField(company)
+        if(company === 'clear filter'){
+            setCompanyField('')
+        } else {
+            setCompanyField(company)
+        }
+        
         setRefreshData(!refreshData)
         
     }
@@ -89,33 +96,7 @@ function Search()
         setRefreshData(!refreshData)
         
     }
-
     
-    
-    // console.log(pageNum)
-
-    // useEffect(() => {
-    //     const getCompanyList = () => {
-    //         const apiReqString = `${BACKEND_SVR_URL}/database/jobpostings`
-
-    //         const postOptions = { 
-    //             company: '',
-    //             location: '',
-    //             pagenum: 0 ,
-    //             keyword: "",
-    //             benefits: []              
-    //         };
-
-    //         axios.post(apiReqString, postOptions).then(res => {
-    //             setCompanies(res.data.companylist)
-    //             setLocationList(res.data.locationlist)
-    //             // console.log(res.data.locationlist)
-    //         })
-    //     }
-
-    //     getCompanyList()
-
-    // },[])
     
    useEffect( () => {
     // build up query Parameter string
@@ -143,15 +124,6 @@ function Search()
             })
 
         }
-        // if(selectdCompany === 'cancel filter')
-        // {
-        //     setCompanyField('');
-        // }
-        // if(selectdLocation === 'cancel filter')
-        // {
-        //     setLocationField('');
-        // }
-
 
         setArryJobPosting([])
         setArryLocation([])
