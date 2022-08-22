@@ -1,4 +1,5 @@
 // https://github.com/deekshasharma/load-json-react/tree/master/src
+// abnormal test sets = {Dubai, Netherlands, Finland}
 module.exports = jobpostingData = { 
     data:[
         {
