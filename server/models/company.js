@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     static async seed(logger)
     {
       try{
-        await comapnyRecordsRestoreFromCSV('company table_0629.csv', company, logger);
+        await comapnyRecordsRestoreFromCSV('company table_0820.csv', company, logger);
       }catch(e)
       {
         logger.error(`[jobposting classmethod]seed database error : ${e}`);
