@@ -156,11 +156,11 @@ button:active{
   align-items:  center;
 }
 
-.job-page-body h1{
+/* .job-page-body h1{
   font-weight: bolder;
   margin-top: 126px;
   padding: 0 120px;
-}
+} */
 
 .job-page-body p {
   font-size: 20px;
@@ -667,6 +667,29 @@ button:active{
 .pagination div{
   display: flex;
   flex-direction: column;
+}
+
+/* pagination ends */
+
+/* email sign up styling begins*/
+.email-signup{
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.email-signup h1{
+  margin-top: 126px;
+  padding: 0 120px;
+}
+
+/* email sign up styling ends*/
+
+/* job search styling begins*/
+
+.job-search h1{
+  text-align: center;
+  margin-top: 126px;
+  padding: 0 120px;
 }
 
 @media screen and (max-width: 940px){

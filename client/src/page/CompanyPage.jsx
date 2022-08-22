@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 
 import { useLocation } from 'react-router-dom';
 
+import EmailSignup, { EmailSignUp } from '../component/EmailSignUp'
+
 export const CompanyPage = () => {
 
     const location = useLocation()
@@ -78,6 +80,7 @@ export const CompanyPage = () => {
                     
                 </div>
             </div>
+            <EmailSignUp />
         </div>
     )
 }
