@@ -19,7 +19,7 @@ function App() {
       <BrowserRouter>
         <div className='title-bar'>
           <a href="/" className='logo-image-container'><img src={logo} alt="dwindle logo" /></a> 
-          <button>Post a Job</button>
+          <button><a href='https://dwindlestudentdebt.com/add-company/'>Post a Job</a></button>
         </div>
 
         <div className='page-container'>

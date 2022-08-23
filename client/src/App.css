@@ -93,6 +93,11 @@ button:active{
   margin: 2.5rem;
 }
 
+.title-bar button a{
+  text-decoration: none;
+  color: black;
+}
+
 /* title bar styling ends */
 
 /* nav styling begins*/
@@ -706,6 +711,7 @@ button:active{
     min-width: 0;
 
   }
+
 
   .nav-container{
     width: 82%;

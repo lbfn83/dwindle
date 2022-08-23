@@ -132,6 +132,7 @@ function Search()
         }
         getData()
     }, [refreshData])
+    
 // Flaw of Initial design
 /*
     useEffect's second argument wasn't working so it was executed in every non relevant event like change input field 
