@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     static async seed(logger)
     {
       try{
-        await loc_lookupRecordsRestoreFromCSV('loc_lookup_20220806.csv', loc_lookup, logger);
+        await loc_lookupRecordsRestoreFromCSV('loc_lookup_20220816.csv', loc_lookup, logger);
       }catch(e)
       {
         logger.error(`[loc_lookup classmethod]seed database error : ${e}`);
@@ -45,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
      * @returns {Promise<String>} standardized address :  The concat of administrative_area_level_1 and country``
      *                                           ex) Maine, United States   
      */
+    // TODO : one more argument is requried for Country
     static async geocodingQuery(strAddr, logger)
     {
       try{
@@ -74,6 +75,8 @@ module.exports = (sequelize, DataTypes) => {
           logger.info(`[loc_lookup classmethod]geocodingQuery extracted result from '${strAddr}': country => '${country}' / state => '${state}'`);
 
         }
+        // TODO : if country is undefined or not the country asked for, 
+        // return 'deletion flag'
         if(country === undefined || state === undefined)
         {
           return Promise.reject(`[loc_lookup classmethod]geocodingQuery error`);
@@ -88,6 +91,7 @@ module.exports = (sequelize, DataTypes) => {
         return Promise.reject(`[loc_lookup classmethod]geocodingQuery error`);
       }
     }
+
 
 
     /**
@@ -202,35 +206,73 @@ module.exports = (sequelize, DataTypes) => {
             await sequelize.query(`INSERT into loc_lookup(job_location_str, std_loc_str, need_to_be_reviewed, "createdAt", "updatedAt") 
                           VALUES ($$${regexAddr}$$, $$${stdAddr}$$, ${need_to_be_reviewed}, NOW(), NOW()) 
                           ON CONFLICT DO NOTHING;`);
-        }else if(lookupResult.rowCount  === 1)
+        }
+        else if(lookupResult.rowCount  === 1)
         {
           // A hit!
             stdAddr = lookupResult.rows[0].std_loc_str;
-        }else{
+        }
+        else{
+          // TODO : I can prevent this by setting unique constraint in job_location_str column 
           // More than Two rows coming from queries. 
-          throw Error("Duplicate rows in a loc_lookup table")
+          throw Error("Duplicate rows in a loc_lookup table");
         }
         return Promise.resolve(await stdAddr);
       }
       catch(e){
         logger.error(`[loc_lookup classmethod]convertToStdAddr error : ${e}`);
-        return Promise.reject(`[loc_lookup classmethod]convertToStdAddr error`);
+        return Promise.reject(`deletion flag`);
       }
     }
 
+    /**
+     * 
+     * locate a record that matches with input arg and
+     * flag its "job_location_str" column in a table as "deletion flag"
+     *   
+     * @param {String} job_location_str  
+     * @param {logger} logger 
+     * 
+     * @return rowCount, which is 1 when it is successful
+     */    
+    static async markDelFlag_LocTb( job_location_str ,logger)
+    {
+      try{
 
-   /**
-    * Initialize "std_loc_str" column in the jobposting table.
-    * 
-    * This function is to update std_loc_str column in jobposting table after reflecting any changes in loc_lookup table.
-    * 
-    */
-    static async buildStdAddrColumn(logger)
+        const lookupResult = await pgPool.query(`SELECT * FROM loc_lookup WHERE std_loc_str = '${job_location_str}'`);
+        // console.log(lookupResult);
+        let updateResult = undefined;
+        if(lookupResult.rowCount > 0)
+        {
+          updateResult = await pgPool.query(`UPDATE loc_lookup SET std_loc_str = 'deletion flag' WHERE std_loc_str = '${job_location_str}'`);
+          // Error msg : column "deletedAt" is of type timestamp with time zone but expression is of type bigint
+          let today = new Date(); // console.log(today.toLocaleString());
+          // ?
+          // await pgPool.query(`UPDATE jobposting SET "deletedAt" = '${today.toLocaleString()}' WHERE std_loc_str = '${job_location_str}'`);
+        }else
+        {
+          throw Error(`There is no record with std_loc_str '${job_location_str}'`);
+        }
+        return Promise.resolve(updateResult.rowCount);
+        
+      }
+      catch(e){
+        logger.error(`[loc_lookup classmethod]markDelFlag_LocTb error : ${e}`);
+        return Promise.reject(`[loc_lookup classmethod]markDelFlag_LocTb error : ${e}`);
+      }
+    }
+
+    /**
+      * Bulk update "std_loc_str" column in the jobposting table according to loc_lookup table.
+      * @param {logger} logger
+      * @return the number of rows in jobpostings updated. It should be same as the total number of records
+      */
+    static async UpdateStdAddrColumn_JPTb(logger)
     {
       try{
 
         // As of July 2022, jobpostings in USA are only valid.
-        const allRowsfromJobposting = await sequelize.query(`SELECT * FROM jobposting where jobposting.normalized_job_location = 'USA' ;`);
+        const allRowsfromJobposting = await sequelize.query(`SELECT * FROM jobposting ;`); //where jobposting.normalized_job_location = 'USA' 
         
         /* For Debugging purpose */
         // const allRowsfromJobposting = await sequelize.query(`SELECT * FROM jobposting where jobposting.normalized_job_location = 'USA' and jobposting.job_location similar to '(\\S)+, [A-Z]{2}\\M';`);
@@ -255,7 +297,7 @@ module.exports = (sequelize, DataTypes) => {
       
           const result  = await pgPool.query(`UPDATE jobposting SET std_loc_str = $$${standardizedAddr}$$ where jobposting.uuid = $$${element.uuid}$$;`)
           
-          logger.info(`[loc_lookup classmethod] buildStdAddrColumn : addr update to std_loc_str col : 
+          logger.debug(`[loc_lookup classmethod] buildStdAddrColumn : addr update to std_loc_str col : 
           stdaddr string => '${standardizedAddr}' / original str =>'${element.job_location}'`);
           // logger.info(`[loc_lookup classmethod] jobpostingsArry with std location : ${JSON.stringify(await jobpostingsArryWithStdAddr)}`);
           return standardizedAddr;
@@ -267,8 +309,8 @@ module.exports = (sequelize, DataTypes) => {
         }));
 
         logger.debug(`[loc_lookup classmethod] buildStdAddrColumn : jobpostingsArry with std location : ${JSON.stringify(await jobpostingsArryWithStdAddr)}`);
-
-/*
+        return Promise.resolve(jobpostingsArryWithStdAddr.length);
+        /*
         const jobpostingsArry = [];
 
         await allRowsfromJobposting[0].map(async(element) => {
@@ -289,14 +331,33 @@ module.exports = (sequelize, DataTypes) => {
             // await element.save();
         });
         */
-        //TODO: Implement bulk update
-
-
       }catch(e)
       {
         logger.error(`[loc_lookup classmethod]buildStdAddrColumn error : ${e}`);
+        return Promise.reject(`[loc_lookup classmethod]buildStdAddrColumn error : ${e}`);
       }
             
+    }
+    /**
+     * Soft Delete jobpostings flagged with "deletion flag" in a std_loc_str column
+     */
+    static async softDel_JPTb_ByFlag(logger)
+    {
+      try{
+        // update loc_lookup set std_loc_str = 'deletion flag' where job_location_str similar to '%India' 
+        // select * from loc_lookup where need_to_be_reviewed = true order by std_loc_str asc
+        let today = new Date();
+        
+        const softDeletionResult = await pgPool.query(`UPDATE jobposting SET "deletedAt" = '${today.toLocaleString()}' where  std_loc_str = 'deletion flag' and "deletedAt" is null`);
+        logger.debug(`[loc_lookup classmethod]jobpostingSoftDeleteByFlag : Update result '${JSON.stringify(softDeletionResult)}' `);
+        logger.info(`[loc_lookup classmethod]jobpostingSoftDeleteByFlag  '${softDeletionResult.rowCount}' Rows soft deleted`);
+        return Promise.resolve(softDeletionResult.rowCount); 
+      }catch(e)
+      {
+        logger.error(`[loc_lookup classmethod]jobpostingSoftDeleteByFlag error : ${e}`);
+        return Promise.reject(`[loc_lookup classmethod]jobpostingSoftDeleteByFlag error : ${e}`);
+      }
+        
     }
   }
   loc_lookup.init({

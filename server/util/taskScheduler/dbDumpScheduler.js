@@ -37,23 +37,23 @@ const cronOpt = (() => {
 
 async function registerDBDumpScheduler()
 {
-    logger.info(`[Bull dbDumpQueue] registered! `)
-    await dbDumpQueue.obliterate({force : true})
-    dbDumpQueue.add({ message : 'db dump finished!' } , {repeat: cronOpt})
+    logger.info(`[Bull dbDumpQueue] registered! `);
+    await dbDumpQueue.obliterate({force : true});
+    dbDumpQueue.add({ message : 'db dump finished!' } , {repeat: cronOpt});
 }
 
 dbDumpQueue.process( async(job) => {
-    logger.info(`[Bull dbDumpQueue] Consumer Started!`)
+    logger.info(`[Bull dbDumpQueue] Consumer Started!`);
 
     // logger.info(`[Bull DBDumpScheduler] Consumer: job info in consumer: ${JSON.stringify(job.data)}`)
-    psqlDump()
+    psqlDump();
 })
 
 dbDumpQueue.on('completed', function (job) {
     // A job successfully completed with a `result`.
-    logger.debug(`[Bull dbDumpQueue] Event listner : completed  : ${JSON.stringify(job)}`)
+    logger.debug(`[Bull dbDumpQueue] Event listner : completed  : ${JSON.stringify(job)}`);
     
-    logger.info(`[Bull dbDumpQueue] Event listner: completed : ${JSON.stringify(job.data.message)}`)
+    logger.info(`[Bull dbDumpQueue] Event listner: completed : ${JSON.stringify(job.data.message)}`);
 })
 
 dbDumpQueue.on('error', function (error) {
@@ -79,18 +79,18 @@ async function psqlDump() {
     // const output = await execSync("dir",{ encoding: 'utf-8' })
     
     try{
-        const output = execSync(`pg_dump -f ${fileName} -F t postgres://${username}:${password}@${host}:5432/${database} `, { encoding: 'utf-8' })
-        logger.info(`[Bull dbDumpQueue] psqlDump db dump done `)
+        const output = execSync(`pg_dump -f ${fileName} -F t postgres://${username}:${password}@${host}:5432/${database} `, { encoding: 'utf-8' });
+        logger.info(`[Bull dbDumpQueue] psqlDump db dump done `);
         // compress and uploadFile doesn't return anything
         await compress(fileName).then(async () => {
             
-            logger.info(`[Bull dbDumpQueue] psqlDump compress and upload : ${fileName}`)
-            compressedFileName = fileName + ".gz"
+            logger.info(`[Bull dbDumpQueue] psqlDump compress and upload : ${fileName}`);
+            compressedFileName = fileName + ".gz";
             await uploadFile(compressedFileName).then((msg)=> {
-                logger.info(`[Bull dbDumpQueue] Google upload finished : ${msg}`)
+                logger.info(`[Bull dbDumpQueue] Google upload finished : ${msg}`);
                 fs.unlinkSync(compressedFileName);
             }).catch((error)=>{
-                logger.error(`[Bull dbDumpQueue] Google upload error : ${error}`)
+                logger.error(`[Bull dbDumpQueue] Google upload error : ${error}`);
             })
     
         }).then(()=> {
@@ -98,11 +98,11 @@ async function psqlDump() {
         });
     }catch(error)
     {
-        logger.error(`[Bull dbDumpQueue] psqlDump error : ${error}`)
+        logger.error(`[Bull dbDumpQueue] psqlDump error : ${error}`);
     }
 
 }
-module.exports = {registerDBDumpScheduler}
+module.exports = {registerDBDumpScheduler};
 
 
 /* when it comes to pg_restore

@@ -100,7 +100,7 @@ router.post('/jobpostings', async (req, res) => {
         
         }else
         {
-          queryResult = await jobposting.searchJobPosting('product manager', logger)
+          queryResult = await jobposting.searchJobPosting(keyword, logger)
         }
 
 
@@ -179,10 +179,10 @@ router.post('/jobpostings', async (req, res) => {
 
         /* 'TODO:filter list generation */
         // https://www.codegrepper.com/code-examples/javascript/how+to+get+unique+values+in+array+of+objects+in+react+js
-        const companyFilteringList = [...new Set(filteredResult.map(jobposting => jobposting.company_name))];
+        const companyFilteringList = [...new Set(filteredResult.map(jobposting => jobposting.company_name))].sort();
         logger.debug(`[jobpostings router:post] distinct(company) :  ${companyFilteringList}`);
         
-        const locationFilteringList = [...new Set(filteredResult.map(jobposting => jobposting.std_loc_str))];
+        const locationFilteringList = [...new Set(filteredResult.map(jobposting => jobposting.std_loc_str))].sort();
         logger.debug(`[jobpostings router:post] distinct(location) :  ${locationFilteringList}`);
        
 

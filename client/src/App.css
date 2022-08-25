@@ -88,9 +88,14 @@ button:active{
 }
 
 .title-bar button{
-  width: 158px;
-  height: 44px;
+  width: 180px;
+  height: 48px;
   margin: 2.5rem;
+}
+
+.title-bar button a{
+  text-decoration: none;
+  color: black;
 }
 
 /* title bar styling ends */
@@ -110,8 +115,27 @@ button:active{
   padding: 0;
 }
 
-.nav-mobile{
-  display: none;
+.nav-mobile-option{
+  margin: 10px ;
+
+}
+
+.nav-mobile-option a{
+  display: block;
+  font-size: 1.17em;
+  /* margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px; */
+  height: 100%;
+  width: 100%;
+  font-weight: bold;
+  text-decoration: none;
+  color: black;
+  transition: all .2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
 }
 
@@ -156,11 +180,11 @@ button:active{
   align-items:  center;
 }
 
-.job-page-body h1{
+/* .job-page-body h1{
   font-weight: bolder;
   margin-top: 126px;
   padding: 0 120px;
-}
+} */
 
 .job-page-body p {
   font-size: 20px;
@@ -180,7 +204,7 @@ button:active{
 }
 
 .form-component select{
-  width: 379px;
+  width: 413px;
   height: 51px;
   border-radius: 10px;
   padding: 0 15px;
@@ -632,16 +656,17 @@ button:active{
   width: 100%;
   align-items: center;
   justify-content: space-evenly;
-  margin-top: 50px;
+  margin-top: 30px;
   margin-bottom: 40px;
 }
 
 .benefit-option{
   background-color: #96DFE3;
   padding: 5px 25px;
-  margin: 10px;
   border-radius: 20px;
   transition: 0.3s;
+  margin-top: 10px;
+  width: 210px;
 }
 
 .benefit-option:hover{
@@ -654,9 +679,10 @@ button:active{
 .benefit-option-focus{
   border-radius: 0;
   padding: 5px 25px;
-  margin: 10px;
   cursor: pointer;
   background-color: #84c7ca;
+  margin-top: 10px;
+  width: 210px;
 }
 
 .pagination{
@@ -671,7 +697,39 @@ button:active{
   flex-direction: column;
 }
 
+/* pagination ends */
+
+/* email sign up styling begins*/
+.email-signup{
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.email-signup h1{
+  margin-top: 126px;
+  padding: 0 120px;
+}
+
+/* email sign up styling ends*/
+
+/* job search styling begins*/
+
+.job-search h1{
+  text-align: center;
+  margin-top: 126px;
+  padding: 0 120px;
+}
+
 @media screen and (max-width: 940px){
+
+  .title-bar button{
+    display: none;
+  }
+
+  .nav-title-container{
+    display: flex;
+    width: 100%;
+  }
 
   .header-text-container{
     text-align: center;
@@ -685,6 +743,7 @@ button:active{
     min-width: 0;
 
   }
+
 
   .nav-container{
     width: 82%;
@@ -704,13 +763,24 @@ button:active{
   }
 
   .nav-mobile{
-    display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+    align-items: center;
     width: 100%;
     text-decoration: none;
     list-style-type: none;
-    padding: 0;
+    padding: 0 0 20px 0;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  }
+
+  .nav-mobile button{
+    margin-top: 20px;
+    height: 48px;
+  }
+
+  .nav-mobile button a {
+    color: black;
+    text-decoration: none;
   }
 
   .form-component{
@@ -720,6 +790,13 @@ button:active{
     align-items: center;
   }
 
+  .form-component button {
+    width: 410px;
+    height: 51px;
+    padding: 0 15px;
+    margin-top: 20px;
+    margin-left: 0;
+  }
   .job-page-body h1{
     margin-top: 88px;
   }
@@ -769,8 +846,6 @@ button:active{
   }
   
   .job-page-body h1{
-    font-weight: 600;
-    font-size: x-large;
     padding: 0 59px;
   }
   
@@ -830,19 +905,31 @@ button:active{
     width: 90%;
   }
 
+  
+  .form-component button {
+    width: 98%;
+    height: 48px;
+    margin: 20px 0 0 0;
+    /* margin-left: 10px; */
+}
+
   .company-card{
     width: 100%;
   }
 
-  .title-bar{
-    flex-direction: column;
+  .logo-image-container{
+    width: 50%;
+    display: flex;
+    height: auto;
   }
 
   .job-posting{
     flex-direction: column;
+    text-align: center;
+    font-weight: normal;
   }
 
-  .job-posting button{
+  .job-posting a{
     margin-top: 20px;
   }
   .nav-container{

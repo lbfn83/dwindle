@@ -1,6 +1,5 @@
 
-import React, { useEffect, useState } from 'react'
-import Search from './Search';
+import React from 'react'
 // import axios from 'axios'
 // import { BACKEND_SVR_URL } from "../util/constants";
 // import { JobBenefitFilter } from './JobBenefitFilter';
@@ -8,50 +7,8 @@ import Search from './Search';
 // import Select from 'react-select'
 
 // https://medium.com/geekculture/create-a-simple-search-component-in-react-js-using-react-hooks-710c1dfe8b58
-export const JobPostSearch = () => {
-  
-  const [keywordField, setkeywordField] = useState("");
-  const [locationField, setlocationField] = useState("")
-  const [clickCounter, setClickCounter] = useState(0)
-  
-  const [ loading, setLoading ] = useState(false)
-  const [arryCompany, setArryCompany] = useState([])
-  const [pageNum, setPageNum ] = useState(0)
+export const JobPostSearch = ({ keywordSet, locationSet, companySet, companyArray, locations } ) => {
 
-
-
-  // const getJobData = async() => {
-  //   const response = await fetch(`${BACKEND_SVR_URL}/database/companies`, {
-  //     method: 'GET', // *GET, POST, PUT, DELETE, etc.
-  //     mode: 'cors',
-  // })
-  // const data =  await response.json()
-  // setArryCompany(data)
-  // console.log(data[0])
-  // }
-
-  //THIS NEEDS TO BE REMOVED!!
-  useEffect( () => {
-       
-    // const apiReqString = `${BACKEND_SVR_URL}/database/companies`
-    // console.log(apiReqString)
-    setLoading(true)
-    // axios.get(apiReqString).then(res => {
-    //       setLoading(false)
-    //       console.log("company list response : ",res.data)
-    //       setArryCompany(res.data)
-    // })
-
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-    
-
- }, [])
-
-
-    const callbackFunction = (childData) => {
-      setArryCompany(childData)
-      
-    }
   // const colourOptions = [
   //   { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
   //   { value: 'blue', label: 'Blue', color: '#0052CC', isDisabled: true },
@@ -65,28 +22,41 @@ export const JobPostSearch = () => {
   //   { value: 'silver', label: 'Silver', color: '#666666' },
   // ];
   
-  const handleClick = (event) => {
-    event.preventDefault()
+  // const handleClick = (event) => {
+  //   event.preventDefault()
     
-    setClickCounter( clickCounter+1 )
-    setPageNum(0)
+  //   setClickCounter( clickCounter+1 )
+  //   setPageNum(0)
 
-  }
+  // }
 
   const handleChange = (event) => {
     // console.log(event)
     // console.log(event.target.placeholder)
+    event.preventDefault()
+
     switch(event.target.id){
       case "location" :
-        setlocationField(event.target.value)
+        locationSet(event.target.value)
+        // console.log(event.target.value)
         break;
       
-      case "keywords" :
-        setkeywordField(event.target.value)
+      case "company" :
+        companySet(event.target.value)
         break;
-      
+
       default :
         console.log("undefined event : ", event)
+    }
+  }
+
+  const handleKeyPress = (event) => {
+    
+
+    if(event.key === 'Enter'){
+      event.preventDefault()
+      keywordSet(event.target.value);
+      // console.log(event.target.value);
     }
   }
 
@@ -96,8 +66,9 @@ export const JobPostSearch = () => {
 
   // }
 
+  // console.log(companyArray)
   return (
-    <div>
+    <div className='job-search'>
         
         <h1>
             Want to work for a company that helps you pay down your student debt?
@@ -106,39 +77,47 @@ export const JobPostSearch = () => {
         <p>We only list jobs that provide student loan repayment, tuition assistance, and tuition reimbursement benefits</p>
 
         <form className='form-component' >
+
+
+
+            <input type="text" id="keyword" name="text" placeholder="Enter Keyword" onKeyPress={handleKeyPress}/>
 {/* https://stackoverflow.com/questions/28868071/onchange-event-using-react-js-for-drop-down */}
  
             {/* <input type="input" placeholder='keywords' onChange={handleChange}/>
             <input type="input" placeholder='location' onChange={handleChange}/> */}
-            <select id='keywords'  onChange={handleChange}>
-                <option value="">--Please choose an option--</option>
+            <select id='company' onChange={handleChange}>
+                <option value="" >--Company--</option>
                 {
-                  arryCompany.map( (company, index) =>
+                  companyArray.map((company, index) =>
                     <option key={index} value={company} >{company}</option>
                   )
-                  // <option>{arryCompany}</option>
                 }
-  
+                <option value="clear filter">Clear Filter</option>
             </select>
+            
 
            
-            <select id="location"  onChange={handleChange}>
-                <option value="">--Please choose an option--</option>
-                <option value="USA" >USA</option>
-                <option value="CANADA">CANADA</option>
+            <select id="location" onChange={handleChange} >
+                <option value="">--Location--</option>
+                {
+                  locations.map((location, index) => 
+                    <option key={index} value={location}>{location}</option>
+                  )
+                }
+                <option value="clear filter">Clear Filter</option>
             </select>
 
 
 
-            <button onClick={handleClick} >Find Jobs</button> 
+            {/* <button onClick={handleClick} >Find Jobs</button>  */}
             {/* disabled = {!(keywordField&&locationField)} */}
         </form>
 
-        <div className = 'search-result'>
+        {/* <div className = 'search-result'>
             <Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter} parentCallBack={callbackFunction} resetPageNum={pageNum}/>
             
-            {/* {(clickCounter>0)?<Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter}/>: null} */}
-        </div>
+            {(clickCounter>0)?<Search keyword = {keywordField} loc = {locationField} btnClicked = {clickCounter}/>: null}
+        </div> */}
 
         
     

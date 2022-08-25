@@ -23,17 +23,17 @@ const cronOpt = (() => {
 
 async function registerCampaignCreateService()
 {
-    logger.info(`[Bull campaignCreateScheduler] registered! `)
-    await emailCampaignCreateQueue.obliterate({force : true})
+    logger.info(`[Bull campaignCreateScheduler] registered! `);
+    await emailCampaignCreateQueue.obliterate({force : true});
 
     // “At 10:00 on Saturday and Sunday.”
-    emailCampaignCreateQueue.add({ message : 'campaignCreateScheduler processing' } , {repeat: cronOpt })
+    emailCampaignCreateQueue.add({ message : 'campaignCreateScheduler processing' } , {repeat: cronOpt });
 }
 
 
 emailCampaignCreateQueue.process(async(job) => {
     
-    logger.info(`[Bull campaignCreateScheduler] Consumer: job info : ${JSON.stringify(job.data.message)}`)
+    logger.info(`[Bull campaignCreateScheduler] Consumer: job info : ${JSON.stringify(job.data.message)}`);
     await weeklyCampaignCreate().then((msg) =>
     {
         logger.info(`[Bull campaignCreateScheduler] Consumer done processing! : ${msg}`);

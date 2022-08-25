@@ -105,7 +105,7 @@ export const EmailSignUp = () => {
   }, [clickCnt] )
   
   return (
-    <div>
+    <div className='email-signup'>
         
         <h1>
             Find a job that helps you pay down student debt or lowers the cost of your education
