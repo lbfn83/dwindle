@@ -18,4 +18,4 @@ const MobileNav = (open) => {
   )
 }
 
-export default MobileNav
+export default MobileNav;
