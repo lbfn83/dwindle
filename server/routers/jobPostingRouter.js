@@ -100,7 +100,7 @@ router.post('/jobpostings', async (req, res) => {
         
         }else
         {
-          queryResult = await jobposting.searchJobPosting('product manager', logger)
+          queryResult = await jobposting.searchJobPosting(keyword, logger)
         }
 
 

@@ -9,7 +9,7 @@ const { logger } = require('../config/logger');
 require('dotenv').config();
 const {v4}  = require('uuid')
 
-const MaxPageToProbe = 2; // In case of not using page limit, please put undefined or comment this line out
+const MaxPageToProbe = 10; // In case of not using page limit, please put undefined or comment this line out
 
 
 function sliceIntoChunks(arr, chunkSize) {
