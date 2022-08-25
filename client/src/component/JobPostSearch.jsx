@@ -44,13 +44,19 @@ export const JobPostSearch = ({ keywordSet, locationSet, companySet, companyArra
       case "company" :
         companySet(event.target.value)
         break;
-      
-      case "keyword" :
-        keywordSet(event.target.value)
-        break;
 
       default :
         console.log("undefined event : ", event)
+    }
+  }
+
+  const handleKeyPress = (event) => {
+    
+
+    if(event.key === 'Enter'){
+      event.preventDefault()
+      keywordSet(event.target.value);
+      // console.log(event.target.value);
     }
   }
 
@@ -62,7 +68,7 @@ export const JobPostSearch = ({ keywordSet, locationSet, companySet, companyArra
 
   // console.log(companyArray)
   return (
-    <div>
+    <div className='job-search'>
         
         <h1>
             Want to work for a company that helps you pay down your student debt?
@@ -74,7 +80,7 @@ export const JobPostSearch = ({ keywordSet, locationSet, companySet, companyArra
 
 
 
-            <input type="text" id="keyword" name="text" placeholder="Enter Keyword" onChange={handleChange}/>
+            <input type="text" id="keyword" name="text" placeholder="Enter Keyword" onKeyPress={handleKeyPress}/>
 {/* https://stackoverflow.com/questions/28868071/onchange-event-using-react-js-for-drop-down */}
  
             {/* <input type="input" placeholder='keywords' onChange={handleChange}/>
@@ -86,6 +92,7 @@ export const JobPostSearch = ({ keywordSet, locationSet, companySet, companyArra
                     <option key={index} value={company} >{company}</option>
                   )
                 }
+                <option value="clear filter">Clear Filter</option>
             </select>
             
 
@@ -97,6 +104,7 @@ export const JobPostSearch = ({ keywordSet, locationSet, companySet, companyArra
                     <option key={index} value={location}>{location}</option>
                   )
                 }
+                <option value="clear filter">Clear Filter</option>
             </select>
 
 
