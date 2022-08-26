@@ -13,7 +13,7 @@ const MobileNav = (open) => {
         {/* <li className="nav-option"><a href='/'>Community</a></li> */}
         <li className="nav-mobile-option"><a href='https://dwindlestudentdebt.com/blog/'>Blog</a></li>
         <li className="nav-mobile-option"><a href='https://dwindlestudentdebt.com/partners/'>Partners</a></li>
-        <button><a href='https://dwindlestudentdebt.com/add-company/'>Add a Company</a></button>
+        <button><a href='#'>Add a Company</a></button>
     </ul>
   )
 }
