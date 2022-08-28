@@ -30,7 +30,7 @@ function App() {
           <div className="nav-title-container">
             <div className='title-bar'>
               <a href="/" className='logo-image-container'><img src={logo} alt="dwindle logo" /></a> 
-              <button><a href='https://dwindlestudentdebt.com/add-company/'>Add a Company</a></button>
+              <button><a href='https://dwindlestudentdebt.com/add-company/'>Add Company</a></button>
 
               <div className="burger-menu" onClick={() => setOpen(!open)}><img src={burgerMenu} alt='' /></div>
 
