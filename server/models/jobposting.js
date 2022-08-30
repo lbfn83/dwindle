@@ -4,7 +4,7 @@ const {
   Model
 } = require('sequelize');
 const {jobpostingTable_RestoreFromCSV} = require('../util/DBRecordsRestoreFromCSV/jobpostingTable_RestoreFromCSV');
-
+const pgPool = require('../config/pgLibDBconfig')
 // const company = require('./company');
 module.exports = (sequelize, DataTypes) => {
   // console.log("sequelize" ,sequelize)
@@ -143,13 +143,25 @@ module.exports = (sequelize, DataTypes) => {
           // Old version : return sequelize.query(`SELECT * FROM "${jobposting.tableName}" WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}');`);
           // https://www.ibm.com/docs/en/i/7.4?topic=join-inner-using-where-clause
           // Should exculde soft-deleted entries
-          return sequelize.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
+          
+          // return sequelize.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
+          // (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as tuition_assistance,
+          // (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
+          //  FROM "${jobposting.tableName}" LEFT JOIN (SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
+          //  FROM benefit where "deletedAt" is null group by benefit.company_name) as benefit_agg on benefit_agg.company_name = jobposting.company_name
+          //   WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}') and "deletedAt" is null
+          //   order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC;`);
+          
+          // Sequelize ORM output DATEONLY type as a string. 
+            // Very unreliable. should get codes migrated into pg lib. 
+          return pgPool.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
           (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as tuition_assistance,
           (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
            FROM "${jobposting.tableName}" LEFT JOIN (SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
            FROM benefit where "deletedAt" is null group by benefit.company_name) as benefit_agg on benefit_agg.company_name = jobposting.company_name
             WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}') and "deletedAt" is null
             order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC;`);
+          
           // For debug
           // // SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment,
           // (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as 
@@ -189,7 +201,7 @@ module.exports = (sequelize, DataTypes) => {
       values : ['USA', 'CANADA'],
       allowNull : false
     },
-    posted_date: DataTypes.STRING,
+    posted_date: DataTypes.DATEONLY,
     full_text: DataTypes.TEXT,
     // "jobpostingToken" is not really required to be specified
     // ,as it would be only handled with raw query and classmethod

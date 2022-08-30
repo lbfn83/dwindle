@@ -5,7 +5,7 @@ const {jobposting, sequelize} = require('../models');
 const {toHttp} = require('../util/toHttp');
 const {pullJobPostings} = require('../service/jobPostingFetcher');
 const {logger} = require('../config/logger');
-
+const pgPool = require('../config/pgLibDBconfig');
 
 const recordLimit = 250
 // promisify
@@ -88,7 +88,9 @@ router.post('/jobpostings', async (req, res) => {
             //  https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-order-by/
             // order by uuid is essential as ... without it every query's result will be sorted in a different way and pagination won't work as intended
             // soft-deleted entries are ignored
-            queryResult= await sequelize.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
+            // Sequelize ORM output DATEONLY type as a string. 
+            // Very unreliable. should get codes migrated into pg lib. 
+            queryResult= await pgPool.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
             (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as tuition_assistance,
             (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
             FROM jobposting left join 
@@ -100,7 +102,7 @@ router.post('/jobpostings', async (req, res) => {
         
         }else
         {
-          queryResult = await jobposting.searchJobPosting(keyword, logger)
+          queryResult = await jobposting.searchJobPosting(keyword, logger);
         }
 
 
@@ -133,13 +135,15 @@ router.post('/jobpostings', async (req, res) => {
         "_parsers":[null,null,null,null,null,null,null,null,null,null,null,null,null],
         "_types":{"_types":{},"text":{},"binary":{}},"RowCtor":null,"rowAsArray":false}
         */
-
-        logger.debug(`[jobpostings router:post] search keyword : ${keyword}/ number of data in total:  ${queryResult[0].length}`);
+        logger.debug(`[jobpostings router:post] query result before filtering : ${JSON.stringify( queryResult.rows)}`);
+        logger.debug(`[jobpostings router:post] search keyword : ${keyword}/ number of data in total:  ${queryResult.rows.length}`);
         // console.log(`[jobpostings router:post] search keyword : ${keyword}/ number of data in total:  ${JSON.stringify(queryResult[0].map(elem => elem.uuid))}`);
         
         // Execute filtering of data according to the parameters in the request body
-        let filteredResult = queryResult[0];
-        
+        // Deep copy approach will turn Date type into string type again
+        // and changing string with DATE() will apply locale so date might not be accurately displayed 
+        let filteredResult = JSON.parse(JSON.stringify(queryResult.rows));
+        // let filteredResult = queryResult.rows;
         // why did I add normalized_company_name in the table? company_name is the foreign key
         // it is just passed over from RapidAPI 
         
@@ -189,18 +193,26 @@ router.post('/jobpostings', async (req, res) => {
         /************ */
 
 
-        // As a last step, Pagination is applied
-        const paginationResult = filteredResult.filter((elem, idx) => (idx >= recordLimit*pagenum) && (idx < recordLimit*(pagenum+1)))
+        // As a second last step, Pagination is applied
+        let paginationResult = filteredResult.filter((elem, idx) => (idx >= recordLimit*pagenum) && (idx < recordLimit*(pagenum+1)))
         logger.debug(`[jobpostings router:post] pagination record # : ${paginationResult.length} / lower limit : ${recordLimit*pagenum} / upper limit : ${recordLimit*(pagenum+1)-1}`)
         // logger.debug(`[jobpostings router:post] paginationResult :  ${JSON.stringify(paginationResult)}`);
-        
+        paginationResult.forEach((element) => {
+            // Heroku Database is converting string into date with GMT-4 locale 00:00:00
+            // Covert it to UTC again. 
+            const ESTTime = Date.parse(element.posted_date);
+            const timeOffset = new Date(ESTTime).getTimezoneOffset();
+            element.posted_date = new Intl.DateTimeFormat('en-US', {timeZone : 'UTC'}).format(new Date(ESTTime + timeOffset*60000));
+            // element.posted_date = new Intl.DateTimeFormat('en-US').format(element.posted_date);
+        });
+        // As a final step, post
         
         /*TODO : generate whole response array*/
         const response = {
           jobpostings : paginationResult,
           companylist : companyFilteringList,
           locationlist : locationFilteringList
-        }
+        };
         // console.log(response)
 
         return res.json(response)
