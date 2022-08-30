@@ -2,6 +2,7 @@
 // abnormal test sets = {Dubai, Netherlands, Finland}
 module.exports = jobpostingData = { 
     data:[
+           // Korean Date form
         {
             "uuid": "06dedd7e-44b5-4b2f-a60c-fd5fcf65c31f",
             "linkedin_job_url_cleaned": "https://www.linkedin.com/jobs/view/systems-engineer-at-abbott-3187620822",
@@ -10,7 +11,7 @@ module.exports = jobpostingData = {
             "job_title": "Systems Engineer",
             "job_location": "Princeton, NJ",
             "normalized_job_location": "USA",
-            "posted_date": "7/28/2022",
+            "posted_date": "2022-08-17",
             "full_text": "",
             "createdAt": "2022-08-16T23:43:54.704Z",
             "updatedAt": "2022-08-16T23:43:54.704Z",
@@ -27,6 +28,7 @@ module.exports = jobpostingData = {
             "tuition_assistance": true,
             "full_tuition_coverage": false
         },
+           // Korean Date form
         {
             "uuid": "433a4df9-0fe9-47e3-83cb-beceb2028e3f",
             "linkedin_job_url_cleaned": "https://www.linkedin.com/jobs/view/implementation-specialist-1-at-abbott-3190417762",
@@ -35,7 +37,7 @@ module.exports = jobpostingData = {
             "job_title": "Implementation Specialist 1",
             "job_location": "Charlottesville, VA",
             "normalized_job_location": "USA",
-            "posted_date": "7/28/2022",
+            "posted_date": "2022-08-17",
             "full_text": "",
             "createdAt": "2022-08-16T23:43:54.704Z",
             "updatedAt": "2022-08-16T23:43:54.704Z",
@@ -52,6 +54,7 @@ module.exports = jobpostingData = {
             "tuition_assistance": true,
             "full_tuition_coverage": false
         },
+        // Korean Date form
         {
             "uuid": "51f263e7-5f11-4022-b823-72ced5028682",
             "linkedin_job_url_cleaned": "https://ph.linkedin.com/jobs/view/product-manager-glucerna-at-abbott-3179862003",
@@ -60,7 +63,7 @@ module.exports = jobpostingData = {
             "job_title": "Product Manager - Glucerna",
             "job_location": "Taguig, National Capital Region, Philippines",
             "normalized_job_location": "USA",
-            "posted_date": "7/28/2022",
+            "posted_date": "2022-08-17",
             "full_text": "",
             "createdAt": "2022-08-16T23:43:54.704Z",
             "updatedAt": "2022-08-16T23:43:54.704Z",
@@ -77,6 +80,7 @@ module.exports = jobpostingData = {
             "tuition_assistance": true,
             "full_tuition_coverage": false
         },
+        // European Date form / this will cause error
         {
             "uuid": "5bc776dc-fb48-44bd-8442-1f96a300ce24",
             "linkedin_job_url_cleaned": "https://www.linkedin.com/jobs/view/clinical-sales-specialist-structural-heart-si-stroke-prevention-salt-lake-city-at-abbott-3189133168",
@@ -85,7 +89,7 @@ module.exports = jobpostingData = {
             "job_title": "Clinical Sales Specialist, Structural Heart - SI Stroke Prevention (Salt Lake City)",
             "job_location": "Salt Lake City, UT",
             "normalized_job_location": "USA",
-            "posted_date": "7/28/2022",
+            "posted_date": "28/7/2022",
             "full_text": "",
             "createdAt": "2022-08-16T23:43:54.704Z",
             "updatedAt": "2022-08-16T23:43:54.704Z",
@@ -102,6 +106,7 @@ module.exports = jobpostingData = {
             "tuition_assistance": true,
             "full_tuition_coverage": false
         },
+        // European Date form / this will cause error
         {
             "uuid": "5fdf3492-55f8-4c79-ae33-b098d5c4015e",
             "linkedin_job_url_cleaned": "https://www.linkedin.com/jobs/view/senior-treasury-analyst-at-abbott-3179861161",
@@ -110,7 +115,7 @@ module.exports = jobpostingData = {
             "job_title": "Senior Treasury Analyst",
             "job_location": "Illinois, United States",
             "normalized_job_location": "USA",
-            "posted_date": "7/28/2022",
+            "posted_date": "28/7/2022",
             "full_text": "",
             "createdAt": "2022-08-16T23:43:54.704Z",
             "updatedAt": "2022-08-16T23:43:54.704Z",

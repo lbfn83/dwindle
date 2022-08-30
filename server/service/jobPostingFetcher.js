@@ -9,7 +9,7 @@ const { logger } = require('../config/logger');
 require('dotenv').config();
 const {v4}  = require('uuid')
 
-const MaxPageToProbe = 10; // In case of not using page limit, please put undefined or comment this line out
+const MaxPageToProbe = 4; // In case of not using page limit, please put undefined or comment this line out
 
 
 function sliceIntoChunks(arr, chunkSize) {
@@ -252,7 +252,7 @@ async function processAPIRequestAndSQL(queryOption, companyName, loc, testmode =
             logger.info(`[processRequest] rowData length : ${JSON.stringify(result.data.length)}`);
             // Logging.write("[Rate limit remaining]: " + JSON.stringify(result.headers["x-ratelimit-requests-remaining"]))
             // Logging.write("[rowData length] : " + JSON.stringify(result.data.length) + "[rowData End]\n")  
-
+            logger.info(`[processRequest] rowData  : ${JSON.stringify(result.data)}`);
             result.data.forEach(async (element) => {
                 // Logging.write("[eachElem] : " + JSON.stringify(element) + "\n")
 
@@ -266,7 +266,9 @@ async function processAPIRequestAndSQL(queryOption, companyName, loc, testmode =
                     // foreign key constraint ... can't put test here
                     element.company_name = testmode?element.company_name:companyName;
                     // primary key should be unique so that uuid generator is introduced in here
-                    element.linkedin_job_url_cleaned = testmode?v4():element.linkedin_job_url_cleaned;
+                    // element.linkedin_job_url_cleaned = testmode?v4():element.linkedin_job_url_cleaned;
+                    element.linkedin_job_url_cleaned = testmode?element.linkedin_job_url_cleaned+' test':element.linkedin_job_url_cleaned;
+                   
                     /* The problem with below is that it doens't update the found data entry 
                     
                     Motivation : 
@@ -282,6 +284,24 @@ async function processAPIRequestAndSQL(queryOption, companyName, loc, testmode =
                     Logging.write("Created? : "+ created + "//" + elemFound +"\n")
                     */
 
+
+                    /* Address standardization */
+                    let stdStr = undefined;
+                    await loc_lookup.convertToStdAddr(element.job_location, logger)
+                        .then(result => stdStr = result).catch(err => stdStr = err);
+
+                    element.std_loc_str = stdStr;
+                    // if the jobposting is marked with a deletion flag, execute the soft-deletion to it.
+                    if (stdStr === 'deletion flag') {
+                        let today = new Date();
+                        element.deletedAt = today.toLocaleString();
+                    }else{
+                        // This doesn't seem to overwrite deleteadAt coulmun of existing record
+                        // sequelize's misbehavior beyond understanding
+                        element.deletedAt = null;
+                    }
+
+
                     /* Insert new jobposting item or Update existing DB entry corresponding to jobposting item*/
                     /* Since RapidAPI's data set is inconsistent, some of jobpostings that was already soft-deleted might 
                     be brought in again later query, so the logic should be able to detect this and restore the record accordingly  */
@@ -293,32 +313,18 @@ async function processAPIRequestAndSQL(queryOption, companyName, loc, testmode =
                     if (foundEntry !== null) {
                         // sort out whether it is soft deleted or not 
                         if (foundEntry.deletedAt !== null) {
-                            logger.info(`[processRequest] restore : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `)
-                            await foundEntry.restore()
+                            logger.info(`[processRequest] restore : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `);
+                            await foundEntry.restore();
                         } else {
                             // update
-                            await foundEntry.set(element)
-                            logger.info(`[processRequest] Update : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `)
-                            // Logging.write("[update] : " + JSON.stringify(foundEntry.linkedin_job_url_cleaned)+"\n")
-                            await foundEntry.save()
+                            logger.info(`[processRequest] Update : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `);
                         }
+                        await foundEntry.set(element);
+                        await foundEntry.save();
+
 
                     } else {
                         logger.info(`[processRequest] insert : ${JSON.stringify(element.linkedin_job_url_cleaned)} `)
-
-                        // TODO: here location standardization function should be placed
-                        // 1st test : element.std_loc_str = "dummy"
-                        // Should add a logic to handle "reject"
-                        let stdStr = undefined;
-                        await loc_lookup.convertToStdAddr(element.job_location, logger)
-                            .then(result => stdStr = result).catch(err => stdStr = err);
-
-                        element.std_loc_str = stdStr;
-                        // if the jobposting is marked with a deletion flag, execute the soft-deletion to it.
-                        if (stdStr === 'deletion flag') {
-                            let today = new Date();
-                            element.deletedAt = today.toLocaleString();
-                        }
 
                         await jobposting.create(element);
                         // Logging.write("[insert]"+JSON.stringify(element.linkedin_job_url_cleaned)+"\n");    
