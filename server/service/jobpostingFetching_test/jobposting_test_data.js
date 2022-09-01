@@ -81,57 +81,57 @@ module.exports = jobpostingData = {
             "full_tuition_coverage": false
         },
         // European Date form / this will cause error
-        {
-            "uuid": "5bc776dc-fb48-44bd-8442-1f96a300ce24",
-            "linkedin_job_url_cleaned": "https://www.linkedin.com/jobs/view/clinical-sales-specialist-structural-heart-si-stroke-prevention-salt-lake-city-at-abbott-3189133168",
-            "company_name": "Abbott",
-            "normalized_company_name": "Abbott",
-            "job_title": "Clinical Sales Specialist, Structural Heart - SI Stroke Prevention (Salt Lake City)",
-            "job_location": "Salt Lake City, UT",
-            "normalized_job_location": "USA",
-            "posted_date": "28/7/2022",
-            "full_text": "",
-            "createdAt": "2022-08-16T23:43:54.704Z",
-            "updatedAt": "2022-08-16T23:43:54.704Z",
-            "deletedAt": null,
-            "jobpostingToken": "'abbott':1,2 'citi':5,17 'clinic':7 'heart':11 'lake':4,16 'prevent':14 'sale':8 'salt':3,15 'si':12 'specialist':9 'stroke':13 'structur':10 'ut':6",
-            "std_loc_str": "Utah, United States",
-            "benefit_type_array": [
-                "student_loan_repayment",
-                "tuition_assistance",
-                "tuition_reimbursement"
-            ],
-            "student_loan_repayment": true,
-            "tuition_reimbursement": true,
-            "tuition_assistance": true,
-            "full_tuition_coverage": false
-        },
+        // {
+        //     "uuid": "5bc776dc-fb48-44bd-8442-1f96a300ce24",
+        //     "linkedin_job_url_cleaned": "https://www.linkedin.com/jobs/view/clinical-sales-specialist-structural-heart-si-stroke-prevention-salt-lake-city-at-abbott-3189133168",
+        //     "company_name": "Abbott",
+        //     "normalized_company_name": "Abbott",
+        //     "job_title": "Clinical Sales Specialist, Structural Heart - SI Stroke Prevention (Salt Lake City)",
+        //     "job_location": "Salt Lake City, UT",
+        //     "normalized_job_location": "USA",
+        //     "posted_date": "28/7/2022",
+        //     "full_text": "",
+        //     "createdAt": "2022-08-16T23:43:54.704Z",
+        //     "updatedAt": "2022-08-16T23:43:54.704Z",
+        //     "deletedAt": null,
+        //     "jobpostingToken": "'abbott':1,2 'citi':5,17 'clinic':7 'heart':11 'lake':4,16 'prevent':14 'sale':8 'salt':3,15 'si':12 'specialist':9 'stroke':13 'structur':10 'ut':6",
+        //     "std_loc_str": "Utah, United States",
+        //     "benefit_type_array": [
+        //         "student_loan_repayment",
+        //         "tuition_assistance",
+        //         "tuition_reimbursement"
+        //     ],
+        //     "student_loan_repayment": true,
+        //     "tuition_reimbursement": true,
+        //     "tuition_assistance": true,
+        //     "full_tuition_coverage": false
+        // },
         // European Date form / this will cause error
-        {
-            "uuid": "5fdf3492-55f8-4c79-ae33-b098d5c4015e",
-            "linkedin_job_url_cleaned": "https://www.linkedin.com/jobs/view/senior-treasury-analyst-at-abbott-3179861161",
-            "company_name": "Abbott",
-            "normalized_company_name": "Abbott",
-            "job_title": "Senior Treasury Analyst",
-            "job_location": "Illinois, United States",
-            "normalized_job_location": "USA",
-            "posted_date": "28/7/2022",
-            "full_text": "",
-            "createdAt": "2022-08-16T23:43:54.704Z",
-            "updatedAt": "2022-08-16T23:43:54.704Z",
-            "deletedAt": null,
-            "jobpostingToken": "'abbott':1,2 'analyst':8 'illinoi':3 'senior':6 'state':5 'treasuri':7 'unit':4",
-            "std_loc_str": "Illinois, United States",
-            "benefit_type_array": [
-                "student_loan_repayment",
-                "tuition_assistance",
-                "tuition_reimbursement"
-            ],
-            "student_loan_repayment": true,
-            "tuition_reimbursement": true,
-            "tuition_assistance": true,
-            "full_tuition_coverage": false
-        },
+        // {
+        //     "uuid": "5fdf3492-55f8-4c79-ae33-b098d5c4015e",
+        //     "linkedin_job_url_cleaned": "https://www.linkedin.com/jobs/view/senior-treasury-analyst-at-abbott-3179861161",
+        //     "company_name": "Abbott",
+        //     "normalized_company_name": "Abbott",
+        //     "job_title": "Senior Treasury Analyst",
+        //     "job_location": "Illinois, United States",
+        //     "normalized_job_location": "USA",
+        //     "posted_date": "28/7/2022",
+        //     "full_text": "",
+        //     "createdAt": "2022-08-16T23:43:54.704Z",
+        //     "updatedAt": "2022-08-16T23:43:54.704Z",
+        //     "deletedAt": null,
+        //     "jobpostingToken": "'abbott':1,2 'analyst':8 'illinoi':3 'senior':6 'state':5 'treasuri':7 'unit':4",
+        //     "std_loc_str": "Illinois, United States",
+        //     "benefit_type_array": [
+        //         "student_loan_repayment",
+        //         "tuition_assistance",
+        //         "tuition_reimbursement"
+        //     ],
+        //     "student_loan_repayment": true,
+        //     "tuition_reimbursement": true,
+        //     "tuition_assistance": true,
+        //     "full_tuition_coverage": false
+        // },
         {
             "uuid": "7ce34e3c-e7a2-4f6c-89be-7efc26500624",
             "linkedin_job_url_cleaned": "https://www.linkedin.com/jobs/view/2023-operations-intern-at-abbott-3190859822",
