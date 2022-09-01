@@ -41,7 +41,7 @@ export const EmailSignUp = () => {
   // Set : When this component receives error from server
   // Reset : When new input string is submitted
   const [registrErr, setRegistrErr] = useState(false);
-
+  const [message, setMessage] = useState("");
   const handleChange = (event) => {
     
     setEmailField(event.target.value);
@@ -85,6 +85,7 @@ export const EmailSignUp = () => {
       axios.post(apiReqString, data)
             .then((res)=> {
               console.log('[EmailSignUp]', res);
+              setMessage(res.data);
             })
             .catch(err => {
               console.log('[EmailSignUp]', err);
@@ -127,7 +128,8 @@ export const EmailSignUp = () => {
             </form>}
             {/* @Bethold I guess you can prettify below form? */}
             {(clickCnt > 0 && emailAddrValidation)&&<form className='after-subscribe form-component'>
-                <p> Thanks for subscribing. </p>
+                <p> {message} </p>
+                {/* <p> Thanks for subscribing. </p> */}
               
             </form>}
             {(clickCnt > 0 && registrErr)&&<form className='duplicate-input'>
