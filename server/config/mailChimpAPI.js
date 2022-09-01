@@ -382,21 +382,47 @@ const createTemplateMrkt = async (templateName, htmlTemplate) => {
 
 /***** MISC ****** */
 
+const getAudienceMembers = async (listId) => {
+    try {
+        const response = await mailchimp.lists.getListMembersInfo(listId);
+        // console.log(response.members);
+        const emailArry = response.members.map((elem, key) => {
+            // console.log(`member #${key} info ${elem.email_address}`);
+            return elem.email_address;
+        })
+        logger.info(`[MCAPI][getAudienceMembers]  member list : ${JSON.stringify(await emailArry)} `);
+        return await emailArry;
+    }catch (err) {
+        logger.error(`[MCAPI][getAudienceMembers] Error : ${err} `);
+        return [];
+    }
+
+};
+
+const getMemberInfo = async (listId, Email) => {
+    try {
+        const md5=  require("blueimp-md5");
+        const response = await mailchimp.lists.getListMember(listId, md5(Email));
+        // console.log(response.members);
+        // const emailArry = response.members.map((elem, key) => {
+        //     // console.log(`member #${key} info ${elem.email_address}`);
+        //     return elem.email_address;
+        // })
+        // logger.info(`[MCAPI][getMemberInfo]  member list : ${JSON.stringify(await emailArry)} `);
+        return await response;
+    }catch (err) {
+        logger.error(`[MCAPI][getMemberInfo] Error : ${err} `);
+        return [];
+    }
+
+};
+
 
 const getCampaignContent = async (campaign_id) => {
     const response = await mailchimp.campaigns.getContent(campaign_id);
     console.log(response);
 };
 
-const getAudienceMembers = async (listId, option) => {
-    const response = await mailchimp.lists.getListMembersInfo(listId, option);
-    // console.log(response.members);
-    const emailArry = response.members.map((elem, key) => {
-        console.log(`member #${key} info ${elem.email_address}`);
-        return elem.email_address;
-    })
-    return emailArry;
-};
 
 // how can I get template html file / info about specific template
 // arg is template id
@@ -407,4 +433,4 @@ const getSingleTemplateinfoMrkt = async (template_id) => {
 };
 
 
-module.exports = { createTemplateMrkt, setAudienceMember, updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup, getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus }
+module.exports = { createTemplateMrkt, setAudienceMember, updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup, getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus, getMemberInfo }

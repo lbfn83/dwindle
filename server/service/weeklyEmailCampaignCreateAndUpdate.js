@@ -1,3 +1,5 @@
+//This module is deprecated as the design for the backend has been changed to only touch templates but not handle the campaign creation ( instead, it will be created by owner of the account on the mailchimp website)
+
 const {logger} = require('../config/logger');
 const MCAPI = require('../config/mailChimpAPI');
 

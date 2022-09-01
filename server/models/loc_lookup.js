@@ -4,7 +4,7 @@ const {
 } = require('sequelize');
 const {loc_lookupRecordsRestoreFromCSV} = require('../util/DBRecordsRestoreFromCSV/loc_lookup_RestoreFromCSV');
 
-const pgPool = require('../config/pgLibDBconfig')
+const pgPool = require('../config/pgLibDBconfig');
 require('dotenv').config();
 const { GEOCODING_API_KEY } = process.env;
 
@@ -39,22 +39,30 @@ module.exports = (sequelize, DataTypes) => {
      * Make queries regarding the geolocation to Google geocoding API
      * However, Google geocoding is not designed for address standardization
      * so the possiblity of API yielding the correct form of the answer is hit or miss
-     * 
+     * Due to the error rate, this is usually for sorting out jobpostings from other countries
      * 
      * @param {String} strAddr address to be queried
      * @returns {Promise<String>} standardized address :  The concat of administrative_area_level_1 and country``
      *                                           ex) Maine, United States   
      */
     // TODO : one more argument is requried for Country
-    static async geocodingQuery(strAddr, logger)
+    static async geocodingQuery(strAddr, APIKey = null, refCountry, logger)
     {
       try{
+        if(APIKey === null)
+        {
+          throw Error(`API key not provided`);
+        }
+        if(strAddr === '')
+        {
+          throw Error(`strAddr is null`);
+        }
         var axios = require('axios');
         require('dotenv').config();
         const queryResult = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
           params : {
             address : strAddr,
-            key : process.env.GEOCODING_API_KEY
+            key : APIKey
           }
         });
         logger.info(`[loc_lookup classmethod]geocodingQuery with ${strAddr} raw result: ${JSON.stringify(queryResult.data)}`);
@@ -72,23 +80,32 @@ module.exports = (sequelize, DataTypes) => {
               if(elem.types.includes('administrative_area_level_1'))
                 state = elem.long_name;
           });
-          logger.info(`[loc_lookup classmethod]geocodingQuery extracted result from '${strAddr}': country => '${country}' / state => '${state}'`);
-
+          logger.info(`[loc_lookup classmethod]geocodingQuery extracted result from '${strAddr}' and its reference country is ${refCountry}: country => '${country}' / state => '${state}'`);
+          
         }
         // TODO : if country is undefined or not the country asked for, 
         // return 'deletion flag'
+
+        //  "status":"ZERO_RESULTS" or state information is not delivered
+        // This means that GEOCODING can't verify the input string down to state level.
         if(country === undefined || state === undefined)
         {
-          return Promise.reject(`[loc_lookup classmethod]geocodingQuery error`);
+          return Promise.reject(`geocodingQuery error`);
     
-        }else{
+        }
+        // If it is from other country, any jobpostings that has this location should be deleted
+        else if(country !== refCountry)
+        {
+          return Promise.reject(`deletion flag`);
+        }
+        else{
           return Promise.resolve(`${state}, ${country}`);
         }
       }
       catch(e)
       {
         logger.error(`[loc_lookup classmethod]geocodingQuery error : ( arg, country, state)=> (${strAddr}, ${country}, ${state}) / err : ${e}`);
-        return Promise.reject(`[loc_lookup classmethod]geocodingQuery error`);
+        return Promise.reject(`geocodingQuery error`);
       }
     }
 
@@ -99,8 +116,9 @@ module.exports = (sequelize, DataTypes) => {
      * 
      * Standardize Address string ( especially fetched from Specrom ) 
      * by utilizing the loc_lookup table
+     * This is only valid for the united states
      * 
-     * @param {String} address single job_location string in jobposting table 
+     * @param {String} address single job_location string in jobposting table coming from web scraper
      * @param {logger} logger  winston logger / to prevent the circular dependency
      * @returns {Promise<String>} standardized address string. If failed, return Promise.reject
      */
@@ -181,9 +199,10 @@ module.exports = (sequelize, DataTypes) => {
         // when there is no hit
         if(lookupResult.rowCount < 1)
         {
+            /* Geocoding part below is redundant since API key won't be provided this way*/
             if(GEOCODING_API_KEY !== undefined && GEOCODING_API_KEY !== '')
             {
-              await loc_lookup.geocodingQuery(regexAddr, logger)
+              await loc_lookup.geocodingQuery(regexAddr, GEOCODING_API_KEY, 'United States',logger)
               .then((addrResult) => {
                 stdAddr = addrResult;
                 need_to_be_reviewed = false;
@@ -295,9 +314,9 @@ module.exports = (sequelize, DataTypes) => {
           // await sequelize.query(`UPDATE jobposting SET std_loc_str = $$${standardizedAddr}$$ 
           //                       where jobposting.uuid = $$${element.uuid}$$;`);
       
-          const result  = await pgPool.query(`UPDATE jobposting SET std_loc_str = $$${standardizedAddr}$$ where jobposting.uuid = $$${element.uuid}$$;`)
+          const result  = await pgPool.query(`UPDATE jobposting SET std_loc_str = $$${standardizedAddr}$$, "updatedAt" = NOW()  where jobposting.uuid = $$${element.uuid}$$;`)
           
-          logger.debug(`[loc_lookup classmethod] buildStdAddrColumn : addr update to std_loc_str col : 
+          logger.info(`[loc_lookup classmethod] buildStdAddrColumn : addr update to std_loc_str col : 
           stdaddr string => '${standardizedAddr}' / original str =>'${element.job_location}'`);
           // logger.info(`[loc_lookup classmethod] jobpostingsArry with std location : ${JSON.stringify(await jobpostingsArryWithStdAddr)}`);
           return standardizedAddr;
