@@ -75,6 +75,9 @@ const setAudienceMember = async (listId, email) => {
  * NOTE > This function doesn't have recursive queries in case of pagination.
  * Since it is hardly impossible to have more than 1000 Audience groups 
  * 
+ * 1000개 레코드를 가지고 오게 한다. 대신 페이지 네이션을 하지는 않는다. 
+ * 오디언스 그룹을 1000개 만들 상황은 거의 없다고 보기 때문이지
+ * 
  * @param {String} targetGrpName / Audience Group name 
  * @returns {JSON} audience group inforamtion  {lists : [{... , name : ''}]}
  * 
@@ -83,23 +86,32 @@ const setAudienceMember = async (listId, email) => {
  */
 const getAudienceGroup = async (targetGrpName) => {
     try {
-        const numOfitemsPerPage = 1000; // 1000 is max
-        let option = {
-            count: numOfitemsPerPage,
-            offset: 0
-        };
-
-        return mailchimp.lists.getAllLists(option).then((audGrp) => {
-
-            logger.info(`[MCAPI][getAudienceGroup] : the total number of audience group ${JSON.stringify(audGrp.lists.length)} `);
-            return audGrp.lists.filter((groupinfo) => {
-                if (groupinfo.name === targetGrpName) {
-                    logger.info(`[MCAPI][getAudienceGroup] : found the matcing audience group ${JSON.stringify(targetGrpName)} `);
-                    return true;
-                }
-                return false;
-            });
+        const MaxCount = 100; // 1000 is max
+        let audGroups = [];
+        const response = await mailchimp.lists.getAllLists({
+            count: MaxCount
         });
+        // console.log(response)
+        audGroups.push(...response.lists);
+        const TotalCount = response.total_items;
+        logger.info(`[MCAPI][getAudienceGroup] : the total number of audience group ${TotalCount} `);
+        if(TotalCount > MaxCount)
+        {
+            for(let i = MaxCount ; i < TotalCount ; i += MaxCount)
+            {
+                let res = await mailchimp.lists.getAllLists({count: MaxCount, offset: i});
+                audGroups.push(...res.lists);
+            }
+        }
+        const targetAudgroup = audGroups.filter((groupinfo) => {
+            if (groupinfo.name === targetGrpName) {
+                logger.info(`[MCAPI][getAudienceGroup] : found the matcing audience group ${JSON.stringify(targetGrpName)} `);
+                return true;
+            }
+            return false;
+        });
+        
+        return await targetAudgroup;
     } catch
     {
         logger.error(`[MCAPI][getAudienceGroup] : error ${JSON.stringify(err.response)}`)
@@ -382,12 +394,31 @@ const createTemplateMrkt = async (templateName, htmlTemplate) => {
 
 /***** MISC ****** */
 
+/**
+ * Fetch the whole list of audiences from Mailchimp server
+ *  @param {String} listId audience group unique ID
+ *  @return {Array} the list of email addresses
+ * https://mailchimp.com/developer/marketing/api/list-members/list-members-info/
+ */
 const getAudienceMembers = async (listId) => {
     try {
-        const response = await mailchimp.lists.getListMembersInfo(listId);
-        // console.log(response.members);
-        const emailArry = response.members.map((elem, key) => {
-            // console.log(`member #${key} info ${elem.email_address}`);
+        const MaxCount = 100;
+        let members = [];
+        const response = await mailchimp.lists.getListMembersInfo(listId, {count: MaxCount});
+        members.push(...response.members);
+        const TotalCount = response.total_items;
+        logger.info(`[MCAPI][getAudienceMembers] total member count : ${TotalCount} `);
+        // console.log(members[0]);
+        if(TotalCount > MaxCount)
+        {
+            for(let i = MaxCount ; i < TotalCount ; i += MaxCount)
+            {
+                let res = await mailchimp.lists.getListMembersInfo(listId, {count: MaxCount, offset: i});
+                members.push(...res.members);
+            }
+        }
+        const emailArry = members.map((elem, key) => {
+            logger.debug(`[MCAPI][getAudienceMembers] member #${key} info ${elem.email_address}`);
             return elem.email_address;
         })
         logger.info(`[MCAPI][getAudienceMembers]  member list : ${JSON.stringify(await emailArry)} `);
