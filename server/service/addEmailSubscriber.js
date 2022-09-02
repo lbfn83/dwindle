@@ -49,7 +49,7 @@ async function addEmailSubscriber(emailAddress)  {
     }
 }
 async function checkAlreadyMember(listID, emailAddress)  {
-    const subscriberList = await MCAPI.getAudienceMembers(listID);
+    const subscriberList = await MCAPI.getAudienceMembers(listID, "subscribed");
     if(subscriberList.includes(emailAddress))
     {
         return true;

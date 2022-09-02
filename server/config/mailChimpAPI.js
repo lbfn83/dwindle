@@ -395,16 +395,17 @@ const createTemplateMrkt = async (templateName, htmlTemplate) => {
 /***** MISC ****** */
 
 /**
- * Fetch the whole list of audiences from Mailchimp server
+ * Fetch the whole list of audiences from Mailchimp server that matches the status
  *  @param {String} listId audience group unique ID
+ *  @param {String} status "subscribed", "unsubscribed", "cleaned", "pending", "transactional", or "archived".
  *  @return {Array} the list of email addresses
  * https://mailchimp.com/developer/marketing/api/list-members/list-members-info/
  */
-const getAudienceMembers = async (listId) => {
+const getAudienceMembers = async (listId, status) => {
     try {
         const MaxCount = 100;
         let members = [];
-        const response = await mailchimp.lists.getListMembersInfo(listId, {count: MaxCount});
+        const response = await mailchimp.lists.getListMembersInfo(listId, {count: MaxCount, status : status});
         members.push(...response.members);
         const TotalCount = response.total_items;
         logger.info(`[MCAPI][getAudienceMembers] total member count : ${TotalCount} `);
@@ -413,7 +414,7 @@ const getAudienceMembers = async (listId) => {
         {
             for(let i = MaxCount ; i < TotalCount ; i += MaxCount)
             {
-                let res = await mailchimp.lists.getListMembersInfo(listId, {count: MaxCount, offset: i});
+                let res = await mailchimp.lists.getListMembersInfo(listId, {count: MaxCount, offset: i, status : status});
                 members.push(...res.members);
             }
         }
@@ -448,6 +449,37 @@ const getMemberInfo = async (listId, Email) => {
 
 };
 
+const unsubscribeMember = async (listId, Email) => {
+    try{
+        const md5=  require("blueimp-md5");
+        const response = await mailchimp.lists.updateListMember(listId, md5(Email), {status : "unsubscribed"});
+        return await response;
+    }catch (err) {
+        logger.error(`[MCAPI][unsubscribeMember] Error : ${err} `);
+        return err;
+    }
+
+}
+
+/**
+ * This will make it impossible to re-import the list member. so don't use it!!!
+ * @deprecated
+ * @param {String} listId audience group unique ID
+ * @param {String} Email email address to unsubscribe/remove
+ * @return {Array} null when it is successful or otherwise returns the error message from MailChimp
+ * https://mailchimp.com/developer/marketing/api/list-merges/
+ */
+const removeMember = async (listId, Email) => {
+    try{
+        const md5=  require("blueimp-md5");
+        const response = await mailchimp.lists.deleteListMemberPermanent(listId, md5(Email));
+        return await response;
+    }catch (err) {
+        logger.error(`[MCAPI][removeMember] Error : ${err} `);
+        return err;
+    }
+
+}
 
 const getCampaignContent = async (campaign_id) => {
     const response = await mailchimp.campaigns.getContent(campaign_id);
@@ -464,4 +496,4 @@ const getSingleTemplateinfoMrkt = async (template_id) => {
 };
 
 
-module.exports = { createTemplateMrkt, setAudienceMember, updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup, getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus, getMemberInfo }
+module.exports = { createTemplateMrkt, setAudienceMember, updateCampaignContent, connectionChecker, createCampaign, getAudienceGroup, getAudienceMembers, getCampaignContent, getCampaignList, getSingleTemplateinfoMrkt, getTemplateListMrkt, sendCampaign, getCampaignStatus, getMemberInfo, removeMember, unsubscribeMember }
