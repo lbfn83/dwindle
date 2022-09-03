@@ -76,6 +76,7 @@ function Search()
         } else {
             setlocationField(location)
         }
+        setPageNum(0)
         setRefreshData(!refreshData)
         
     }
@@ -86,13 +87,14 @@ function Search()
         } else {
             setCompanyField(company)
         }
-        
+        setPageNum(0)
         setRefreshData(!refreshData)
         
     }
 
     const keywordSet = (wordKey) => {
         setkeywordField(wordKey)
+        setPageNum(0)
         setRefreshData(!refreshData)
         
     }
