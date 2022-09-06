@@ -154,24 +154,26 @@ module.exports = (sequelize, DataTypes) => {
           
           // Sequelize ORM output DATEONLY type as a string. 
             // Very unreliable. should get codes migrated into pg lib. 
-          return pgPool.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
-          (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as tuition_assistance,
-          (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
-           FROM "${jobposting.tableName}" LEFT JOIN (SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
-           FROM benefit where "deletedAt" is null group by benefit.company_name) as benefit_agg on benefit_agg.company_name = jobposting.company_name
-            WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}') and "deletedAt" is null
-            order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC;`);
           
-          // For debug
-          // // SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment,
-          // (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as 
-          // tuition_assistance,
-          //           (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
-          //            FROM "jobposting" left join
-          //        (SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
-          //            FROM benefit group by benefit.company_name) as benefit_agg on benefit_agg.company_name = jobposting.company_name
-          //             WHERE "jobpostingToken" @@ plainto_tsquery('english', 'product manager') and "deletedAt" is NOT null and benefit_agg.benefit_type_array @> '{tuition_assistance}'
-          //              order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC    
+          return pgPool.query(`SELECT jobposting.*, benefit_agg.company_website, benefit_agg.imagelink, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
+          (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as tuition_assistance,
+          (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage FROM "${jobposting.tableName}" LEFT JOIN 
+		  ( SELECT benefit.company_name , array_agg(benefit.benefit_type) as benefit_type_array, (array_agg(company.company_website))[1] as company_website, (array_agg(company.imagelink))[1] as imagelink
+				   FROM benefit LEFT JOIN 
+		   		   (  SELECT company_name, company_website, imagelink FROM company )
+		   		   as company on company.company_name = benefit.company_name where "deletedAt" is null group by benefit.company_name
+		  ) as benefit_agg on benefit_agg.company_name = jobposting.company_name 
+		  WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}') and "deletedAt" is null
+		  ORDER BY posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC;`);
+        
+          // return pgPool.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
+          // (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as tuition_assistance,
+          // (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
+          //  FROM "${jobposting.tableName}" LEFT JOIN (SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
+          //  FROM benefit where "deletedAt" is null group by benefit.company_name) as benefit_agg on benefit_agg.company_name = jobposting.company_name
+          //   WHERE "${jobposting.getSearchVector()}" @@ plainto_tsquery('english', '${query}') and "deletedAt" is null
+          //   order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC;`);
+            
       }
       catch(e)
       {
