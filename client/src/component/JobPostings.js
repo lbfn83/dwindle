@@ -27,10 +27,12 @@ export default function JobPostings({jobList}) {
                           <div className='posting-text-container'>
                             {/* <h2>{p.company_name}</h2> */}
                             {/* onClick={navigate(p.company_name)}  */}
-                              <a style={{display: 'inline', backgroundColor : '#FFFFFF', boxShadow : 'none'} } href={p.redirectLink} ><img src = {p.imagelink} width = "100" height = "100"></img></a> 
-                              
-                              <div style={{display: 'inline', verticalAlign :'top', marginLeft : '10px'}}>{p.company_name}</div>
-                              
+                            <div className='company-title'>
+                              <div className="logo-container">
+                                  <a  href={p.redirectLink}><img src = {p.imagelink}></img></a>
+                                </div>
+                              <div className='title'>{p.company_name}</div>
+                            </div>
                             
                             <h1> {p.job_title} </h1> 
                             <div >{p.job_location} | {p.posted_date} </div>
