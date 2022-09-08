@@ -8,6 +8,8 @@ export const BenefitButton = ({benefit}) => {
   const handleToggle = () => {
       
       changeState(!state)
+      
+
   }
 
 
@@ -21,6 +23,7 @@ export const BenefitButton = ({benefit}) => {
       }
   }
 
+ 
 
   return (
 
@@ -30,6 +33,7 @@ export const BenefitButton = ({benefit}) => {
             handleToggle()
         }}
     >
+        <input type="checkbox" id={benefit.title} checked={state}/>
         {benefit.title}
     </div>
     
