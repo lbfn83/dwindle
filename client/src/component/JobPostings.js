@@ -7,7 +7,9 @@ export default function JobPostings({jobList}) {
       // console.log("jobitems from JobPostings function: ", jobList)
       const redirectLinkPrefix = "https://dwindlestudentdebt.com/company-";
       const JLwithLink = jobList.map(p => {
-        p.redirectLink = redirectLinkPrefix+String(p.company_name).toLowerCase().replace(/\s/g,''); 
+        // https://stackoverflow.com/questions/9705194/replace-special-characters-in-a-string-with-underscore
+        // p.redirectLink = redirectLinkPrefix+String(p.company_name).toLowerCase().replace(/\s/g,'');
+        p.redirectLink = redirectLinkPrefix+String(p.company_name).toLowerCase().replace(/[^a-zA-Z0-9]/g,'');
         return p; 
       })
       // console.log(JLwithLink)
