@@ -694,7 +694,7 @@ button:active{
   border-radius: 20px;
   transition: 0.3s;
   margin-top: 10px;
-  width: 210px;
+  width: 223px;
 }
 
 .benefit-option:hover{
@@ -710,7 +710,7 @@ button:active{
   cursor: pointer;
   background-color: #84c7ca;
   margin-top: 10px;
-  width: 210px;
+  width: 223px;
 }
 
 .pagination{
