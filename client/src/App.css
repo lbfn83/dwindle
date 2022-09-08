@@ -235,6 +235,7 @@ button:active{
   display: flex;
   justify-content: space-between;
   align-items: center;
+ 
 }
 
 .job-posting h1, h2{
@@ -262,6 +263,42 @@ button:active{
   
   
 }
+
+.company-title{
+  position: relative;
+}
+
+.title{
+  display: flex;
+  align-items: center;
+}
+.logo-container{
+  border-radius: 50%;
+  border: solid 1px black;
+  position: absolute;
+  left: -66px;  
+  height: 60px;
+  width: 60px;
+  display: block;
+}
+
+.logo-container a{
+  background-color: #ffffff;
+  box-shadow: none;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  
+}
+
+.logo-container a img{
+  border-radius: 100%;
+}
+ 
+.logo-container a:hover{
+  background-color: #ffffff !important;
+}
+
 
 .job-posting a:hover{
   background-color: #6dd9df;
@@ -637,15 +674,6 @@ button:active{
 
 /* benefit page styling ends */
 
-@media screen and (max-width: 1140px){
-  .header{
-    flex-direction: column;
-  }
-
-  .content-container{
-    width: auto;
-  }
-}
 /* benefit page styling ends */
 
 /*job benefit options styling begins*/
@@ -718,6 +746,31 @@ button:active{
   text-align: center;
   margin-top: 126px;
   padding: 0 120px;
+}
+
+
+@media screen and (max-width: 1140px){
+  .header{
+    flex-direction: column;
+  }
+
+  .content-container{
+    width: auto;
+  }
+  .company-title{
+    display: flex;
+  }
+
+  .title{
+    margin-left: 10px;
+  }
+
+  .logo-container{
+    position: relative;
+    left: 0;
+    height: 30px;
+    width: 30px;
+  }
 }
 
 @media screen and (max-width: 940px){
@@ -949,5 +1002,12 @@ button:active{
 
   .post-text span{
     white-space: normal;
+  }
+  .company-title{
+    justify-content: center;
+  }
+
+  .logo-container a {
+    margin-top: 0;
   }
 }

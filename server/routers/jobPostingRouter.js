@@ -90,14 +90,21 @@ router.post('/jobpostings', async (req, res) => {
             // soft-deleted entries are ignored
             // Sequelize ORM output DATEONLY type as a string. 
             // Very unreliable. should get codes migrated into pg lib. 
-            queryResult= await pgPool.query(`SELECT jobposting.*, benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
+            queryResult= await pgPool.query(`SELECT jobposting.*,  benefit_agg.company_website, benefit_agg.imagelink , benefit_agg.benefit_type_array, (benefit_agg.benefit_type_array @> '{student_loan_repayment}') as student_loan_repayment, 
             (benefit_agg.benefit_type_array @> '{tuition_reimbursement}') as tuition_reimbursement,  (benefit_agg.benefit_type_array @> '{tuition_assistance}') as tuition_assistance,
-            (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage
-            FROM jobposting left join 
-              (  SELECT benefit.company_name as company_name , array_agg(benefit.benefit_type) as benefit_type_array
-                FROM benefit where "deletedAt" is null group by benefit.company_name ) 
-              as benefit_agg on benefit_agg.company_name = jobposting.company_name where "deletedAt" is null 
-              order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC `) 
+              (benefit_agg.benefit_type_array @> '{full_tuition_coverage}') as full_tuition_coverage FROM jobposting left join 
+        
+            (SELECT benefit.company_name ,array_agg(benefit.benefit_type) as benefit_type_array, (array_agg(company.company_website))[1] as company_website, (array_agg(company.imagelink))[1] as imagelink
+        
+                FROM benefit left join 
+        
+                   (  SELECT company_name, company_website, imagelink FROM company  ) 
+        
+                   as company on company.company_name = benefit.company_name where "deletedAt" is null group by benefit.company_name 
+        
+            ) as benefit_agg on benefit_agg.company_name = jobposting.company_name where "deletedAt" is null 
+        
+            order by posted_date DESC, jobposting.company_name ASC, jobposting.uuid ASC;`); 
               // limit ${recordLimit} offset ${recordLimit*pagenum}
         
         }else

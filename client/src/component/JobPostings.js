@@ -5,7 +5,12 @@ export default function JobPostings({jobList}) {
   try{
     //   if use props as an argument, props.pokemon is the right way to refer to
       // console.log("jobitems from JobPostings function: ", jobList)
-      let temp = jobList.map(p => (<div> {p} </div>) )
+      const redirectLinkPrefix = "https://dwindlestudentdebt.com/company-";
+      const JLwithLink = jobList.map(p => {
+        p.redirectLink = redirectLinkPrefix+String(p.company_name).toLowerCase().replace(/\s/g,''); 
+        return p; 
+      })
+      // console.log(JLwithLink)
       // console.log("mapped array in JobItems", temp) 
       // const temp = Object.keys(joblist)
         // console.log("keys" , temp)
@@ -15,12 +20,20 @@ export default function JobPostings({jobList}) {
       
             return (
             <div>
-              { jobList.map( (p,index) =>(
+              { JLwithLink.map( (p,index) =>(
                  
                       [
                         <div key = {2*index-1} className="job-posting">
                           <div className='posting-text-container'>
-                            <h2>{p.company_name}</h2>
+                            {/* <h2>{p.company_name}</h2> */}
+                            {/* onClick={navigate(p.company_name)}  */}
+                            <div className='company-title'>
+                              <div className="logo-container">
+                                  <a  href={p.redirectLink}><img src = {p.imagelink}></img></a>
+                                </div>
+                              <div className='title'>{p.company_name}</div>
+                            </div>
+                            
                             <h1> {p.job_title} </h1> 
                             <div >{p.job_location} | {p.posted_date} </div>
                           </div>
