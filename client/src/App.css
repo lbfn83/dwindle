@@ -1,3 +1,9 @@
+html, body{
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+}
+
 img{
   max-width: 100%;
   max-height: 100%;
@@ -33,7 +39,6 @@ button:active{
   display: flex;
   justify-content: center;
   max-width: 1141px;
-  display: flex;
   flex-direction: column;
   align-items: center;
 }
@@ -729,7 +734,6 @@ button:active{
 
 /* email sign up styling begins*/
 .email-signup{
-  text-align: center;
   margin-bottom: 20px;
 }
 
@@ -903,7 +907,7 @@ button:active{
   }
   
   .job-page-body p{
-    margin: 0;
+    margin: 0 30px;
     font-size: medium;
   }
 
@@ -948,8 +952,14 @@ button:active{
   }
 }
 
-@media screen and (max-width: 414px){
+@media screen and (max-width: 415px){
 
+  .site-container{
+    display: block;
+  }
+  .job-page-body{
+    display: block;
+  }
   .form-component select {
     width: 100%;
   }
