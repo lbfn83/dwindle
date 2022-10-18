@@ -19,6 +19,8 @@ router.post('/subscribe', async (req, res) => {
         /* Obsolete codes */
         // when request contains duplicate key value, server dies => Use Upsert
         // await subscriber.create({firstname, lastname, email });
+
+        // https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-upsert/
         await pool.query(`INSERT INTO subscriber(firstname, lastname, email, "createdAt", "updatedAt") values('${firstname}', '${lastname}', '${email}', NOW(), NOW()) 
         ON CONFLICT(email) DO UPDATE SET firstname = EXCLUDED.firstname, lastname = EXCLUDED.lastname ,email = EXCLUDED.email, "updatedAt" = NOW()`);
         res.status(200).send(message);

@@ -7,7 +7,8 @@ const MAX_JOBPOSTING_PER_COMPANY = 10;
 const NUMBER_OF_COMPANIES_TO_PICK = 3;
 /**
  * Pick top three companies that have most jobpostings this week
- * and calculate their respective counts of jobpostings in each location
+ * and calculate their respective counts of jobpostings in each location( no longer vaild on 10/15/2022, only USA is a valid location)
+ * Doesn't take account of soft deleted jobpostings or jobpostings generated more than a week ago .
  * @param {String} benefitType any of ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage'] or if empty string is passed, most active hiring companies will be picked
  * @returns {Array} Array of the below Object => 
  *      
@@ -28,7 +29,7 @@ const NUMBER_OF_COMPANIES_TO_PICK = 3;
  *                          }
  *      }
  */
-const fetchCompanyInformation = async (benefitType) => {
+ const fetchCompanyInformation = async (benefitType) => {
     try {
         
         // If MAIL_CHIMP_BENEFIT_TYPE is defined with one of ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']
@@ -66,7 +67,7 @@ const fetchCompanyInformation = async (benefitType) => {
                        SELECT benefit.company_name , array_agg(benefit.benefit_type) as benefit_type_array
                        FROM benefit where benefit."deletedAt" is null group by benefit.company_name
             ) as benefitInfo join jobposting on benefitInfo.company_name = jobposting.company_name
-            where jobposting."deletedAt" is null ${SQLBenefitCond}
+            where jobposting."deletedAt" is null and jobposting.posted_date >= NOW() - interval '7 day'  ${SQLBenefitCond}
             group by jobposting.company_name, benefitInfo.benefit_type_array order by count desc limit ${NUMBER_OF_COMPANIES_TO_PICK}
         ) as JPcount LEFT JOIN company on company.company_name = JPcount.company_name`);
 
@@ -82,7 +83,7 @@ const fetchCompanyInformation = async (benefitType) => {
         // exclude soft-deleted entries
         const countingPerLoc = await Promise.all(threeCompanies[0].map(async (company, index) => {
             const eachJobcounting = await sequelize.query(`SELECT mode() WITHIN GROUP(ORDER BY jobposting.normalized_job_location), COUNT(*) from jobposting 
-            WHERE jobposting.company_name = '${company.company_name}' and "deletedAt" is null group by jobposting.normalized_job_location`);
+            WHERE jobposting.company_name = '${company.company_name}' and "deletedAt" is null and jobposting.posted_date >= NOW() - interval '7 day' group by jobposting.normalized_job_location`);
             // each elem of eachJobcounting : [ { mode: 'USA', count: '470' }, { mode: 'CANADA', count: '372' } ]
             // console.log(eachJobcounting[0]);
             // reduce
@@ -166,9 +167,10 @@ const fetchJobPostingInformation = async (companyInfo) => {
             let actualNumOfJPfromEachLoc = {}; // for debugging purpose
             let randNumSets = []; // this is for debugging purpose
 
-            // create New key to store jobposting strings
+            // create New key to store jobposting information
             singleCompanyInfo.jobpostings = [];
-            // Go through each location [USA, CANADA]
+            // Not valid anymore since USA is only location 10/15/2022 :
+            //  Go through each location [USA, CANADA] and calculate/allocate quotas of each location for MailChimp posting according to the ratio of total jobpostings   
             for (singleLoc of Object.keys(singleCompanyInfo.count_per_loc)) {
                 // console.log(singleLoc);
                 // for example 5.5 and 4.5 then it will have one more job posting. However, putting out one more job posting won't do any harm I think
@@ -179,16 +181,17 @@ const fetchJobPostingInformation = async (companyInfo) => {
                 let randNumSet = new Set();
                 let loopCond = parseInt(actualNumOfJPfromEachLoc[`${singleLoc}_NumOfJP`]);
                 while (randNumSet.size < loopCond) {
+                    // Random numbers genertaed that are less than the total number of jobpostings each company has in each location
                     let temp = getRandomInt(0, singleCompanyInfo.count_per_loc[singleLoc] - 1);
                     randNumSet.add(temp);
                 }
 
                 randNumSets.push(randNumSet);
-                // exclude soft-deleted entries
+                // exclude soft-deleted jobpostins and jobpostings generated more than a week ago
                 const result = await sequelize.query(`select * from jobposting where jobposting.company_name='${singleCompanyInfo.company_name}' 
-                and jobposting.normalized_job_location= '${singleLoc}' and "deletedAt" is null `);
+                and jobposting.normalized_job_location= '${singleLoc}' and "deletedAt" is null and jobposting.posted_date >= NOW() - interval '7 day' `);
 
-                // Insert jobpostings' info fetched from the generated index into return value
+                // Push selected jobpostings with the randomly generated indices among the total query result from DB 
                 for (index of randNumSet) {
                     singleCompanyInfo.jobpostings.push(result[0][index])
                 }
