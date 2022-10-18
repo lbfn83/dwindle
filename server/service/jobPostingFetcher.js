@@ -182,7 +182,11 @@ async function sleep(ms) {
 }
 
 // Importing test data for address standardization 
-let jobpostingTestData = require('./jobpostingFetching_test/jobposting_test_data');
+// let jobpostingTestData = require('./jobpostingFetching_test/jobposting_test_data');
+
+// Importing test data for filtering out keywords
+let jobpostingTestData = require('./jobpostingFetching_test/jobpositng_test_keywords_Intern_Contract');
+const {doesFilteringKeywordsExistInJP} = require('./filteringKeywords');
 
 /**
  * A function that sends a request to query job postings to the RapidAPI linkedIn webscraper.
@@ -211,9 +215,14 @@ async function processAPIRequestAndSQL(queryOption, companyName, loc, testmode =
         if (testmode) {
             jobpostingTestData.data.forEach((jp) => {
                 // since this is test , all the entries should be soft deleted? nope...
-                // 
-                let today = new Date();
-                jp.deletedAt = today.toLocaleString(); // how did I put time stamp?
+                // Input data having non null values at deletedAt column doens't really affect 
+                // the records in the database. Sequelize doesn't take into account of updatedAt, deletedAt
+                // columns in input data set 
+                // as if these columns should be treated as system default values that user shouldn't touch
+                // let today = new Date();
+                // jp.deletedAt = today.toLocaleString(); 
+
+
                 delete jp.uuid;
                 delete jp.createdAt;
                 delete jp.updatedAt;
@@ -259,90 +268,104 @@ async function processAPIRequestAndSQL(queryOption, companyName, loc, testmode =
                 // If API sends wrong data having different company name, simply ignore 
                 // Chegg INC from API.. our database Chegg
                 // Natixis assurance from API ... our database Natxis
-                if (element.company_name.includes(companyName)||testmode) {
-
-                    element.full_text = testmode?'test':element.full_text;
-                    element.normalized_job_location = testmode?'USA':loc;
-                    // foreign key constraint ... can't put test here
-                    element.company_name = testmode?element.company_name:companyName;
-                    // primary key should be unique so that uuid generator is introduced in here
-                    // element.linkedin_job_url_cleaned = testmode?v4():element.linkedin_job_url_cleaned;
-                    element.linkedin_job_url_cleaned = testmode?element.linkedin_job_url_cleaned+' test':element.linkedin_job_url_cleaned;
-                   
-                    /* The problem with below is that it doens't update the found data entry 
-                    
-                    Motivation : 
-                    on daily basis, jobposting database should be updated with new or existing jobposting data pulled from API query
-                    if existing data entry matches any of this new stream of data from API query, we simply 
-                    update UpdatedAt column as current timestamp so it is not the target of soft-deletion*/
-                    /*
-                    const [elemFound, created] = await jobposting.findOrCreate({
-                        where: { linkedin_job_url_cleaned: element.linkedin_job_url_cleaned },
-                        defaults: element
-                    });
-                    // when created is false, it is just updated
-                    Logging.write("Created? : "+ created + "//" + elemFound +"\n")
-                    */
-
-
-                    /* Address standardization */
-                    let stdStr = undefined;
-                    await loc_lookup.convertToStdAddr(element.job_location, logger)
-                        .then(result => stdStr = result).catch(err => stdStr = err);
-
-                    element.std_loc_str = stdStr;
-                    // if the jobposting is marked with a deletion flag, execute the soft-deletion to it.
-                    if (stdStr === 'deletion flag') {
-                        let today = new Date();
-                        element.deletedAt = today.toLocaleString();
-                    }else{
-                        // This doesn't seem to overwrite deleteadAt coulmun of existing record
-                        // sequelize's misbehavior beyond understanding
-                        element.deletedAt = null;
-                    }
-
-
-                    /* Insert new jobposting item or Update existing DB entry corresponding to jobposting item*/
-                    /* Since RapidAPI's data set is inconsistent, some of jobpostings that was already soft-deleted might 
-                    be brought in again later query, so the logic should be able to detect this and restore the record accordingly  */
-                    const foundEntry = await jobposting.findOne({
-                        paranoid: false,
-                        where: { linkedin_job_url_cleaned: element.linkedin_job_url_cleaned }
-                    })
-                    // console.log("[Select result]: " + foundEntry)
-                    if (foundEntry !== null) {
-                        // sort out whether it is soft deleted or not 
-                        if (foundEntry.deletedAt !== null) {
-                            logger.info(`[processRequest] restore : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `);
-                            await foundEntry.restore();
-                        } else {
-                            // update
-                            logger.info(`[processRequest] Update : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `);
+                if (element.company_name.includes(companyName) ||testmode) {
+                    if(!doesFilteringKeywordsExistInJP(element))
+                    {
+                        element.normalized_company_name = testmode?'test':element.normalized_company_name;
+                        element.normalized_job_location = testmode?'USA':loc;
+                        // foreign key constraint ... can't put test here
+                        element.company_name = testmode?element.company_name:companyName;
+                        // primary key should be unique so that uuid generator is introduced in here
+                        // element.linkedin_job_url_cleaned = testmode?v4():element.linkedin_job_url_cleaned;
+                        element.linkedin_job_url_cleaned = testmode?element.linkedin_job_url_cleaned+' test':element.linkedin_job_url_cleaned;
+                       
+                        /* The problem with below is that it doens't update the found data entry 
+                        
+                        Motivation : 
+                        on daily basis, jobposting database should be updated with new or existing jobposting data pulled from API query
+                        if existing data entry matches any of this new stream of data from API query, we simply 
+                        update UpdatedAt column as current timestamp so it is not the target of soft-deletion*/
+                        /*
+                        const [elemFound, created] = await jobposting.findOrCreate({
+                            where: { linkedin_job_url_cleaned: element.linkedin_job_url_cleaned },
+                            defaults: element
+                        });
+                        // when created is false, it is just updated
+                        Logging.write("Created? : "+ created + "//" + elemFound +"\n")
+                        */
+    
+    
+                        /* Address standardization */
+                        let stdStr = undefined;
+                        await loc_lookup.convertToStdAddr(element.job_location, logger)
+                            .then(result => stdStr = result).catch(err => stdStr = err);
+    
+                        element.std_loc_str = stdStr;
+                        // if the jobposting is marked with a deletion flag, execute the soft-deletion to it.
+                        if (stdStr === 'deletion flag') {
+                            let today = new Date();
+                            element.deletedAt = today.toLocaleString();
+                        }else{
+                            // This doesn't seem to overwrite deleteadAt coulmun of existing record
+                            // sequelize's misbehavior beyond understanding
+                            element.deletedAt = null;
                         }
-                        await foundEntry.set(element);
-                        await foundEntry.save();
+    
+    
+                        /* Insert new jobposting item or Update existing DB entry corresponding to jobposting item*/
+                        /* Since RapidAPI's data set is inconsistent, some of jobpostings that was already soft-deleted might 
+                        be brought in again later query, so the logic should be able to detect this and restore the record accordingly  */
+                        const foundEntry = await jobposting.findOne({
+                            paranoid: false,
+                            where: { linkedin_job_url_cleaned: element.linkedin_job_url_cleaned }
+                        })
+                        // console.log("[Select result]: " + foundEntry)
+                        if (foundEntry !== null) {
+                            // sort out whether it is soft deleted or not 
+                            if (foundEntry.deletedAt !== null) {
+                                logger.info(`[processRequest] restore : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `);
+                                await foundEntry.restore();
+                            } else {
+                                // update
+                                logger.info(`[processRequest] Update : ${JSON.stringify(foundEntry.linkedin_job_url_cleaned)} `);
+                            }
+                            /************************ */
+                            // Sequelize doesn't reflect the manual changes in updatedAt, deletedAt columns in input data set to Database records
+                            // as if these columns should be treated as the system default values that user shouldn't touch
+                            // in this regard, element.updatedAT = new Date() won't work but instead use changed()
 
+                            // updating updatedAt manually with sequelize
+                            // https://stackoverflow.com/questions/42519583/sequelize-updating-updatedat-manually
+                            await foundEntry.changed('updatedAt', true)
+                            await foundEntry.set(element);
+                            await foundEntry.save();
+    
+    
+                        } else {
+                            logger.info(`[processRequest] insert : ${JSON.stringify(element.linkedin_job_url_cleaned)} `);
+    
+                            await jobposting.create(element);
+                            // Logging.write("[insert]"+JSON.stringify(element.linkedin_job_url_cleaned)+"\n");    
+                        }
 
-                    } else {
-                        logger.info(`[processRequest] insert : ${JSON.stringify(element.linkedin_job_url_cleaned)} `)
-
-                        await jobposting.create(element);
-                        // Logging.write("[insert]"+JSON.stringify(element.linkedin_job_url_cleaned)+"\n");    
+                    }else
+                    {
+                        logger.warn(`[processRequest] filtering keywords founds in ${element.job_title} `);
                     }
 
                 } else {
                     // res.write
 
-                    logger.warn(`[processRequest] IncorrectDatafromAPI : ${element.normalized_company_name} is not a seach keyword `)
+                    logger.warn(`[processRequest] IncorrectDatafromAPI :  ${element.normalized_company_name} is not a seach keyword `);
                     // Logging.write("[error_from_API]"+element.normalized_company_name +" is not a search keyword\n")
                 }
             })
             // In recursive manner, request next page from API end point
             // data props in queryOption is not JSON object.. it is string that "looks like" JSON
             if(!testmode){
-                let nextSearchOption = JSON.parse(result.config.data)
-                nextSearchOption.page = (parseInt(nextSearchOption.page) + 1).toString()
-                queryOption.data = JSON.stringify(nextSearchOption)
+                let nextSearchOption = JSON.parse(result.config.data);
+                nextSearchOption.page = (parseInt(nextSearchOption.page) + 1).toString();
+                queryOption.data = JSON.stringify(nextSearchOption);
             }
 
             /*Test purpose : don't probe into more pages but only single page */
@@ -372,7 +395,7 @@ async function processAPIRequestAndSQL(queryOption, companyName, loc, testmode =
         // From Linked in to our backend server, we got object as a response, not string
 
     } catch (error) {
-        logger.error(`[processRequest] error : ${error}`)
+        logger.error(`[processRequest] error : ${error}`);
         // To see the full structure of the error by invoking pullJobPostings() directly in worker.js
         // : JSON structure => response.data.message
         // console.log(error)
@@ -386,3 +409,12 @@ async function processAPIRequestAndSQL(queryOption, companyName, loc, testmode =
 
 
 module.exports = { pullJobPostings, processAPIRequestAndSQL };
+
+// test with debugger <= this depends on which testing data is imported right at the top of processAPIRequestAndSQL
+// However, this test shouldn't be done with production DB since this module will insert the entries for mocking test
+// processAPIRequestAndSQL('', '', '',true);
+
+//test with debugger 2
+// (async() => {
+//     await pullJobPostings();
+// })();
