@@ -95,12 +95,12 @@ const POSTED_DATE_COND   = TESTMODE? `and jobposting.posted_date >= (select post
                 prev['company_summary'] = company.company_summary;
                 prev['company_imagelink'] = company.imagelink;
                 prev['company_benefit'] = company.benefit_type_array;
-                prev['ttal_count'] = company.count;
+                prev['total_count'] = company.count;
                 if (prev['count_per_loc'] === undefined) {
                     prev['count_per_loc'] = {};
                 }
 
-                prev['counot_per_loc'][`${elem.mode}`] = elem.count;
+                prev['count_per_loc'][`${elem.mode}`] = elem.count;
 
                 // Version 1.0
                 // https://code-boxx.com/convert-string-object-javascript/
@@ -335,12 +335,12 @@ full_tuition_coverage
 To facilitate the test, please keep in mind that TESTMODE variable should be true
 
 */
-(async() => {
+// (async() => {
 
-    const result = await dyanmicConentBuilder('full_tuition_coverage');
-    logger.info("[test result]");
-    logger.info(result);
-})();
+//     const result = await dyanmicConentBuilder('full_tuition_coverage');
+//     logger.info("[test result]");
+//     logger.info(result);
+// })();
 
 
 /*
