@@ -56,7 +56,7 @@ This project was created for one of our clients who is seeking to create a job b
 ● Backend Features : 
   - MailChimp Integration : provide the feature for email subscription and a weekly email template generation based on jobposting data
   - Postgres full text search 
-  - Address standardization with a regular expression and Google Geocoding
+  - Address standardization using a regular expression and Google Geocoding
   - Job hadnling queues using Bull and Redis
   - Logging/Database backup file upload using Google Cloud platform 
   - Custom REST APIs
