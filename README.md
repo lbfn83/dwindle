@@ -49,11 +49,18 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://cheery-hamster-3c8aba.netlify.app/)
+[![Product Name Screen Shot][product-screenshot]](https://peppy-pika-fe5e5b.netlify.app/)
 
 This project was created for one of our clients who is seeking to create a job board app that was catered to students who needed to pay down their school debt. The companies on our website offer unique benefits for students. On the companies page, you will notice four options: student loan repayment, 100% tuition coverage, tuition assistance, and tuition reimbursement. Once one of these options is clicked on it will take the user to a new page where it will list the companies with this type of benefit. 
 
-You can also search for the jobs being offered on our job board page, we almost hope to implement a weekly email sent to anyone who signs up.
+● Backend Features : 
+  - MailChimp Integration : provide the feature for email subscription and a weekly email template generation based on jobposting data
+  - Postgres full text search 
+  - Address standardization with a regular expression and Google Geocoding
+  - Job hadnling queues using Bull and Redis
+  - Logging/Database backup file upload using Google Cloud platform 
+  - Custom REST APIs
+  - Third-party Web Scraping API integration  
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
