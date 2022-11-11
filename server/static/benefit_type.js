@@ -1,0 +1,1 @@
+module.exports = BENEFIT_TYPES = ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']; 

@@ -1,0 +1,1023 @@
+html, body{
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+}
+
+img{
+  max-width: 100%;
+  max-height: 100%;
+}
+
+button{
+  font-family: 'Poppins', sans-serif;
+  background-color: #96DFE3;
+  font-weight: 700;
+  font-size: larger;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 5px 16px 0px #0B325E;
+}
+
+button:hover{
+  background-color: #6dd9df;
+  cursor: pointer;
+}
+
+button:active{
+  background-color: #519da1;
+}
+
+.site-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.page-container{
+  display: flex;
+  justify-content: center;
+  max-width: 1141px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.content-container{
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 1141px;
+}
+
+/* page header styling begins */
+
+
+.header{
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.header-text-container{
+  position: relative;
+  z-index: 20;
+  width: 550px;
+  max-width: 550px;
+}
+
+.header-image-container{
+  width: calc(100% - 550px);
+  text-align: center;
+}
+
+/* page header ends */
+
+/* title bar styling begins */
+.title-bar{
+  width: 95%;
+  max-width: 1642.98px;
+  min-width: 958px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-image-container{
+  width: 373px;
+  height: 105px;
+}
+
+.title-bar button{
+  width: 180px;
+  height: 48px;
+  margin: 2.5rem;
+}
+
+.title-bar button a{
+  text-decoration: none;
+  color: black;
+}
+
+/* title bar styling ends */
+
+/* nav styling begins*/
+
+.nav-container{
+  width: 100%;
+}
+
+.nav-list{
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  text-decoration: none;
+  list-style-type: none;
+  padding: 0;
+}
+
+.nav-mobile-option{
+  margin: 10px ;
+
+}
+
+.nav-mobile-option a{
+  display: block;
+  font-size: 1.17em;
+  /* margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px; */
+  height: 100%;
+  width: 100%;
+  font-weight: bold;
+  text-decoration: none;
+  color: black;
+  transition: all .2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.nav-option{
+  margin: 0 20px 0 20px;
+}
+
+.nav-option a{
+    display: block;
+    font-size: 1.17em;
+    /* margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px; */
+    height: 100%;
+    width: 100%;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    transition: all .2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-option a:hover{
+  transform: translate(0rem, -4px);
+  transition: all .2s;
+}
+.burger-menu{
+  display: none;
+}
+
+/* nav styling ends */
+
+/* jobpage styling*/
+.job-page-body{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content:  center;
+  align-items:  center;
+}
+
+/* .job-page-body h1{
+  font-weight: bolder;
+  margin-top: 126px;
+  padding: 0 120px;
+} */
+
+.job-page-body p {
+  font-size: 20px;
+  margin: 0 250px;
+}
+
+/* job page forms components*/
+.form-component{
+  margin-top: 50px;
+}
+.form-component input{
+  width: 379px;
+  height: 51px;
+  border-radius: 10px;
+  padding: 0 15px;
+  border: 2px solid black;
+}
+
+.form-component select{
+  width: 413px;
+  height: 51px;
+  border-radius: 10px;
+  padding: 0 15px;
+  border: 2px solid black;
+}
+
+.form-component button{
+  width: 158px;
+  height: 48px;
+  margin: 0;
+  font-size: medium;
+  margin-left: 10px;
+}
+
+/*job page form component ends*/
+
+/*Job posting styling begins*/
+
+.search-result{
+  margin-top: 50px;
+}
+
+.job-posting{
+  font-weight: bolder;
+  padding: 20px 20px;
+  text-align: left;
+  border: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+ 
+}
+
+.job-posting h1, h2{
+  margin: 0;
+  padding: 0;
+
+  
+}
+
+.job-posting a{
+  height: 60px;
+  width: 150px;
+  font-family: 'Poppins', sans-serif;
+  background-color: #96DFE3;
+  font-weight: 700;
+  font-size: larger;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 5px 16px 0px #0B325E;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+  
+  
+}
+
+.company-title{
+  position: relative;
+}
+
+.title{
+  display: flex;
+  align-items: center;
+}
+.logo-container{
+  border-radius: 50%;
+  border: solid 1px black;
+  position: absolute;
+  left: -66px;  
+  height: 60px;
+  width: 60px;
+  display: block;
+}
+
+.logo-container a{
+  background-color: #ffffff;
+  box-shadow: none;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  
+}
+
+.logo-container a img{
+  border-radius: 100%;
+}
+ 
+.logo-container a:hover{
+  background-color: #ffffff !important;
+}
+
+
+.job-posting a:hover{
+  background-color: #6dd9df;
+  cursor: pointer;
+}
+
+.job-posting a:active{
+  background-color: #519da1;
+}
+
+
+.posting-text-container{
+  width: 80%;
+}
+
+.posting-text-container h2{
+  font-weight: 300;
+  font-size: 17px;
+}
+
+.posting-text-container h1{
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/*Job Post styling ends*/
+
+/*Blog post styling begins*/
+
+.blog-home{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blog-home div{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 15px 0;
+}
+
+.post-item{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 45px;
+  padding: 10px;
+  border-radius: 3px;
+  width: 30%;
+  text-decoration: none;
+  color: black;
+}
+
+.post-item:hover{
+  background-color: rgb(222,222,222);
+  transition: all 0.5s ease-out;
+}
+
+.post-item:nth-child(5n+1){
+  width: 62%;
+}
+
+.post-item:nth-child(5n+1) img{
+  max-height: 300px;
+  object-fit: cover;
+  object-position: 50% 39%;
+}
+
+.post-item img{
+  max-height: 150px;
+  margin-bottom: 10px;
+  object-fit: cover;
+}
+
+
+
+/* blog post styling ends */
+
+/* partner page styling begins */
+
+.partner-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.partner-title-container{
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.partners-section{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: -15px;
+}
+
+.partner-posts{
+    display: block;
+    overflow:visible;
+    width: 30%;
+    margin: 15px;
+    min-width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px 0 rgb(136 144 195 / 20%), 0 5px 15px 0 rgb(37 44 97 / 15%);
+    background-color: white;
+}
+
+.image-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    height: 140px;
+}
+
+.image-container img{
+  max-width: 70%;
+  height: 100px;
+}
+.dolr{
+  background-color: #fafafa
+}
+
+.dolr img{
+  max-width: 70%;
+  height: 48px;
+}
+
+.topresume{
+  background-color: #040c37
+}
+
+.colorfullife{
+  background-color: #cedee9
+}
+
+.post-text{
+  padding: 15px 45px 25px;
+  
+}
+
+.post-text span{
+  opacity: 0.6;
+  margin-left: 7px;
+  font-size: 14px;
+  white-space: nowrap;
+  font-weight: 400;
+}
+
+.button-box a{
+  color: #303030;
+  text-decoration: none;
+}
+
+/*partners page styling ends8/
+
+/* company benefit page styling begins*/
+
+.company-intro-container{
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.company-title-intro{
+  max-width: 550px;
+}
+
+.company-title-intro p{
+  max-width: 400px;
+}
+
+.company-button{
+  margin-top: 45px;
+}
+
+.company-button a{
+  display: flex;
+  font-family: 'Poppins', sans-serif;
+  background-color: #96DFE3;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 2px 5px 0px #0B325E;
+  text-decoration: none;
+  color: black;
+  width: 120px;
+  height: 44px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+}
+
+.company-description-container{
+  width: 550px;
+  margin-top: 80px;
+}
+
+
+/* company benefit page styling ends */
+
+/*company list page styling begins*/
+
+
+.title-container{
+  text-align: center;
+}
+
+/*company list page styling begins*/
+
+/*company card styling begins*/
+
+.card-list-container{
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.company-card{
+  width: 260px;
+  padding: 25px 20px 10px;
+  margin: 0 20px 40px;
+  background-color: white;
+  box-shadow: 0 5px 15px 0 rgb(37 44 97 / 15%);
+  border-radius: 10px;
+  text-align: center;
+
+}
+
+.company-card:hover{
+  cursor: pointer;
+}
+
+.company-page-link{
+  text-decoration: none;
+  color: black;
+}
+
+.image-box{
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    box-shadow: 0 7px 25px 0 rgb(37 44 97 / 10%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: #eee;
+}
+
+.tag-container{
+  margin-bottom: 15px;
+}
+
+.tag{
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  background-color: #303030;
+  color: #96DFE3;
+  text-transform: uppercase;
+}
+
+.tag-text{
+  text-decoration: none;
+}
+
+.social-buttons-container{
+  margin-bottom: 15px;
+}
+
+.social-buttons-list{
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.social-buttons-item{
+  margin: 0 6px 5px;
+  width: 18px;
+  height: 18px;
+}
+
+
+.social-buttons-icon{
+  vertical-align: middle;
+}
+
+/*company card styling ends*/
+
+
+/* company benefit list styling begins*/
+
+.company-benefit-list{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+/* company benefit list styling ends*/
+
+/* company benefit card styling begins */
+
+.benefit-card-container{
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px 0 rgb(136 144 195 / 20%), 0 5px 15px 0 rgb(37 44 97 / 15%);
+  background-color: white;
+  text-decoration: none;
+  cursor: pointer;
+  height: 100px;
+  width: 750px;
+  margin-top: 20px;
+  justify-content: space-between;
+}
+
+.benefit-card-image-container{
+  left: 0;
+  top: 0;
+  width: 20%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.benefit-card-image-container img{
+  object-fit: cover;
+  object-position: center;
+}
+
+.benefit-card-text{
+  padding: 20px;
+}
+
+/* company benefit card styling ends */
+
+/* benefit page styling begins */
+
+.small-container{
+  margin-top: 100px;;
+  max-width: 550px;
+}
+
+.text-container{
+  margin-bottom: 40px;
+}
+
+/* benefit page styling ends */
+
+/* benefit page styling ends */
+
+/*job benefit options styling begins*/
+
+.job-benefit-options{
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+.benefit-option{
+  background-color: #96DFE3;
+  padding: 5px 25px;
+  border-radius: 20px;
+  transition: 0.3s;
+  margin-top: 10px;
+  width: 223px;
+}
+
+.benefit-option:hover{
+  border-radius: 0;
+  cursor: pointer;
+  background-color: #84c7ca;
+}
+
+
+.benefit-option-focus{
+  border-radius: 0;
+  padding: 5px 25px;
+  cursor: pointer;
+  background-color: #84c7ca;
+  margin-top: 10px;
+  width: 223px;
+}
+
+.pagination{
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.pagination div{
+  display: flex;
+  flex-direction: column;
+}
+
+/* pagination ends */
+
+/* email sign up styling begins*/
+.email-signup{
+  margin-bottom: 20px;
+}
+
+.email-signup h1{
+  margin-top: 126px;
+  padding: 0 120px;
+}
+
+/* email sign up styling ends*/
+
+/* job search styling begins*/
+
+.job-search h1{
+  text-align: center;
+  margin-top: 126px;
+  padding: 0 120px;
+}
+
+
+@media screen and (max-width: 1140px){
+  .header{
+    flex-direction: column;
+  }
+
+  .content-container{
+    width: auto;
+  }
+  .company-title{
+    display: flex;
+  }
+
+  .title{
+    margin-left: 10px;
+  }
+
+  .logo-container{
+    position: relative;
+    left: 0;
+    height: 30px;
+    width: 30px;
+  }
+}
+
+@media screen and (max-width: 940px){
+
+  .title-bar button{
+    display: none;
+  }
+
+  .nav-title-container{
+    display: flex;
+    width: 100%;
+  }
+
+  .header-text-container{
+    text-align: center;
+  }
+
+  .header-image-container{
+    width: calc(100% - 407px);
+  }
+
+  .title-bar{
+    min-width: 0;
+
+  }
+
+
+  .nav-container{
+    width: 82%;
+  }
+
+  .logo-image-container{
+    width: auto;
+  }
+
+  .burger-menu{
+    display: block;
+  }
+
+  .nav-list{
+    display: none;
+    flex-direction: column;
+  }
+
+  .nav-mobile{
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    text-decoration: none;
+    list-style-type: none;
+    padding: 0 0 20px 0;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  }
+
+  .nav-mobile button{
+    margin-top: 20px;
+    height: 48px;
+  }
+
+  .nav-mobile button a {
+    color: black;
+    text-decoration: none;
+  }
+
+  .form-component{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .form-component button {
+    width: 410px;
+    height: 51px;
+    padding: 0 15px;
+    margin-top: 20px;
+    margin-left: 0;
+  }
+  .job-page-body h1{
+    margin-top: 88px;
+  }
+
+  .posting-text-container h1{
+    margin: 0px;
+  }
+
+  .post-item{
+    flex-direction: column;
+    width: 100%;
+     
+  }
+  .post-item img{
+    max-height: 300px;
+  }
+
+  .post-item:nth-child(5n+1) {
+    width: 100%;
+  }
+  .company-button{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+}
+
+@media screen and (max-width: 720px){
+
+  .header-image-container{
+    width: calc(100% - 200px);
+  }  
+  
+  .company-benefit-list{
+    width: 100%;
+  }
+
+  .benefit-card-container{
+    width: 100%;
+  }
+
+  .job-page-body{
+    width: 100%;
+  }
+  
+  .job-page-body h1{
+    padding: 0 59px;
+  }
+  
+  .job-page-body p{
+    margin: 0 30px;
+    font-size: medium;
+  }
+
+  .posting-text-container h1{
+    padding: 0px;
+  }
+
+}
+
+@media screen and (max-width: 550px){
+
+  .header-image-container{
+    width: 100%;
+  }  
+  .header-text-container{
+    width: 100%;
+  }
+
+  .benefit-card-container{
+    flex-direction: column;
+    height: fit-content;
+    align-items: center;
+  }
+
+  .benefit-card-image-container{
+    width: 45%;
+  }
+
+  .job-page-body h1{
+    padding: 0;
+  }
+
+  .form-component input{
+    width: 80%;
+  }
+
+  .partner-title-container{
+    width: 100%;
+  }
+  .company-description-container{
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 415px){
+
+  .site-container{
+    display: block;
+  }
+  .job-page-body{
+    display: block;
+  }
+  .form-component select {
+    width: 100%;
+  }
+
+  .form-component input{
+    width: 90%;
+  }
+
+  
+  .form-component button {
+    width: 98%;
+    height: 48px;
+    margin: 20px 0 0 0;
+    /* margin-left: 10px; */
+}
+
+  .company-card{
+    width: 100%;
+  }
+
+  .logo-image-container{
+    width: 50%;
+    display: flex;
+    height: auto;
+  }
+
+  .job-posting{
+    flex-direction: column;
+    text-align: center;
+    font-weight: normal;
+  }
+
+  .job-posting a{
+    margin-top: 20px;
+  }
+  .nav-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .nav-option{
+    margin: 0;
+  }
+
+  .partner-posts{
+    min-width: 100%;
+  }
+
+  .post-text span{
+    white-space: normal;
+  }
+  .company-title{
+    justify-content: center;
+  }
+
+  .logo-container a {
+    margin-top: 0;
+  }
+}
