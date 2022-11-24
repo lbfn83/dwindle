@@ -143,10 +143,11 @@ transport.on('rotate', async function (oldFilename, newFilename) {
             fs.renameSync( oldFilename, filenameUploaded)
         
             // google is also finicky :  Error: invalid_grant
-            await uploadFile(filenameUploaded)
+            // await uploadFile(filenameUploaded)
+            
             // https://unix.stackexchange.com/questions/151951/what-is-the-difference-between-rm-and-unlink
             // rm is too clever, so we need to use safer alternative which is unlink
-            fs.unlinkSync(filenameUploaded)
+            // fs.unlinkSync(filenameUploaded)
         }
         else{
             const filenameTS = `.${date.getHours()}_${date.getMinutes()}`;

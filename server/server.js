@@ -6,14 +6,15 @@
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
+const morgan = require('morgan');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const companyRouter = require('./routers/companyRouter')
-const subscribeRouter = require('./routers/subscribeRouter')
-const jobpostingRouter = require('./routers/jobPostingRouter')
-const googleOAuth2Router = require('./routers/googleOAuth2Router')
+const companyRouter = require('./routes/companyRouter')
+const subscribeRouter = require('./routes/subscribeRouter')
+const jobpostingRouter = require('./routes/jobPostingRouter')
+const googleOAuth2Router = require('./routes/googleOAuth2Router')
 const bp = require('body-parser')
 
 const { sequelize, jobposting} = require('./models');
@@ -27,6 +28,9 @@ const {logger} = require('./config/logger')
 app.use(cors());
 app.use(bp.json());
 
+app.use(morgan('combined', {stream : {
+  write : (msg) => logger.info(msg.trim()),
+}}));
 /* !!!! use below to invoke sync() to newly create database and tables 
 * only use this in Iaas or Local server to initialize database !!!! 
 */
