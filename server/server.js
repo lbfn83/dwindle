@@ -124,6 +124,15 @@ app.get('/files', (req, res, next) => {
 // TODO: preliminary admin console. might have to build a seperate router for this 
 // When all of DB tables are set up 
 app.get("/admin", (req, res) => res.sendFile(`${__dirname}/static/index.html`))
+// express default error handler
+app.use((err, req, res, next) => {
+  logger.log(`[Defualt Error Handler] ${err}`);
+  const status = err.statusCode || 500;
+  const message = err.message;
+  const data = err.data;
+  res.status(status).json({ message : message, data : data});
+})
+
 
 app.listen(PORT, () => {
   logger.log('info', `[server] : server started on port ${PORT}`)
