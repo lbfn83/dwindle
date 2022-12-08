@@ -179,10 +179,11 @@ transport.on('new', async function ( newFilename) {
 
 function shutdown(signal)
 {
+    // when it comes to uncaughtException signal, it has second arguments to specfiy the narrowed down cause of error
     return  (err) => {
         logger.info(`[Logger : shutdown] Signal triggered : ${signal}`);
         if(err){
-            logger.error(`[Logger : shutdown] Error =>  ${JSON.stringify(err.stack || err)}`)
+            logger.error(`[Logger : shutdown] Error =>  ${JSON.stringify(err.stack || err)}`);
            
         }
         
@@ -194,11 +195,12 @@ function shutdown(signal)
         // third argument 'new file name' is not really valid since 
         // heroku will wipe out any generated file outside from its src code
         // this file generated with new file name will be soon gone
-        logger.transports[0].emit('rotate', logfileName ,'soon-to-be-deleted')
+        logger.transports[0].emit('rotate', logfileName ,`${logfileName.split('.')[0]}.2nd.log`);
         setTimeout(() => {
-            logger.info(`[Logger : shutdown] ...waiting 5s before exiting.`)
+            logger.info(`[Logger : shutdown] ...waiting 5s before exiting.`);
             process.exit(err ? 1 : 0);
-        }, 5000)
+        }, 5000);
+
   }
 }
 
@@ -218,11 +220,4 @@ const logger = winston.createLogger({
             level: LEVEL}),
 ]});
 
-// Termination signal handling
-process
-.on('SIGTERM', shutdown('SIGTERM'))
-.on('SIGINT',  shutdown('SIGINT'))
-.on('uncaughtException', shutdown('uncaughtException'))
-
-
-module.exports = {logger};
+module.exports = {logger, shutdown};

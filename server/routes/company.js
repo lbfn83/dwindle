@@ -10,13 +10,13 @@ const middleware = require('../middleware/is-auth')
 
 
 //give full list of companies. it doesn't yield any benefit information but only columns in company table
-router.get('/companies', async (req, res) => {
-  await companyControllers.getfullListCompanies(req, res);
+router.get('/companies', async (req, res, next) => {
+  await companyControllers.getfullListCompanies(req, res, next);
 });
 
 
-router.post('/company/', middleware, async (req, res) => {
-  await companyControllers.postCompany(req, res);
+router.post('/company/', middleware, async (req, res, next) => {
+  await companyControllers.postCompany(req, res, next);
 });
 
 

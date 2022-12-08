@@ -10,7 +10,7 @@ const morgan = require('morgan');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+const userRouter = require('./routes/user')
 const companyRouter = require('./routes/company')
 const subscribeRouter = require('./routes/subscribeRouter')
 const jobpostingRouter = require('./routes/jobPostingRouter')
@@ -19,7 +19,7 @@ const bp = require('body-parser')
 
 const { sequelize, jobposting} = require('./models');
 
-const {logger} = require('./config/logger')
+const {logger, shutdown} = require('./config/logger')
 
 // const {initDatabase} = require('./util/setupDatabase')
 
@@ -89,6 +89,7 @@ if(process.env.NODE_ENV !== 'development')
 
 }
 
+app.use('/', userRouter);
 /* **** google API OAuth2 ****** */
 const {initGoogleDrive} = require('./config/googleDrive');
 
@@ -103,7 +104,6 @@ app.use('/googleAuth', googleOAuth2Router)
 app.use('/database', jobpostingRouter)
 app.use('/database' , subscribeRouter)
 app.use('/database' , companyRouter)
-
 
 app.get('/files', (req, res, next) => {
   const options = {
@@ -126,12 +126,22 @@ app.get('/files', (req, res, next) => {
 app.get("/admin", (req, res) => res.sendFile(`${__dirname}/static/index.html`))
 // express default error handler
 app.use((err, req, res, next) => {
-  logger.log(`[Defualt Error Handler] ${err}`);
+  
+  logger.error(`[Defualt Error Handler] ${JSON.stringify(err.stack)}`);
   const status = err.statusCode || 500;
   const message = err.message;
   const data = err.data;
   res.status(status).json({ message : message, data : data});
 })
+
+// Termination signal handling
+// https://help.heroku.com/KR6BGO6A/what-do-relocating-dyno-to-a-new-server-messages-mean
+// SIGTERM is the only event acutally required to deploy in Heroku
+process
+.on('SIGTERM', shutdown('SIGTERM'))
+.on('SIGINT',  shutdown('SIGINT'))
+.on('uncaughtException', shutdown('uncaughtException'));
+
 
 
 app.listen(PORT, () => {
