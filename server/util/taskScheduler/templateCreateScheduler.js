@@ -12,8 +12,9 @@ const { NODE_ENV } = process.env;
 const cronOpt = (() => {
     if(NODE_ENV === 'test' || NODE_ENV === 'development')
     {
-        // Temporarily set up At 01:00 on Monday in January.
-        return { cron : '0 1 * 1 1'};
+        // At 00:00 on Monday in September.”
+        return { cron : '0 0 * 9 1'};
+
     }
     else{
         // At 03:00 a.m on Tuesday.

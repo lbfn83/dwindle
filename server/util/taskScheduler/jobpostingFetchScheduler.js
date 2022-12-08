@@ -16,7 +16,9 @@ logger.info(`[Bull jpProcessQueue] NODE_ENV ${NODE_ENV} `)
 const cronOpt = (() => {
     if(NODE_ENV === 'test' || NODE_ENV === 'development')
     {
-        return { cron : '06 14 * * *'};
+        // At 00:00 on Monday in September.”
+        return { cron : '0 0 * 9 1'};
+        // return { cron : '06 14 * * *'};
     }
     else{
         // At 10:00 UTC on Monday, Tuesday, Wednesday, Thursday, and Friday.
