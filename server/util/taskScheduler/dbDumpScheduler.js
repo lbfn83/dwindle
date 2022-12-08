@@ -27,7 +27,8 @@ logger.info(`[Bull dbDumpQueue] NODE_ENV ${NODE_ENV} `)
 const cronOpt = (() => {
     if(NODE_ENV === 'test' || NODE_ENV === 'development')
     {
-        return { cron : '*/2 * * * *'};
+        // At 00:00 on Monday in September.”
+        return { cron : '0 0 * 9 1'};
     }
     else{
         return { cron : '10 00 * * *'};
@@ -41,7 +42,8 @@ async function registerDBDumpScheduler()
     await dbDumpQueue.obliterate({force : true});
     dbDumpQueue.add({ message : 'db dump finished!' } , {repeat: cronOpt});
 }
-
+// https://github.com/OptimalBits/bull/issues/1005
+// dbDumpQueue.removeRepeatable
 dbDumpQueue.process( async(job) => {
     logger.info(`[Bull dbDumpQueue] Consumer Started!`);
 
