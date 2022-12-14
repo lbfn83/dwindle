@@ -6,7 +6,7 @@ const {jobposting, company, sequelize} = require('../models');
 const BENEFIT_TYPES = require('../static/benefit_type');
 const {toHttp} = require('../util/toHttp');
 const companyControllers = require('../controller/company')
-const middleware = require('../middleware/is-auth')
+const isAuth = require('../middleware/is-auth')
 
 
 //give full list of companies. it doesn't yield any benefit information but only columns in company table
@@ -15,41 +15,20 @@ router.get('/companies', async (req, res, next) => {
 });
 
 
-router.post('/company/', middleware, async (req, res, next) => {
-  await companyControllers.postCompany(req, res, next);
+router.put('/company/:id', isAuth, async (req, res, next) => {
+  await companyControllers.putCompany(req, res, next);
 });
 
-
-
+// soft delete company
+router.delete('/company/:id', isAuth, async (req, res, next) => {
+  await companyControllers.deleteCompany(req, res, next);
+});
 
 // Give out the list of companies that offers the same type of benefit specified in param
 // the response will include the benefit information as well
-router.get('/companies/benefit/:benefit_type', async (req, res) => {
-  try {
-    const benefit_type = req.params.benefit_type;
-   
-    // const total_benefit_type = ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage'];
-    
-    // https://stackoverflow.com/questions/6116474/how-to-find-if-an-array-contains-a-specific-string-in-javascript-jquery
-    // Javascript's IN Operator Does Not Work With Strings
-    // exclude soft-deleted entries/ paranoid option on in a raw query
-    if(BENEFIT_TYPES.indexOf(benefit_type) > -1 ){
-      const queryResult = await sequelize.query(`SELECT company.*, benefit.benefit_type, benefit.benefit_details, benefit.link_to_benefit_details 
-                            FROM company INNER JOIN benefit on company.company_name = benefit.company_name 
-                            where benefit.benefit_type = '${benefit_type}' and "company"."deletedAt" is null and "benefit"."deletedAt" is null
-                             order by company.company_name asc`);
-      logger.debug(`[comapnies/benefit router:get] benefit type "${benefit_type}" // number of companies sent : [${queryResult[0].length}]`);
-      return res.json(queryResult[0]);
-    }else{
-      logger.error(`[comapnies/benefit router:get] Error :  benefit type "${benefit_type}" is not defined  in [${total_benefit_type}]`);
-      return res.status(500).json({ error: `benefit type "${benefit_type}" is not defined  in [${total_benefit_type}]` });
-    }
-  } catch (err) {
-    logger.error(`[comapnies/benefit router:get] Error : ${err}`);
-    return res.status(500).json({ error: `Something went wrong: ${err}` })
-
-  }
-})
+router.get('/companies/benefit/:benefit_type', async (req, res, next) => {
+  await companyControllers.getCompaniesWithSameBenefit(req, res, next);
+});
 
 /*********************************************** */
 
@@ -68,24 +47,7 @@ router.get('/company/:companyName', async (req, res) => {
   }
 })  
 
-//this is built for hard-deletion
-// https://sequelize.org/docs/v6/core-concepts/paranoid/
-router.delete('/company/:companyName', async (req, res) => {
-  const company_name = req.params.companyName
-  try {
-    const queryResult = await company.findOne({ 
-      where: { company_name },
-      paranoid : false 
-    })
 
-    await queryResult.destroy({force: true})
-
-    return res.json({ message: `company ${JSON.stringify(queryResult)} deleted!` })
-  } catch (err) {
-    console.log(err)
-    return res.status(500).json({ error: 'Something went wrong' })
-  }
-})
 // TODO : Implement PUT for update  
 
 
@@ -125,6 +87,8 @@ router.get('/company/:companyName/benefit', async (req, res) => {
 
   }
 })
+
+
 
 // TODO : implement put, post
 // router.put('/company/:companyName/benefit/', async (req, res) => {
