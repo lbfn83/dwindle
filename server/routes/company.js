@@ -15,7 +15,7 @@ router.get('/companies', async (req, res, next) => {
 });
 
 
-router.put('/company/:id', isAuth, async (req, res, next) => {
+router.put('/company', isAuth, async (req, res, next) => {
   await companyControllers.putCompany(req, res, next);
 });
 
