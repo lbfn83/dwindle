@@ -4,24 +4,24 @@ import { useLocation } from 'react-router-dom';
 
 import EmailSignup, { EmailSignUp } from '../component/EmailSignUp'
 
+import { BACKEND_SVR_URL } from '../util/constants'
+
 export const CompanyPage = () => {
 
     const location = useLocation()
 
     const { state } = location
 
-    const { name, jobs, image, summary, description} = state
+    const { uuid ,name, jobs, image, summary, description} = state
 
     const [ benefitDetails, setBenefitDetails ] = useState([])
 
     const getBenefitData = async () => {
-        const response = await fetch(`https://dwindle-backend-server.herokuapp.com/database/company/${name}/benefit`, { 
+        const response = await fetch(`${BACKEND_SVR_URL}/database/company/${uuid}/benefit`, { 
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors',
         })
         const data = await response.json()
-        // console.log(JSON.stringify(data.benefits))
-        // const temp = data.benefits
         setBenefitDetails(data.benefits)
     
         
