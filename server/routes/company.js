@@ -14,6 +14,10 @@ router.get('/companies', async (req, res, next) => {
   await companyControllers.getfullListCompanies(req, res, next);
 });
 
+// TODO : for now: id takes company name, not uuid
+router.get('/company/:id', async (req, res, next) => {
+  await companyControllers.getCompany(req, res, next);
+});
 
 router.put('/company', isAuth, async (req, res, next) => {
   await companyControllers.putCompany(req, res, next);
@@ -30,22 +34,22 @@ router.get('/companies/benefit/:benefit_type', async (req, res, next) => {
   await companyControllers.getCompaniesWithSameBenefit(req, res, next);
 });
 
+// TODO : for now: id takes company name, not uuid
+router.get('/company/:id/benefit', async (req, res, next) => {
+  await companyControllers.getCompanyBenefit(req, res, next);
+});
+
+router.put('/company/:id/benefit', async (req, res, next) => {
+  await companyControllers.putCompanyBenefit(req, res, next);
+});
+
+router.delete('/company/:id/benefit', async (req, res, next) => {
+  await companyControllers.deleteCompanyBenefit(req, res, next);
+});
+
 /*********************************************** */
 
-router.get('/company/:companyName', async (req, res) => {
-  try {
-    const company_name = req.params.companyName
-    const queryResult = await company.findOne({
-      where : {company_name}
-    })
 
-    return res.json(queryResult)
-  } catch (err) {
-    console.log(err)
-    return res.status(500).json({ error: `Something went wrong: ${err}` })
-
-  }
-})  
 
 
 // TODO : Implement PUT for update  
@@ -70,24 +74,6 @@ router.get('/company/:companyName/jobposting', async (req, res) => {
 
     }
 })
-router.get('/company/:companyName/benefit', async (req, res) => {
-  const company_name = req.params.companyName
-  try {
-    const queryResult = await company.findOne({
-      where: { company_name },
-      // I did freeze table but wht it takes plural in association name?
-      // find out how other people freezetable in each model to see if it works
-      include: 'benefits',
-    })
-
-    return res.json(queryResult)
-  } catch (err) {
-    console.log(err)
-    return res.status(500).json({ error: `Something went wrong: ${err}` })
-
-  }
-})
-
 
 
 // TODO : implement put, post

@@ -25,6 +25,22 @@ exports.getfullListCompanies = async (req, res, next) => {
     });
 };
 
+exports.getCompany = async (req, res, next) => {
+  const uuid = req.params.id
+  await company.findOne({
+    where: { uuid }
+  })
+    .then((targetCompany) => {
+      // console.log(targetCompany.dataValues);
+      res.status(200).json(targetCompany);
+    })
+    .catch((error) => {
+      error.message = `[${error.name || 'Database'}] ${error.message}`
+      // internal server error
+      error.statusCode = 500;
+      next(error);
+    });
+};
 /** @type {import("express").RequestHandler} */
 exports.putCompany = async (req, res, next) => {
   const { company_name, job_scraper, company_website, industry, imagelink, company_summary, company_description } = req.body;
@@ -150,68 +166,95 @@ exports.getCompaniesWithSameBenefit = async (req, res, next) => {
   }
 };
 
-// router.get('/company/:companyName/benefit', async (req, res) => {
-//   const company_name = req.params.companyName
-//   try {
-//     const queryResult = await company.findOne({
-//       where: { company_name },
-//       // I did freeze table but wht it takes plural in association name?
-//       // find out how other people freezetable in each model to see if it works
-//       include: 'benefits',
-//     })
+exports.getCompanyBenefit = async (req, res, next) => {
+  const uuid = req.params.id;
+  /** Raw Query
+   * SELECT "company".*, "benefits"."uuid" AS "benefits.uuid", "benefits"."company_name" AS "benefits.company_name", "benefits"."benefit_type" AS "benefits.benefit_type", "benefits"."benefit_details" AS "benefits.benefit_details", "benefits"."link_to_benefit_details" AS "benefits.link_to_benefit_details", "benefits"."createdAt" AS "benefits.createdAt", "benefits"."updatedAt" AS "benefits.updatedAt", "benefits"."deletedAt" AS "benefits.deletedAt" FROM "company" AS "company" 
+   * LEFT OUTER JOIN "benefit" AS "benefits" ON "company"."company_name" = "benefits"."company_name"
+   *  AND ("benefits"."deletedAt" IS NULL) WHERE ("company"."deletedAt" IS NULL AND "company"."uuid" = '1b217487-9c6b-4921-a712-dbea6754d0c6');
+   */
 
-//     return res.json(queryResult)
-//   } catch (err) {
-//     console.log(err)
-//     return res.status(500).json({ error: `Something went wrong: ${err}` })
+  await company.findOne({
+    where: { uuid },
+    // https://sequelize.org/docs/v6/core-concepts/model-basics/
+    // I did freeze table but why it takes plural in association name?
+    // use benefit instance from model directly instead
+    // include:  'benefits',
+    include: benefit
 
-//   }
-// })
-
-// // TODO : implement put, post
-// router.put('/company/:companyName/benefit/', async (req, res) => {
-//   try {
-//     const benefit_type = req.params.benefit_type
-//     const total_benefit_type = ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']
-//     // https://stackoverflow.com/questions/6116474/how-to-find-if-an-array-contains-a-specific-string-in-javascript-jquery
-//     // Javascript's IN Operator Does Not Work With Strings
-//     if(total_benefit_type.indexOf(benefit_type) > -1 ){
-//       const queryResult = await sequelize.query(`SELECT company.*, benefit.benefit_type, benefit.benefit_details, benefit.link_to_benefit_details
-//                             FROM company INNER JOIN benefit on company.company_name = benefit.company_name
-//                             where benefit.benefit_type = '${benefit_type}' order by company.company_name asc`)
-
-//       return res.json(queryResult)
-//     }else{
-//       return res.status(500).json({ error: `benefit type "${benefit_type}" is not defined  in [${total_benefit_type}]` })
-//     }
-//   } catch (err) {
-//     console.log(err)
-//     return res.status(500).json({ error: `Something went wrong: ${err}` })
-
-//   }
-// })
-
-
-
-/*
-
- 
-
-
-router.get('/company/:companyName', async (req, res) => {
-  try {
-    const company_name = req.params.companyName
-    const queryResult = await company.findOne({
-      where: { company_name }
+  })
+    .then((benefitResult) => {
+      // Sequelize findOne and findAll requries different logic to handle empty result
+      // findOne => null / findAll => []  which should be handled with benefitResult.length < 1
+      if (!benefitResult ) {
+        // 400 : an error caused by an invalid request.
+        const error = new Error(`[getCompanyBenefit]${uuid} is not correct param`);
+        error.statusCode = 400;
+        next(error);
+      }
+      res.status(200).json(benefitResult)
+    })
+    .catch(error => {
+      error.message = `[${error.name || 'Database'}] ${error.message}`
+      // internal database error
+      error.statusCode = 500;
+      next(error);
     })
 
-    return res.json(queryResult)
+};
+
+
+/** TODO : below routes should be worked on */
+
+exports.putCompanyBenefit = async (req, res, next) => {
+  try {
+    const benefit_type = req.params.benefit_type
+    const total_benefit_type = ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']
+    // https://stackoverflow.com/questions/6116474/how-to-find-if-an-array-contains-a-specific-string-in-javascript-jquery
+    // Javascript's IN Operator Does Not Work With Strings
+    if (total_benefit_type.indexOf(benefit_type) > -1) {
+      const queryResult = await sequelize.query(`SELECT company.*, benefit.benefit_type, benefit.benefit_details, benefit.link_to_benefit_details
+                            FROM company INNER JOIN benefit on company.company_name = benefit.company_name
+                            where benefit.benefit_type = '${benefit_type}' order by company.company_name asc`)
+
+      return res.json(queryResult)
+    } else {
+      return res.status(500).json({ error: `benefit type "${benefit_type}" is not defined  in [${total_benefit_type}]` })
+    }
   } catch (err) {
     console.log(err)
     return res.status(500).json({ error: `Something went wrong: ${err}` })
 
   }
-})
+};
+
+
+exports.deleteCompanyBenefit = async (req, res, next) => {
+  try {
+    const benefit_type = req.params.benefit_type
+    const total_benefit_type = ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']
+    // https://stackoverflow.com/questions/6116474/how-to-find-if-an-array-contains-a-specific-string-in-javascript-jquery
+    // Javascript's IN Operator Does Not Work With Strings
+    if (total_benefit_type.indexOf(benefit_type) > -1) {
+      const queryResult = await sequelize.query(`SELECT company.*, benefit.benefit_type, benefit.benefit_details, benefit.link_to_benefit_details
+                            FROM company INNER JOIN benefit on company.company_name = benefit.company_name
+                            where benefit.benefit_type = '${benefit_type}' order by company.company_name asc`)
+
+      return res.json(queryResult)
+    } else {
+      return res.status(500).json({ error: `benefit type "${benefit_type}" is not defined  in [${total_benefit_type}]` })
+    }
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ error: `Something went wrong: ${err}` })
+
+  }
+};
+
+
+/*
+
+ 
 
 
 
