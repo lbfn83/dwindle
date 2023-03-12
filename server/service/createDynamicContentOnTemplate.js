@@ -10,7 +10,8 @@ const { MAIL_CHIMP_BENEFIT_TYPE } = process.env;
 // e.x.) job postings from the companies that posted most job ads in this week without considering benefit type 
 // or those from the companies offering each of specified benfit types among ['student_loan_repayment', 'tuition_assistance', 'tuition_reimbursement', 'full_tuition_coverage']
 // that have most jobpostings this week
-const CREATE_ALL_TEMPLATE_TYPES = true;
+// const CREATE_ALL_TEMPLATE_TYPES = true;
+const { CREATE_ALL_TEMPLATE_TYPES } = process.env;
 // const AUD_GRP_NAME = "Dwindle Student Debt";
 
 /**

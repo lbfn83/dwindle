@@ -7,7 +7,7 @@ export const CompanyCard = ( {companyData} ) => {
     const [compData, setCompData] = useState([])
 
     //data from companylistpage.jsx
-    const { company_name } = companyData
+    const { uuid, company_name } = companyData
 
     const navigate = useNavigate()
 
@@ -15,7 +15,7 @@ export const CompanyCard = ( {companyData} ) => {
 
     useEffect(() => {    
         const getCompanyData = async () => {
-            const response = await fetch(`${BACKEND_SVR_URL}/database/company/${company_name}`, {
+            const response = await fetch(`${BACKEND_SVR_URL}/database/company/${uuid}`, {
                 method: 'GET', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors',
             })
@@ -29,6 +29,7 @@ export const CompanyCard = ( {companyData} ) => {
     const toCompanyPage = async() => {
         navigate(`/companies/benefits/${company_name}`, {
             state:{
+                uuid: compData.uuid,
                 name: compData.company_name, 
                 jobs: compData.company_jobpage, 
                 website: compData.company_website, 
