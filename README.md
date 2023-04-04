@@ -5,7 +5,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://jobs.dwindlestudentdebt.com/">
+  <!-- <a href="https://jobs.dwindlestudentdebt.com/"> -->
     <img src="client/src/images/dwindleTMbigfinal.png" alt="Logo" width="250" height="80">
   </a>
 
